@@ -1,0 +1,31 @@
+name: Sync to Personal Repository
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Organization Repository
+        uses: actions/checkout@v3
+
+      - name: Configure Git for Personal Repository
+        run: |
+          git config --global user.name "ericliu-12"
+          git config --global user.email "133845008+alaska-summer@users.noreply.github.com"
+
+      - name: Add Personal Repository as Remote
+        run: |
+          git remote add personal https://ericliu12:${{ secrets.PERSONAL_TOKEN }}@github.com/ericliu12/project-3-team-2c.git
+          git fetch personal
+
+      - name: Push Changes to Personal Repository
+        run: |
+          git push personal main --force
