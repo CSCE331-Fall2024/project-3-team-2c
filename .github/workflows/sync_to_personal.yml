@@ -23,7 +23,7 @@ jobs:
 
       - name: Add Personal Repository as Remote
         run: |
-          git remote add personal https://ericliu-12:${{ secrets.PERSONAL_TOKEN }}@github.com/ericliu-12/project-3-team-2c.git
+          git remote add personal https://x-access-token:${{ secrets.PERSONAL_TOKEN }}@github.com/ericliu-12/project-3-team-2c.git
           git fetch personal
 
       - name: Push Changes to Personal Repository
