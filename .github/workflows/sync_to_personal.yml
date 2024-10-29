@@ -11,6 +11,8 @@ on:
 jobs:
   sync:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
       - name: Checkout Organization Repository
@@ -30,5 +32,6 @@ jobs:
       - name: Push Changes to Personal Repository
         run: |
           git push personal main --force
+
 
 
