@@ -13,7 +13,6 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
@@ -22,12 +21,25 @@ jobs:
         run: |
           git config --global user.name "ericliu-12"
           git config --global user.email "133845008+alaska-summer@users.noreply.github.com"
+          
+      - name: Create New Branch
+        run: |
+          BRANCH_NAME="sync-update-$(date +'%Y%m%d%H%M%S')"
+          git checkout -b $BRANCH_NAME
 
       - name: Add Remote with PAT
         run: |
           git remote add personal https://ericliu-12:${{ secrets.PERSONAL_TOKEN }}@github.com/ericliu-12/project-3-team-2c.git
 
-      - name: Push Changes
+      - name: Push New Branch
         run: |
-          git push personal main --force
+          git push personal $BRANCH_NAME
 
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.PERSONAL_TOKEN }}
+          branch: $BRANCH_NAME
+          base: main
+          title: "Sync Update - $BRANCH_NAME"
+          body: "This pull request was automatically created by the sync workflow."
