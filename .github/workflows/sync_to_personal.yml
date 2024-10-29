@@ -30,3 +30,4 @@ jobs:
       - name: Push Changes
         run: |
           git push personal main --force
+
