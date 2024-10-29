@@ -5,6 +5,7 @@ on:
     branches:
       - main
   pull_request:
+    types: [closed]
     branches:
       - main
 
@@ -26,11 +27,12 @@ jobs:
         env:
           PERSONAL_TOKEN: ${{ secrets.PERSONAL_TOKEN }}
         run: |
-          git remote add personal "https://ericliu-12:${PERSONAL_TOKEN}@github.com/ericliu-12/project-3-team-2c.git"
+          git remote add personal "https://${{ secrets.PERSONAL_TOKEN }}@github.com/ericliu-12/project-3-team-2c.git"
           git fetch personal
       
       - name: Push Changes to Personal Repository
         env:
           PERSONAL_TOKEN: ${{ secrets.PERSONAL_TOKEN }}
         run: |
-          git push personal main:main --force
+          git push personal main:main
+
