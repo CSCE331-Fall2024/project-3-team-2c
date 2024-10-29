@@ -1,10 +1,57 @@
-.horizontal-tabs {
+/* managerMenu.css */
+
+body {
+    background-color: #FEC6B5; /* Page background color */
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+main {
+    text-align: center;
+    padding-top: 20px;
+}
+
+h1 {
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.managermenu {
+    background-color: #ce123c; /* Navigation bar color */
     display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+}
+
+.horizontal-tabs {
+    width: 100vw;
+    display: flex;
+    flex-direction:row;
     list-style: none;
     padding: 0;
     margin: 0;
+    justify-content: center;
+    width: 100%;
+    max-width: 800px;
+
 }
 
 .horizontal-tabs > li {
-    margin-right: 20px;
+    margin: 0;
+}
+
+.menulink {
+    color: inherit; /* Remove default link color */
+    text-decoration: none; /* Remove underline */
+    padding: 8px 16px;
+    border-radius: 4px;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.menulink:hover {
+    background-color: #ffffff; /* White background on hover */
+    color: #ce123c; /* Text color change on hover */
+    transform: scale(1.05); /* Slight scale-up effect */
 }

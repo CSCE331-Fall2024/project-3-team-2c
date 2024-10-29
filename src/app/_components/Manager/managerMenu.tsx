@@ -8,7 +8,7 @@ import "./managerMenu.css";
 
 export default function ManagerMenu() {
     return (
-        <main>
+        <main className="managermenu">
             <h1>
                 Manager Menu
             </h1>
@@ -16,22 +16,22 @@ export default function ManagerMenu() {
                 <NavigationMenuList className="horizontal-tabs">
                     {/* Tab for Employee */}
                     <NavigationMenuItem>
-                        <NavigationMenuLink href="/employees">Employees</NavigationMenuLink>
+                        <NavigationMenuLink className="menulink" href="/employees">Employees</NavigationMenuLink>
                     </NavigationMenuItem>
 
                     {/* Tab for Menu Items */}
                     <NavigationMenuItem>
-                        <NavigationMenuLink href="/menu-items">Menu Items</NavigationMenuLink>
+                        <NavigationMenuLink className="menulink" href="/menu-items">Menu Items</NavigationMenuLink>
                     </NavigationMenuItem>
 
                     {/* Tab for Inventory */}
                     <NavigationMenuItem>
-                        <NavigationMenuLink href="/inventory">Inventory</NavigationMenuLink>
+                        <NavigationMenuLink className="menulink" href="/inventory">Inventory</NavigationMenuLink>
                     </NavigationMenuItem>
 
                     {/* Tab for Records */}
                     <NavigationMenuItem>
-                        <NavigationMenuLink href="/records">Records</NavigationMenuLink>
+                        <NavigationMenuLink className="menulink" href="/records">Records</NavigationMenuLink>
                     </NavigationMenuItem>
                 </NavigationMenuList>
             </NavigationMenu>
