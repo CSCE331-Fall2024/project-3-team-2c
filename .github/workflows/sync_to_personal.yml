@@ -16,21 +16,6 @@ jobs:
       - name: Checkout Organization Repository
         uses: actions/checkout@v3
 
-      - name: Set up SSH
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY_BASE64 }}" | base64 --decode > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          eval "$(ssh-agent -s)"
-          ssh-add ~/.ssh/id_rsa
-          ssh-keyscan github.com >> ~/.ssh/known_hosts
-        shell: bash
-
-      - name: Test SSH Authentication
-        run: |
-          ssh -T git@github.com || exit 1
-        shell: bash
-
       - name: Configure Git for Personal Repository
         run: |
           git config --global user.name "ericliu-12"
@@ -38,11 +23,12 @@ jobs:
 
       - name: Add Personal Repository as Remote
         run: |
-          git remote add personal git@github.com:ericliu-12/project-3-team-2c.git
+          git remote add personal https://ericliu-12:${{ secrets.PERSONAL_TOKEN }}@github.com/ericliu-12/project-3-team-2c.git
           git fetch personal
           git branch --set-upstream-to=personal/main main
 
       - name: Push Changes to Personal Repository
         run: |
           git push personal main --force
+
 
