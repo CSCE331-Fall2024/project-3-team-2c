@@ -28,4 +28,4 @@ jobs:
 
       - name: Push Changes to Personal Repository
         run: |
-          git push personal main --force
+          git push personal main
