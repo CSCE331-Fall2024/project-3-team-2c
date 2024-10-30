@@ -24,21 +24,21 @@ const IngredientList: React.FC<{
   return (
     <ul>
       {ingredients.map((ingredient) => (
-        <li key={ingredient.id} style={{ marginBottom: '8px', display: 'flex', alignItems: 'center' }}>
-          <span style={{ flex: 1 }}>{ingredient.name} (Quantity: {ingredient.quantity})</span>
+        <li key={ingredient.id} className="mb-2 flex items-center">
+          <span className="flex-1">{ingredient.name} (Quantity: {ingredient.quantity})</span>
           <button
             onClick={() => {
               const newName = prompt('Edit ingredient name:', ingredient.name);
               const newQuantity = prompt('Edit ingredient quantity:', ingredient.quantity.toString());
               if (newName && newQuantity) onEdit(ingredient.id, newName, Number(newQuantity));
             }}
-            style={{ padding: '8px 16px', backgroundColor: '#3b82f6', color: 'white', borderRadius: '4px', marginRight: '8px' }}
+            className="px-4 py-2 bg-blue-500 text-white rounded mr-2"
           >
             EDIT
           </button>
           <button
             onClick={() => onDelete(ingredient.id)}
-            style={{ padding: '8px 16px', backgroundColor: '#ef4444', color: 'white', borderRadius: '4px' }}
+            className="px-4 py-2 bg-red-500 text-white rounded"
           >
             DELETE
           </button>
@@ -57,23 +57,23 @@ const AddIngredientForm: React.FC<{
   onAdd: () => void;
 }> = ({ newIngredient, newQuantity, setNewIngredient, setNewQuantity, onAdd }) => {
   return (
-    <div style={{ marginBottom: '16px' }}>
+    <div className="mb-4">
       <input
         type="text"
         value={newIngredient}
         onChange={(e) => setNewIngredient(e.target.value)}
-        style={{ border: '1px solid #ccc', padding: '8px', marginRight: '8px' }}
+        className="border p-2 mr-2"
         placeholder="New ingredient"
       />
       <input
         type="number"
         value={newQuantity}
         onChange={(e) => setNewQuantity(Number(e.target.value))}
-        style={{ border: '1px solid #ccc', padding: '8px', marginRight: '8px' }}
+        className="border p-2 mr-2"
         placeholder="Quantity"
         min="1"
       />
-      <button onClick={onAdd} style={{ padding: '8px 16px', backgroundColor: '#10b981', color: 'white', borderRadius: '4px' }}>
+      <button onClick={onAdd} className="px-4 py-2 bg-green-500 text-white rounded">
         ADD
       </button>
     </div>
@@ -107,8 +107,8 @@ export default function Home() {
   };
 
   return (
-    <div style={{ padding: '16px' }}>
-      <h1 style={{ fontSize: '24px', marginBottom: '16px' }}>Ingredients</h1>
+    <div className="p-4">
+      <h1 className="text-2xl mb-4">Ingredients</h1>
       <AddIngredientForm
         newIngredient={newIngredient}
         newQuantity={newQuantity}
