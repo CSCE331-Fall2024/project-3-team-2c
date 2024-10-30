@@ -1,5 +1,8 @@
-import Link from "next/link";
+import ManagerMenu from "../../pages/Manager/managerMenu";
+import MainMenu from "../../pages/Main/mainMenu";
+import "./page.css";
 
+<<<<<<< HEAD
 import { LatestPost } from "~/app/_components/post";
 import {auth} from "~/server/auth";
 import { api, HydrateClient } from "~/trpc/server";
@@ -64,4 +67,8 @@ export default async function Home() {
       </main>
     </HydrateClient>
   );
+=======
+export default function Home() {
+  return <MainMenu />;
+>>>>>>> Vincent_ManagerMenu
 }
