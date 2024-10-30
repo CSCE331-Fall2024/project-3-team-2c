@@ -7,9 +7,12 @@ on:
   pull_request:
     branches:
       - main
+    types:
+      - closed
 
 jobs:
   sync:
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
 
     steps:
@@ -20,10 +23,17 @@ jobs:
         run: |
           git config --global user.name "ericliu-12"
           git config --global user.email "133845008+alaska-summer@users.noreply.github.com"
-      - name: Add Personal Repository as Remote
+
+      - name: Clone Personal Repository as Remote
         run: |
-          git remote add personal https://ericliu-12:${{ secrets.PERSONAL_TOKEN }}@github.com/ericliu-12/project-3-team-2c.git
-          git fetch personal
-      - name: Push Changes to Personal Repository
+          git clone https://ericliu-12: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@github.com/ericliu-12/project-3-team-2c.git ../personal-repo
+
+      - name: Copy Files to Personal Repository
         run: |
-          git push personal main --force
+          rsync -av --progress --exclude .git ./ ../personal-repo/
+          cd ../personal-repo/
+          git add .
+          git commit -m "Sync from organization repo"
+          git push origin main --force
+
+

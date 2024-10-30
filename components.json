@@ -6,7 +6,11 @@
   "tailwind": {
     "config": "tailwind.config.ts",
     "css": "src/styles/globals.css",
+<<<<<<< HEAD
     "baseColor": "neutral",
+=======
+    "baseColor": "zinc",
+>>>>>>> Vincent_ManagerMenu
     "cssVariables": true,
     "prefix": ""
   },
