@@ -4,7 +4,7 @@ import {
     NavigationMenuLink,
     NavigationMenuList,
 } from "~/components/ui/navigation-menu"
-import "./managerMenu.css"; 
+// import "./managerMenu.css"; 
 
 export default function ManagerMenu() {
     return (

@@ -1,5 +1,5 @@
 import React from 'react';
-import './MainMenu.css';
+// import './mainMenu.css';
 
 export default function MainMenu() {
     return (
