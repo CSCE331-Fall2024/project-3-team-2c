@@ -15,7 +15,70 @@ const initialIngredients: Ingredient[] = [
   { id: 3, name: 'Garlic', quantity: 10 },
 ];
 
+// IngredientList component
+const IngredientList: React.FC<{
+  ingredients: Ingredient[];
+  onEdit: (id: number, newName: string, newQuantity: number) => void;
+  onDelete: (id: number) => void;
+}> = ({ ingredients, onEdit, onDelete }) => {
+  return (
+    <ul>
+      {ingredients.map((ingredient) => (
+        <li key={ingredient.id} style={{ marginBottom: '8px', display: 'flex', alignItems: 'center' }}>
+          <span style={{ flex: 1 }}>{ingredient.name} (Quantity: {ingredient.quantity})</span>
+          <button
+            onClick={() => {
+              const newName = prompt('Edit ingredient name:', ingredient.name);
+              const newQuantity = prompt('Edit ingredient quantity:', ingredient.quantity.toString());
+              if (newName && newQuantity) onEdit(ingredient.id, newName, Number(newQuantity));
+            }}
+            style={{ padding: '8px 16px', backgroundColor: '#3b82f6', color: 'white', borderRadius: '4px', marginRight: '8px' }}
+          >
+            EDIT
+          </button>
+          <button
+            onClick={() => onDelete(ingredient.id)}
+            style={{ padding: '8px 16px', backgroundColor: '#ef4444', color: 'white', borderRadius: '4px' }}
+          >
+            DELETE
+          </button>
+        </li>
+      ))}
+    </ul>
+  );
+};
 
+// AddIngredientForm component
+const AddIngredientForm: React.FC<{
+  newIngredient: string;
+  newQuantity: number;
+  setNewIngredient: (value: string) => void;
+  setNewQuantity: (value: number) => void;
+  onAdd: () => void;
+}> = ({ newIngredient, newQuantity, setNewIngredient, setNewQuantity, onAdd }) => {
+  return (
+    <div style={{ marginBottom: '16px' }}>
+      <input
+        type="text"
+        value={newIngredient}
+        onChange={(e) => setNewIngredient(e.target.value)}
+        style={{ border: '1px solid #ccc', padding: '8px', marginRight: '8px' }}
+        placeholder="New ingredient"
+      />
+      <input
+        type="number"
+        value={newQuantity}
+        onChange={(e) => setNewQuantity(Number(e.target.value))}
+        style={{ border: '1px solid #ccc', padding: '8px', marginRight: '8px' }}
+        placeholder="Quantity"
+        min="1"
+      />
+      <button onClick={onAdd} style={{ padding: '8px 16px', backgroundColor: '#10b981', color: 'white', borderRadius: '4px' }}>
+        ADD
+      </button>
+    </div>
+  );
+};
 
 // Main component
 export default function Home() {
