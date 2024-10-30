@@ -27,7 +27,7 @@ jobs:
 
       - name: Copy Files to Personal Repository
         run: |
-          # rsync -av --progress --exclude .git ./ ../personal-repo/
+          rsync -av --progress --exclude .git ./ ../personal-repo/
           cd ../personal-repo/
           git add .
           git commit -m "Sync from organization repo"
