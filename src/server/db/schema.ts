@@ -113,11 +113,22 @@ export const verificationTokens = createTable(
 export const menu_items = createTable("menu_items", {
   id: serial("id").primaryKey(),
   name: varchar("name", { length: 255 }).notNull(),
-  quantity: integer("quantity").notNull(),
-
-  // scale means number of decimal places
-  price: numeric("price", { scale: 2 }).notNull(),
   type: varchar("type").notNull(),
 });
 
 // export const menu_itemsRelations = relations(menu_items, {});
+
+export const orders = createTable("orders", {
+  id: serial("id").primaryKey(),
+  timestamp: timestamp("timestamp").notNull(),
+  total: numeric("total", { scale: 2 }).notNull(),
+  customer_id: serial("customer_id").notNull(),
+});
+
+export const sizes = createTable("sizes", {
+  id: serial("id").primaryKey(),
+  price: numeric("price", { scale: 2 }).notNull(),
+  name: varchar("name").notNull(),
+  num_mains: integer("num_mains").notNull(),
+  num_sides: integer("num_sides").notNull(),
+});
