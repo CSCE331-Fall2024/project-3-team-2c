@@ -116,8 +116,6 @@ export const menuItems = createTable("menu_items", {
   type: varchar("type").notNull(),
 });
 
-// export const menu_itemsRelations = relations(menu_items, {});
-
 export const orders = createTable("orders", {
   id: serial("id").primaryKey(),
   timestamp: timestamp("timestamp").notNull(),
