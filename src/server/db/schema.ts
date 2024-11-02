@@ -135,13 +135,14 @@ export const sizes = createTable("sizes", {
 
 export const containers = createTable("containers", {
   id: serial("id").primaryKey(),
-  order_id: serial("order_id"),
+  orderId: integer("order_id").references(() => orders.id),
+  sizeId: integer("size_id").references(() => sizes.id),
 });
 
 export const containersToMenu = createTable("containers_to_menu", {
   id: serial("id").primaryKey(),
-  containerId: serial("container_id"),
-  itemId: serial("item_id"),
+  containerId: integer("container_id").references(() => containers.id),
+  itemId: integer("item_id").references(() => menuItems.id),
 });
 
 export const employees = createTable("employees", {
@@ -152,11 +153,11 @@ export const employees = createTable("employees", {
 export const ingredients = createTable("ingredients", {
   id: serial("id").primaryKey(),
   name: varchar("name"),
-  quantity: integer().notNull(),
+  quantity: integer("quantity").notNull(),
 });
 
 export const menuToIngredients = createTable("menu_to_ingredients", {
   id: serial("id").primaryKey(),
-  menuId: serial("menu_id"),
-  ingredientId: serial("ingredient_id"),
+  menuId: integer("menu_id").references(() => menuItems.id),
+  ingredientId: integer("ingredient_id").references(() => ingredients.id),
 });
