@@ -117,6 +117,7 @@ export const menu_items = createTable("menu_items", {
 
   // scale means number of decimal places
   price: numeric("price", { scale: 2 }).notNull(),
+  type: varchar("type").notNull(),
 });
 
 // export const menu_itemsRelations = relations(menu_items, {});
