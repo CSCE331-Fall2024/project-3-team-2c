@@ -122,7 +122,7 @@ export const orders = createTable("orders", {
   id: serial("id").primaryKey(),
   timestamp: timestamp("timestamp").notNull(),
   total: numeric("total", { scale: 2 }).notNull(),
-  customerId: serial("customer_id").notNull(),
+  customerId: integer("customer_id").notNull(),
 });
 
 export const sizes = createTable("sizes", {
@@ -148,6 +148,8 @@ export const containersToMenu = createTable("containers_to_menu", {
 export const employees = createTable("employees", {
   id: serial("id").primaryKey(),
   name: varchar("name"),
+  email: varchar("email"),
+  role: varchar("role"),
 });
 
 export const ingredients = createTable("ingredients", {
@@ -160,4 +162,11 @@ export const menuToIngredients = createTable("menu_to_ingredients", {
   id: serial("id").primaryKey(),
   menuId: integer("menu_id").references(() => menuItems.id),
   ingredientId: integer("ingredient_id").references(() => ingredients.id),
+});
+
+// TODO: See if it's better to merge this into the employees table so that we can have a "users" table instead
+export const customers = createTable("customers", {
+  id: serial("id").primaryKey(),
+  name: varchar("name"),
+  email: varchar("email"),
 });
