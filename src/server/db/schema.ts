@@ -110,7 +110,7 @@ export const verificationTokens = createTable(
   }),
 );
 
-export const menu_items = createTable("menu_items", {
+export const menuItems = createTable("menu_items", {
   id: serial("id").primaryKey(),
   name: varchar("name", { length: 255 }).notNull(),
   type: varchar("type").notNull(),
@@ -122,13 +122,24 @@ export const orders = createTable("orders", {
   id: serial("id").primaryKey(),
   timestamp: timestamp("timestamp").notNull(),
   total: numeric("total", { scale: 2 }).notNull(),
-  customer_id: serial("customer_id").notNull(),
+  customerId: serial("customer_id").notNull(),
 });
 
 export const sizes = createTable("sizes", {
   id: serial("id").primaryKey(),
   price: numeric("price", { scale: 2 }).notNull(),
   name: varchar("name").notNull(),
-  num_mains: integer("num_mains").notNull(),
-  num_sides: integer("num_sides").notNull(),
+  numMains: integer("num_mains").notNull(),
+  numSides: integer("num_sides").notNull(),
+});
+
+export const containers = createTable("containers", {
+  id: serial("id").primaryKey(),
+  order_id: serial("order_id"),
+});
+
+export const containersToMenu = createTable("containers_to_menu", {
+  id: serial("id"),
+  containerId: serial("container_id"),
+  itemId: serial("item_id"),
 });
