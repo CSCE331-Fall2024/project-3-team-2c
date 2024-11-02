@@ -139,7 +139,24 @@ export const containers = createTable("containers", {
 });
 
 export const containersToMenu = createTable("containers_to_menu", {
-  id: serial("id"),
+  id: serial("id").primaryKey(),
   containerId: serial("container_id"),
   itemId: serial("item_id"),
+});
+
+export const employees = createTable("employees", {
+  id: serial("id").primaryKey(),
+  name: varchar("name"),
+});
+
+export const ingredients = createTable("ingredients", {
+  id: serial("id").primaryKey(),
+  name: varchar("name"),
+  quantity: integer().notNull(),
+});
+
+export const menuToIngredients = createTable("menu_to_ingredients", {
+  id: serial("id").primaryKey(),
+  menuId: serial("menu_id"),
+  ingredientId: serial("ingredient_id"),
 });
