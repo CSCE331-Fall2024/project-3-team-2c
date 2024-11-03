@@ -20,6 +20,8 @@ jobs:
           cache: 'pnpm'
       - name: Install dependencies
         run: pnpm install
+      - name: Generate .env
+        run: echo "SKIP_ENV_VALIDATION=true" >> .env
       - name: Do typecheck
         run: pnpm typecheck
       - name: Check for linting issues
