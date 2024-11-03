@@ -1,4 +1,6 @@
 import "~/styles/globals.css";
+import React from "react";
+
 
 import { GeistSans } from "geist/font/sans";
 import { type Metadata } from "next";
