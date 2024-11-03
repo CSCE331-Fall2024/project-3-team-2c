@@ -1,7 +1,9 @@
-import { api, HydrateClient } from "~/trpc/server";
-
+import {
+  // api,
+  HydrateClient,
+} from "~/trpc/server";
 export default async function CashierExamplePage() {
-  void api.post.getLatest.prefetch();
+  // void api.post.getLatest.prefetch();
 
   return (
     <HydrateClient>

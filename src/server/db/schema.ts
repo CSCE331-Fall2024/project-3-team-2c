@@ -1,6 +1,16 @@
-import {relations, sql} from "drizzle-orm";
-import {index, integer, pgTableCreator, primaryKey, serial, text, timestamp, varchar,} from "drizzle-orm/pg-core";
-import {type AdapterAccount} from "next-auth/adapters";
+import { relations, sql } from "drizzle-orm";
+import {
+  index,
+  integer,
+  numeric,
+  pgTableCreator,
+  primaryKey,
+  serial,
+  text,
+  timestamp,
+  varchar,
+} from "drizzle-orm/pg-core";
+import { type AdapterAccount } from "next-auth/adapters";
 
 /**
  * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
@@ -9,27 +19,6 @@ import {type AdapterAccount} from "next-auth/adapters";
  * @see https://orm.drizzle.team/docs/goodies#multi-project-schema
  */
 export const createTable = pgTableCreator((name) => `panda_${name}`);
-
-export const posts = createTable(
-  "post",
-  {
-    id: serial("id").primaryKey(),
-    name: varchar("name", { length: 256 }),
-    createdById: varchar("created_by", { length: 255 })
-      .notNull()
-      .references(() => users.id),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .default(sql`CURRENT_TIMESTAMP`)
-      .notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true }).$onUpdate(
-      () => new Date(),
-    ),
-  },
-  (example) => ({
-    createdByIdIdx: index("created_by_idx").on(example.createdById),
-    nameIndex: index("name_idx").on(example.name),
-  }),
-);
 
 export const users = createTable("user", {
   id: varchar("id", { length: 255 })
@@ -120,3 +109,62 @@ export const verificationTokens = createTable(
     compoundKey: primaryKey({ columns: [vt.identifier, vt.token] }),
   }),
 );
+
+export const menuItems = createTable("menu_items", {
+  id: serial("id").primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  type: varchar("type").notNull(),
+});
+
+export const orders = createTable("orders", {
+  id: serial("id").primaryKey(),
+  timestamp: timestamp("timestamp").notNull(),
+  total: numeric("total", { scale: 2 }).notNull(),
+  customerId: integer("customer_id").notNull(),
+});
+
+export const sizes = createTable("sizes", {
+  id: serial("id").primaryKey(),
+  price: numeric("price", { scale: 2 }).notNull(),
+  name: varchar("name").notNull(),
+  numMains: integer("num_mains").notNull(),
+  numSides: integer("num_sides").notNull(),
+});
+
+export const containers = createTable("containers", {
+  id: serial("id").primaryKey(),
+  orderId: integer("order_id").references(() => orders.id),
+  sizeId: integer("size_id").references(() => sizes.id),
+});
+
+export const containersToMenu = createTable("containers_to_menu", {
+  id: serial("id").primaryKey(),
+  containerId: integer("container_id").references(() => containers.id),
+  itemId: integer("item_id").references(() => menuItems.id),
+});
+
+export const employees = createTable("employees", {
+  id: serial("id").primaryKey(),
+  name: varchar("name"),
+  email: varchar("email"),
+  role: varchar("role"),
+});
+
+export const ingredients = createTable("ingredients", {
+  id: serial("id").primaryKey(),
+  name: varchar("name"),
+  quantity: integer("quantity").notNull(),
+});
+
+export const menuToIngredients = createTable("menu_to_ingredients", {
+  id: serial("id").primaryKey(),
+  menuId: integer("menu_id").references(() => menuItems.id),
+  ingredientId: integer("ingredient_id").references(() => ingredients.id),
+});
+
+// TODO: See if it's better to merge this into the employees table so that we can have a "users" table instead
+export const customers = createTable("customers", {
+  id: serial("id").primaryKey(),
+  name: varchar("name"),
+  email: varchar("email"),
+});
