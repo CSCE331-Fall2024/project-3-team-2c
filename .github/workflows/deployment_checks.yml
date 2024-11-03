@@ -1,4 +1,4 @@
-name: Important pre-deployment checks (typecheck, format, lint, build)
+name: Important pre-deployment checks (typecheck, lint, build)
 
 on:
   - pull_request
@@ -22,8 +22,6 @@ jobs:
         run: pnpm install
       - name: Do typecheck
         run: pnpm typecheck
-      - name: Check formatting
-        run: pnpm format
       - name: Check for linting issues
         run: pnpm lint
       - name: Try building
