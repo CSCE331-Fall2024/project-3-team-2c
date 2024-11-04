@@ -4,6 +4,7 @@ import { Item } from "../item";
 import { useNavigate } from "node_modules/react-router-dom";
 
 // use next redirect
+// change img to Image
 
 interface Item {
     id: number;
@@ -19,7 +20,7 @@ const RedirectButton: React.FC<navButton> = ({ text, to }) => {
     const navigate = useNavigate();
 
     const handleClick = () => {
-        navigate(to);  // Navigate to the route passed in the 'to' prop
+        navigate(to);
     };
 
     return (

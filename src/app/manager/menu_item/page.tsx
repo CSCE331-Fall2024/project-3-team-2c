@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { Card } from "../../card_component/card"
+import { redirect } from 'next/navigation'
 
 
 interface Item {
@@ -49,6 +50,7 @@ const MenuItemsPage: React.FC = () => {
         <div>
             <header style={{ backgroundColor: "red", padding: "1rem", color: "#fff", textAlign: "center" }}>
                 <nav>
+                    <a onClick={() => redirect('/')} style={{ cursor: "pointer" }}>Home</a>
                     <a href="#employees" style={{ marginRight: "1rem" }}>Employees</a>
                     <a href="#menu-items" className="font-bold text-xl mr-4" style={{ marginRight: "1rem" }}>Menu Items</a>
                     <a href="#ingredients" style={{ marginRight: "1rem" }}>Ingredients</a>
@@ -79,7 +81,7 @@ const MenuItemsPage: React.FC = () => {
                     {items.map((item) => (
                         <Card
                             key={item.id}
-                            imageUrl="https://fastly.picsum.photos/id/237/200/300.jpg?hmac=TmmQSbShHz9CdQm0NkEjx1Dyh_Y984R9LpNrpvH2D_U"
+                            imageUrl="/dog.jpg"
                             name={item.content}
                             onEdit={() => enableEditing(item.id)}
                             onDelete={() => deleteItem(item.id)}

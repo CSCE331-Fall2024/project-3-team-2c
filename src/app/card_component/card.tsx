@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Image from "next/image";
 
 interface SquareBlockProps {
     imageUrl: string;
@@ -19,10 +20,8 @@ export const Card: React.FC<SquareBlockProps> = ({ imageUrl, name, onEdit, onDel
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
         >
-            {/* Image */}
-            <img src={imageUrl} alt={name} className="w-24 h-24 object-cover mb-4" />
+            <Image src={imageUrl} alt="Food Picture Here" width={64} height={96} className="mb-4" />
 
-            {/* Name or Edit Input */}
             {isEditing ? (
                 <input
                     type="text"
@@ -34,7 +33,6 @@ export const Card: React.FC<SquareBlockProps> = ({ imageUrl, name, onEdit, onDel
                 <p className="text-center font-bold text-gray-700 mb-6">{name}</p>
             )}
 
-            {/* Edit and Delete Buttons */}
             {isHovered && (
                 <div className="absolute bottom-2 flex space-x-2">
                     {isEditing ? (
