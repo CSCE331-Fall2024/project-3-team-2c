@@ -1,4 +1,3 @@
-import "~/styles/globals.css";
 import { auth } from "~/server/auth";
 import { redirect } from "next/navigation";
 
@@ -12,7 +11,7 @@ export default async function ManagerAuthExampleLayout({
   }
 
   if (session?.user?.role !== "manager") {
-    redirect("/")
+    redirect("/");
   }
 
   return <div>{children}</div>;
