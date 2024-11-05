@@ -1,6 +1,4 @@
 "use client";
-import 'src/styles/globals.css';  // Import Tailwind CSS
-
 import React, { useState } from "react";
 import { Card } from "../../card_component/card"
 import { redirect } from 'next/navigation'
