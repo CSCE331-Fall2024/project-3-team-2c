@@ -1,15 +1,31 @@
 // TODO: Delete this file when we don't need to use it as an example
 
-// import { z } from "zod";
-
 import {
   createTRPCRouter,
-  // protectedProcedure,
-  // publicProcedure,
+  protectedProcedure,
+  publicProcedure,
 } from "~/server/api/trpc";
-// import { posts } from "~/server/db/schema";
+import { orders } from "~/server/db/schema";
+import { db } from "~/server/db";
+import { z } from "zod";
 
-export const postRouter = createTRPCRouter({
+export const exampleRouter = createTRPCRouter({
+  getAllOrders: publicProcedure.query(() => {
+    // from here:
+    // https://orm.drizzle.team/docs/data-querying
+    return db.select().from(orders);
+  }),
+
+  addOrder: publicProcedure
+    .input(z.object({ text: z.string() }))
+    .mutation(({ input }) => {
+      db.insert(orders).values({
+        total: input.text,
+        timestamp: new Date(),
+        customerId: 1,
+      });
+    }),
+
   // hello: publicProcedure
   //   .input(z.object({ text: z.string() }))
   //   .query(({ input }) => {
