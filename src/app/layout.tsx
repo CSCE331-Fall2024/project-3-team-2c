@@ -1,5 +1,5 @@
-import 'src/styles/globals.css';  // Import Tailwind CSS
-
+import "src/styles/globals.css";
+import { TRPCReactProvider } from "~/trpc/react"; // Import Tailwind CSS
 
 export default function RootLayout({
   children,
@@ -7,7 +7,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        {children}
+        <TRPCReactProvider>{children}</TRPCReactProvider>
       </body>
     </html>
   );
