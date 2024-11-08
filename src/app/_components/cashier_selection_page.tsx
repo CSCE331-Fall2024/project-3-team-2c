@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 
 const steps = ["side", "entree", "drinks", "appetizers"];
 
-export default function SelectionPage({ category }: { category: string }) {
+export default function SelectionPage({ category, setSelectedCategory }: { category: string, setSelectedCategory: (category: string | null) => void }) {
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState(0);
 
@@ -19,7 +19,8 @@ export default function SelectionPage({ category }: { category: string }) {
     if (currentStep > 0) {
       setCurrentStep((prev) => prev - 1);
     } else {
-      router.back(); // Go back to previous page
+      setSelectedCategory(null);
+      router.push('/Customer');
     }
   };
 
