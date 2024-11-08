@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useState } from 'react';
-import MenuBar from '../_components/cashier_menu_bar';
-import CustomerGrid from '../_components/cashier_customer_grid';
-import SelectionPage from '../_components/cashier_selection_page';
+import MenuBar from '../_components/customer_menu_bar';
+import CustomerGrid from '../_components/customer_grid';
+import SelectionPage from '../_components/customer_selection_page';
 
 export default function CustomerPage() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -19,9 +19,9 @@ export default function CustomerPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-100">
+    <div className="h-full flex flex-col bg-gray-100">
       <MenuBar />
-      <div className="flex-grow flex items-center justify-center p-8 mt-16"> {/* Adjust margin to account for MenuBar height */}
+      <div className="flex-1 p-8 mt-16"> {/* Ensure there’s enough space for the MenuBar */}
         {selectedCategory ? (
           <SelectionPage 
             category={selectedCategory} 

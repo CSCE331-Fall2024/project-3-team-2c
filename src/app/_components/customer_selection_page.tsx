@@ -15,7 +15,7 @@ import {
   SidebarTrigger
 } from "~/components/ui/sidebar"
 
-const steps = ["side", "entree", "drinks", "appetizers"];
+const steps = ["Side", "Entree", "Drinks", "Appetizers"];
 
 export default function SelectionPage({ category, setSelectedCategory }: { category: string, setSelectedCategory: (category: string | null) => void }) {
   const router = useRouter();
@@ -37,7 +37,7 @@ export default function SelectionPage({ category, setSelectedCategory }: { categ
   };
 
   return (
-    <div className="flex min-h-screen">
+    <div className="flex h-full">
       {/* Sidebar */}
       <SidebarProvider>
         <OrderSidebar 
@@ -46,7 +46,7 @@ export default function SelectionPage({ category, setSelectedCategory }: { categ
         />
         <SidebarTrigger />
         {/* Main content area */}
-        <div className="flex-1 p-10">
+        <div className="flex-1 p-10 ml-64"> {/* ml-64 makes space for the sidebar */}
           <h1 className="text-2xl font-bold mb-6">{steps[currentStep]} Options</h1>
           <div className="grid grid-cols-3 gap-4">
             {Array.from({ length: 6 }).map((_, index) => (
@@ -71,7 +71,6 @@ export default function SelectionPage({ category, setSelectedCategory }: { categ
   );
 }
 
-
 function OrderSidebar({
     currentStep,
     handleBack,
@@ -80,29 +79,29 @@ function OrderSidebar({
     handleBack: () => void;
   }) {
   return (
-    <Sidebar className="w-64 bg-gray-200 p-4 flex flex-col">
-    <button onClick={handleBack} className="bg-blue-500 text-white p-2 rounded mb-4">Back</button>
-    <SidebarContent>
-      <SidebarGroup>
-        <SidebarGroupLabel>Current Combo</SidebarGroupLabel>
-        <SidebarGroupContent>
-          <SidebarMenu>
-            {steps.map((step,index) => (
-              <SidebarMenuItem 
+    <Sidebar className="w-64 bg-gray-200 p-4 flex flex-col ">
+      <button onClick={handleBack} className="bg-blue-500 text-white p-2 rounded mb-4">Back</button>
+      <SidebarContent>
+        <SidebarGroup>
+          <SidebarGroupLabel>Current Combo</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {steps.map((step, index) => (
+                <SidebarMenuItem 
                   key={step}
                   className={`p-2 ${index === currentStep ? "font-bold" : ""}`}
                 >
-                <SidebarMenuButton asChild>
-                  <a> 
-                    <span>{step.charAt(0).toUpperCase() + step.slice(1)}</span>
-                  </a>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            ))}
-          </SidebarMenu>
-        </SidebarGroupContent>
-      </SidebarGroup>
-    </SidebarContent>
-  </Sidebar>
+                  <SidebarMenuButton asChild>
+                    <a> 
+                      <span>{step.charAt(0).toUpperCase() + step.slice(1)}</span>
+                    </a>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+      </SidebarContent>
+    </Sidebar>
   );
 }
