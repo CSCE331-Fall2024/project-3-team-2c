@@ -19,9 +19,9 @@ export default function CustomerPage() {
   };
 
   return (
-    <div className="h-full flex flex-col bg-gray-100">
+    <div className="h-full flex flex-col h-full">
       <MenuBar />
-      <div className="flex-1 p-8 mt-16"> {/* Ensure there’s enough space for the MenuBar */}
+      <div className="flex-1 p-8 mt-16 h-full"> {/* Ensure there’s enough space for the MenuBar */}
         {selectedCategory ? (
           <SelectionPage 
             category={selectedCategory} 

@@ -46,7 +46,7 @@ export default function SelectionPage({ category, setSelectedCategory }: { categ
         />
         <SidebarTrigger />
         {/* Main content area */}
-        <div className="flex-1 p-10 ml-64"> {/* ml-64 makes space for the sidebar */}
+        <div className="flex-1 p-10">
           <h1 className="text-2xl font-bold mb-6">{steps[currentStep]} Options</h1>
           <div className="grid grid-cols-3 gap-4">
             {Array.from({ length: 6 }).map((_, index) => (
