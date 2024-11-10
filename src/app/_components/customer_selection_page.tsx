@@ -360,14 +360,16 @@ function OrderSidebar({
               {steps.map((step, index) => (
                 <SidebarMenuItem
                   key={step}
-                  className={`p-2 ${index === currentStep ? "font-bold" : ""}`}
+                  className={`p-2 ${index === currentStep ? "font-bold" : ""}`} // flex-col to stack items vertically
                 >
                   <SidebarMenuButton asChild>
-                    <a>
-                      <span>{step.charAt(0).toUpperCase() + step.slice(1)}</span>
-                      {selections[step] && (
-                        <div className="text-sm text-gray-600">{selections[step]}</div>
-                      )}
+                    <a className="flex flex-col justify-start">
+                      <span className="text-lg font-semibold text-black">{step.charAt(0).toUpperCase() + step.slice(1)}</span>
+                      <div className="text-sm text-gray-600">
+                        {selections[step]?.map((item, i) => (
+                          <div key={i}>{item}</div>
+                        ))}
+                      </div>
                     </a>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
