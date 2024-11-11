@@ -1,3 +1,5 @@
+// to push to db: pnpm db:push
+
 import { relations, sql } from "drizzle-orm";
 import {
   index,
@@ -137,6 +139,7 @@ export const containers = createTable("containers", {
   sizeId: integer("size_id").references(() => sizes.id),
 });
 
+
 export const containersToMenu = createTable("containers_to_menu", {
   id: serial("id").primaryKey(),
   containerId: integer("container_id").references(() => containers.id),
@@ -167,4 +170,8 @@ export const customers = createTable("customers", {
   id: serial("id").primaryKey(),
   name: varchar("name"),
   email: varchar("email"),
+});
+
+export const blah = createTable("blah", {
+  id: serial("id").primaryKey(),
 });
