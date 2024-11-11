@@ -292,7 +292,15 @@ export default function SelectionPage({
     if (currentStep < steps.length - 1) {
       setCurrentStep((prev) => prev + 1);
     } else {
-      addComboToCart(category, selections);
+      const finalSelections = { ...selections };
+    
+      steps.forEach((step) => {
+        if (!finalSelections[step]) {
+          finalSelections[step] = selectedItems[step] || [];
+        }
+      });
+    
+      addComboToCart(category, finalSelections);
       setSelectedCategory(null);
       router.push("/Customer");
     }

@@ -48,6 +48,8 @@ export default function CustomerPage() {
     combos: [],
   });
 
+  console.log(cart);
+  
   useEffect(() => {
     setSelectedCategory(null);
   }, []);
