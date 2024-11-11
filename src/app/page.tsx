@@ -1,9 +1,7 @@
+import MainMenu from "./MainMenu/page";
+
 export default async function Home() {
   return (
-    <main>
-      <div>
-        Hello world
-      </div>
-    </main>
+    <MainMenu />
   );
 }
