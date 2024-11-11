@@ -61,7 +61,7 @@ export default function SelectionPage({
 
   const [currentStep, setCurrentStep] = useState<number>(0);
   const [selections, setSelections] = useState<Record<string, string[]>>({});
-  const [selectedItems, setSelectedItems] = useState<Record<string, string[]>>({}); // Track selected items for each step
+  const [selectedItems, setSelectedItems] = useState<Record<string, string[]>>({});
 
   const limits = getSelectionLimits(category);
   const limit = limits[steps[currentStep]];
@@ -131,30 +131,30 @@ export default function SelectionPage({
         {/* Main content area */}
         <div className="flex-1 p-10">
           <h1 className="text-2xl font-bold mb-6">{steps[currentStep]} Options (Select {limit})</h1>
-          <div className="grid grid-cols-3 gap-4">
-            {Array.from({ length: 6 }).map((_, index) => {
-              const itemName = `${steps[currentStep]} Item ${index + 1}`;
-              const isSelected = selectedItems[steps[currentStep]]?.includes(itemName);
+            <div className="grid grid-cols-3 gap-4">
+              {Array.from({ length: 6 }).map((_, index) => {
+                const itemName = `${steps[currentStep]} Item ${index + 1}`;
+                const isSelected = selectedItems[steps[currentStep]]?.includes(itemName);
 
-              return (
-                <div
-                  key={index}
-                  className={`p-5 bg-blue-200 rounded-lg cursor-pointer hover:bg-blue-300 transition ${
-                    isSelected ? "bg-blue-400" : ""
-                  }`} // Apply highlight class if selected
-                  onClick={() => handleSelection(itemName)}
-                >
-                  {itemName}
-                </div>
-              );
-            })}
-          </div>
+                return (
+                  <div
+                    key={index}
+                    className={`p-5 bg-[#d82c2c] text-white rounded-lg cursor-pointer hover:bg-[#ff474c] transition ${
+                      isSelected ? "bg-[#ff474c]" : ""
+                    }`} // Apply highlight class if selected
+                    onClick={() => handleSelection(itemName)}
+                  >
+                    {itemName}
+                  </div>
+                );
+              })}
+            </div>
           <button
             onClick={handleNext}
-            className="mt-6 bg-green-500 text-white p-3 rounded-lg"
-            disabled={currentStep === steps.length - 1}
+            className="mt-6 bg-[#d82c2c] text-white p-3 rounded-lg"
+            disabled={currentStep === steps.length - 1 && false}
           >
-            Next
+            {currentStep === steps.length - 1 ? "Pay Now" : "Next"}
           </button>
         </div>
       </SidebarProvider>
@@ -177,7 +177,7 @@ function OrderSidebar({
 }) {
   return (
     <Sidebar className="w-64 bg-gray-200 p-4 flex flex-col ">
-      <button onClick={handleBack} className="bg-blue-500 text-white p-2 rounded mb-4">
+      <button onClick={handleBack} className="bg-[#d82c2c] text-white p-2 rounded mb-4">
         Back
       </button>
       <SidebarContent>
@@ -188,7 +188,7 @@ function OrderSidebar({
               {steps.map((step, index) => (
                 <SidebarMenuItem
                   key={step}
-                  className={`p-2 ${index === currentStep ? "font-bold" : ""}`}
+                  className={`p-2 ${index === currentStep ? "bg-gray-200" : ""}`}
                   onClick={() => handleStepSelect(index)}
                 >
                   <SidebarMenuButton asChild>

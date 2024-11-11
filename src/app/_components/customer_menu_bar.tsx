@@ -3,7 +3,7 @@ import Link from 'next/link';
 
 export default function MenuBar() {
   return (
-    <nav className="bg-gray-800 text-white p-4 fixed top-0 w-full z-10">
+    <nav className="bg-[#d1282e] text-white p-4 fixed top-0 w-full z-10">
       <div className="flex row justify-around">
         <Link href="/">Home</Link>
         <Link href="/combo">Combo</Link>
