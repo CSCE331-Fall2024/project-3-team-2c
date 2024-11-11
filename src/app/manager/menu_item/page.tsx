@@ -2,6 +2,8 @@
 import React, { useState } from "react";
 import { Card } from "../../card_component/card"
 import { redirect } from 'next/navigation'
+import { useEffect } from "react";
+
 
 
 interface Item {
@@ -9,11 +11,28 @@ interface Item {
     content: string;
 }
 
+
 const MenuItemsPage: React.FC = () => {
-    const [items, setItems] = useState<Item[]>([
-        { id: 1, content: "Orange Chicken" },
-        { id: 2, content: "Beijing Beef" },
-    ]);
+
+    useEffect(() => {
+        const fetchMenuItems = async () => {
+          try {
+            const response = await fetch("/api/manager");
+            if (!response.ok) {
+              throw new Error("Network response was not ok");
+            }
+            const data = await response.json();
+            console.log("Menu Items:", data);
+            setItems(data);
+          } catch (error) {
+            console.error("Error fetching menu items:", error);
+          }
+        };
+    
+        fetchMenuItems();
+      }, []);
+
+    const [items, setItems] = useState<Item[]>([]);
     const [newContent, setNewContent] = useState<string>(""); // State for the new item content
     const [editId, setEditId] = useState<number | null>(null);
 
