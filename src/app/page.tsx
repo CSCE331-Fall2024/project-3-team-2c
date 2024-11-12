@@ -1,5 +1,6 @@
 "use client";
 import { useEffect } from "react";
+import MainMenu from "./MainMenu/page";
 
 export default async function Home() {
   useEffect(() => {
@@ -19,5 +20,5 @@ export default async function Home() {
     fetchIngredients();
   }, []);
 
-  return <div>Check the console for ingredients data.</div>;
+  return MainMenu();
 }
