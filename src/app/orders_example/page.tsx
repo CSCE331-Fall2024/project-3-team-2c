@@ -6,8 +6,14 @@ import { Suspense, useEffect, useState } from "react";
 export default function OrdersPage() {
   const orders = api.orders.getAllOrders.useQuery();
 
+  // making a separate mutation in the root of the function is absolutely necessary
+  const placeOrdersMutation = api.orders.placeOrder.useMutation();
+
   const placeOrder = () => {
-    api.orders.placeOrder.useMutation({});
+    placeOrdersMutation.mutate({
+      customerId: 1,
+      containers: [{ sizeId: 1, mainIds: [1], sideIds: [1] }],
+    });
   };
 
   return (
