@@ -150,4 +150,17 @@ export const ordersRouter = createTRPCRouter({
       orderIds.map((orderId) => getOneOrder(orderId.id)),
     );
   }),
+
+  getLatestOrdersByCustomer: publicProcedure
+    .input(z.number())
+    .query(async ({ input }) => {
+      const orderIds = await db
+        .select({ id: orders.id })
+        .from(orders)
+        .where(eq(orders.customerId, input));
+
+      return await Promise.all(
+        orderIds.slice(0, 5).map((orderId) => getOneOrder(orderId.id)),
+      );
+    }),
 });
