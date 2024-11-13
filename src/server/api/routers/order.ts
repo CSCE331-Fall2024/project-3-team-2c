@@ -7,7 +7,7 @@ import {
   sizes,
 } from "~/server/db/schema";
 import { db } from "~/server/db";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 
 const containerInputSchema = z.object({
   sizeId: z.number(),
@@ -93,5 +93,50 @@ export const orderRouter = createTRPCRouter({
       return { orderId };
     }),
 
-  getOrder: publicProcedure.input(z.number()).query(({ input }) => {}),
+  getOrder: publicProcedure.input(z.number()).query(async ({ input }) => {
+    const order = (
+      await db.select().from(orders).where(eq(orders.id, input))
+    )?.at(0);
+
+    if (!order) {
+      return null;
+    }
+
+    const containerList = await db
+      .select()
+      .from(containers)
+      .where(eq(containers.orderId, order.id));
+
+    const containerListWithItems = containerList.map(async (container) => {
+      const mainItems = await db
+        .select({ itemId: containersToMenu.itemId })
+        .from(containersToMenu)
+        .where(
+          and(
+            eq(containersToMenu.containerId, container.id),
+            eq(containersToMenu.itemType, "main"),
+          ),
+        );
+
+      const sideItems = await db
+        .select({ itemId: containersToMenu.itemId })
+        .from(containersToMenu)
+        .where(
+          and(
+            eq(containersToMenu.containerId, container.id),
+            eq(containersToMenu.itemType, "side"),
+          ),
+        );
+      return {
+        ...container,
+        mainItems,
+        sideItems,
+      };
+    });
+
+    return {
+      ...order,
+      containers: containerListWithItems,
+    };
+  }),
 });
