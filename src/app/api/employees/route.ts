@@ -20,4 +20,7 @@ export async function GET() {
   // } finally {
   //   client.end();
   // }
+
+  //TODO: Remove later
+  return NextResponse.json({ message: "GET /api/employees" });
 }
