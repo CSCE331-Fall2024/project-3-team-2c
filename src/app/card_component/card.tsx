@@ -11,6 +11,7 @@ interface SquareBlockProps {
 }
 
 export const Card: React.FC<SquareBlockProps> = ({ imageUrl, name, onEdit, onDelete, isEditing, onSave }) => {
+    console.log("Card Props:", { name, isEditing });
     const [isHovered, setIsHovered] = useState(false);
     const [editContent, setEditContent] = useState(name);
 
