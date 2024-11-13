@@ -1,10 +1,10 @@
 "use client";
 
 import { api } from "~/trpc/react";
-import { Suspense, useEffect, useState } from "react";
+import { Suspense } from "react";
 
 export default function OrdersPage() {
-  const orders = api.orders.getAllOrders.useQuery();
+  const { data: orders } = api.orders.getAllOrders.useQuery();
 
   // making a separate mutation in the root of the function is absolutely necessary
   const placeOrdersMutation = api.orders.placeOrder.useMutation();
@@ -23,7 +23,45 @@ export default function OrdersPage() {
 
         <p>These are the orders:</p>
         <Suspense fallback={<div>Loading...</div>}>
-          {JSON.stringify(orders.data)}
+          <div>
+            {orders?.map((order) => {
+              return (
+                <div key={order?.id}>
+                  <h2>Order {order?.id}</h2>
+                  <p>Total: {order?.total}</p>
+                  <p>Containers:</p>
+                  {order?.containers.map((container) => {
+                    return (
+                      <>
+                        <p>
+                          ---------------------------------------------------------
+                        </p>
+                        <p>
+                          ---------------------------------------------------------
+                        </p>
+                        <p>Container {container.id}</p>
+                        <p>Size: {container.sizeId}</p>
+                        <p>
+                          Main Items:{" "}
+                          {container.mainItems.map(({ itemId }) => itemId)}
+                        </p>
+                        <p>
+                          Side Items:{" "}
+                          {container.sideItems.map(({ itemId }) => itemId)}
+                        </p>
+                        <p>
+                          ---------------------------------------------------------
+                        </p>
+                        <p>
+                          ---------------------------------------------------------
+                        </p>
+                      </>
+                    );
+                  })}
+                </div>
+              );
+            })}
+          </div>
         </Suspense>
       </div>
       <div>

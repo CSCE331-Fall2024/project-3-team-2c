@@ -81,7 +81,7 @@ async function getOneOrder(input: number) {
 
   return {
     ...order,
-    containers: containerListWithItems,
+    containers: await Promise.all(containerListWithItems),
   };
 }
 
@@ -146,6 +146,8 @@ export const ordersRouter = createTRPCRouter({
 
   getAllOrders: publicProcedure.query(async () => {
     const orderIds = await db.select({ id: orders.id }).from(orders);
-    return orderIds.map((orderId) => getOneOrder(orderId.id));
+    return await Promise.all(
+      orderIds.map((orderId) => getOneOrder(orderId.id)),
+    );
   }),
 });
