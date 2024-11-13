@@ -12,7 +12,7 @@ export default async function ExamplePage() {
           return (
             input.total +
             " " +
-            input.timestamp +
+            input.timestamp?.toString() +
             " " +
             input.customerId +
             " " +
