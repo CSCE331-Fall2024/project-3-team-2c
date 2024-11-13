@@ -68,13 +68,13 @@ export default function SelectionPage({
   const [selectedItems, setSelectedItems] = useState<Record<string, string[]>>({});
 
   const limits = getSelectionLimits(category);
-  const limit = limits[steps[currentStep]];
+  const limit = limits[steps[currentStep]!];
 
   const handleNext = () => {
-    const stepName = steps[currentStep];
+    const stepName = steps[currentStep]!;
     setSelections(() => ({
       ...selections,
-      [stepName]: selectedItems[stepName],
+      [stepName]: selectedItems[stepName]!,
     }));
     if (currentStep < steps.length - 1) {
       setCurrentStep((prev) => prev + 1);
@@ -83,7 +83,7 @@ export default function SelectionPage({
     
       steps.forEach((step) => {
         if (!finalSelections[step]) {
-          finalSelections[step] = selectedItems[step] || [];
+          finalSelections[step] = selectedItems[step] ?? [];
         }
       });
     
@@ -104,22 +104,22 @@ export default function SelectionPage({
 
   const handleSelection = (item: string) => {
     const stepName = steps[currentStep];
-    const currentSelections = selectedItems[stepName] || [];
+    const currentSelections = selectedItems[stepName!] ?? [];
 
     if (limit === 1) {
       setSelectedItems((prev) => ({
         ...prev,
-        [stepName]: [item],
+        [stepName!]: [item],
       }));
     } else if (currentSelections.includes(item)) {
       setSelectedItems((prev) => ({
         ...prev,
-        [stepName]: currentSelections.filter((selected) => selected !== item),
+        [stepName!]: currentSelections.filter((selected) => selected !== item),
       }));
-    } else if (currentSelections.length < limit) {
+    } else if (currentSelections.length < limit!) {
       setSelectedItems((prev) => ({
         ...prev,
-        [stepName]: [...currentSelections, item],
+        [stepName!]: [...currentSelections, item],
       }));
     }
   };
@@ -144,7 +144,7 @@ export default function SelectionPage({
           <div className="grid grid-cols-3 gap-4">
             {Array.from({ length: 6 }).map((_, index) => {
               const itemName = `${steps[currentStep]} Item ${index + 1}`;
-              const isSelected = selectedItems[steps[currentStep]]?.includes(itemName);
+              const isSelected = selectedItems[steps[currentStep]!]?.includes(itemName);
 
               return (
                 <div
