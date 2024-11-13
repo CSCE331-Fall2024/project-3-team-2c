@@ -120,7 +120,7 @@ export const menuItems = createTable("menu_items", {
 
 export const orders = createTable("orders", {
   id: serial("id").primaryKey(),
-  timestamp: timestamp("timestamp").notNull(),
+  timestamp: timestamp("timestamp").default(sql`now()`),
   total: numeric("total", { scale: 2 }).notNull(),
   customerId: integer("customer_id").notNull(),
 });
@@ -139,11 +139,11 @@ export const containers = createTable("containers", {
   sizeId: integer("size_id").references(() => sizes.id),
 });
 
-
 export const containersToMenu = createTable("containers_to_menu", {
   id: serial("id").primaryKey(),
   containerId: integer("container_id").references(() => containers.id),
   itemId: integer("item_id").references(() => menuItems.id),
+  itemType: varchar("item_type").notNull(),
 });
 
 export const employees = createTable("employees", {
@@ -156,7 +156,7 @@ export const employees = createTable("employees", {
 export const ingredients = createTable("ingredients", {
   id: serial("id").primaryKey(),
   name: varchar("name"),
-  quantity: integer("quantity").notNull(),
+  quantity: integer("quantity").default(0),
 });
 
 export const menuToIngredients = createTable("menu_to_ingredients", {
@@ -170,8 +170,4 @@ export const customers = createTable("customers", {
   id: serial("id").primaryKey(),
   name: varchar("name"),
   email: varchar("email"),
-});
-
-export const blah = createTable("blah", {
-  id: serial("id").primaryKey(),
 });
