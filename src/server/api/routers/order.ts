@@ -9,16 +9,22 @@ import {
 import { db } from "~/server/db";
 import { eq } from "drizzle-orm";
 
-const containerSchema = z.object({
+const containerInputSchema = z.object({
   sizeId: z.number(),
   mainIds: z.array(z.number()),
   sideIds: z.array(z.number()),
 });
 
-const orderSchema = z.object({
-  total: z.number(),
+const orderInputSchema = z.object({
   customerId: z.number(),
-  containers: z.array(containerSchema),
+  containers: z.array(containerInputSchema),
+});
+
+const orderOutputSchema = z.object({
+  ...orderInputSchema.shape,
+  orderId: z.number(),
+  total: z.number(),
+  timestamp: z.string(),
 });
 
 function getPriceFromSizes(sizeIds: number[]) {
@@ -33,55 +39,59 @@ function getPriceFromSizes(sizeIds: number[]) {
 }
 
 export const orderRouter = createTRPCRouter({
-  insert: publicProcedure.input(orderSchema).mutation(async ({ input }) => {
-    // calculate total from container sizes
-    const sizeIds = input.containers.map((container) => container.sizeId);
-    const total = getPriceFromSizes(sizeIds);
+  insert: publicProcedure
+    .input(orderInputSchema)
+    .mutation(async ({ input }) => {
+      // calculate total from container sizes
+      const sizeIds = input.containers.map((container) => container.sizeId);
+      const total = getPriceFromSizes(sizeIds);
 
-    // insert order and get id
-    const orderId = (
-      await db
-        .insert(orders)
-        .values({
-          total: total.toString(),
-          customerId: input.customerId,
-        })
-        .returning({ orderId: orders.id })
-    )?.at(0)?.orderId;
+      // insert order and get id
+      const orderId = (
+        await db
+          .insert(orders)
+          .values({
+            total: total.toString(),
+            customerId: input.customerId,
+          })
+          .returning({ orderId: orders.id })
+      )?.at(0)?.orderId;
 
-    // insert containers
-    const containerIds = (
-      await db
-        .insert(containers)
-        .values(
-          input.containers.map((container) => ({
-            orderId: orderId,
-            sizeId: container.sizeId,
-          })),
-        )
-        .returning({ containerId: containers.id })
-    )?.map((row) => row.containerId);
+      // insert containers
+      const containerIds = (
+        await db
+          .insert(containers)
+          .values(
+            input.containers.map((container) => ({
+              orderId: orderId,
+              sizeId: container.sizeId,
+            })),
+          )
+          .returning({ containerId: containers.id })
+      )?.map((row) => row.containerId);
 
-    // insert containers_to_menu
-    input.containers.forEach((container, index) => {
-      const containerId = containerIds[index];
-      container.mainIds.forEach((itemId) => {
-        db.insert(containersToMenu).values({
-          containerId,
-          itemId,
-          itemType: "main",
+      // insert containers_to_menu
+      input.containers.forEach((container, index) => {
+        const containerId = containerIds[index];
+        container.mainIds.forEach((itemId) => {
+          db.insert(containersToMenu).values({
+            containerId,
+            itemId,
+            itemType: "main",
+          });
+        });
+
+        container.sideIds.forEach((itemId) => {
+          db.insert(containersToMenu).values({
+            containerId,
+            itemId,
+            itemType: "side",
+          });
         });
       });
 
-      container.sideIds.forEach((itemId) => {
-        db.insert(containersToMenu).values({
-          containerId,
-          itemId,
-          itemType: "side",
-        });
-      });
-    });
+      return { orderId };
+    }),
 
-    return { orderId };
-  }),
+  getOrder: publicProcedure.input(z.number()).query(({ input }) => {}),
 });
