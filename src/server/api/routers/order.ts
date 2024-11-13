@@ -38,6 +38,53 @@ function getPriceFromSizes(sizeIds: number[]) {
   return sizeIds.reduce((sum, price) => sum + price, 0.0);
 }
 
+async function getOneOrder(input: number) {
+  const order = (
+    await db.select().from(orders).where(eq(orders.id, input))
+  )?.at(0);
+
+  if (!order) {
+    return null;
+  }
+
+  const containerList = await db
+    .select()
+    .from(containers)
+    .where(eq(containers.orderId, order.id));
+
+  const containerListWithItems = containerList.map(async (container) => {
+    const mainItems = await db
+      .select({ itemId: containersToMenu.itemId })
+      .from(containersToMenu)
+      .where(
+        and(
+          eq(containersToMenu.containerId, container.id),
+          eq(containersToMenu.itemType, "main"),
+        ),
+      );
+
+    const sideItems = await db
+      .select({ itemId: containersToMenu.itemId })
+      .from(containersToMenu)
+      .where(
+        and(
+          eq(containersToMenu.containerId, container.id),
+          eq(containersToMenu.itemType, "side"),
+        ),
+      );
+    return {
+      ...container,
+      mainItems,
+      sideItems,
+    };
+  });
+
+  return {
+    ...order,
+    containers: containerListWithItems,
+  };
+}
+
 export const orderRouter = createTRPCRouter({
   insert: publicProcedure
     .input(orderInputSchema)
@@ -93,50 +140,12 @@ export const orderRouter = createTRPCRouter({
       return { orderId };
     }),
 
-  getOrder: publicProcedure.input(z.number()).query(async ({ input }) => {
-    const order = (
-      await db.select().from(orders).where(eq(orders.id, input))
-    )?.at(0);
+  getOrder: publicProcedure.input(z.number()).query(({ input }) => {
+    return getOneOrder(input);
+  }),
 
-    if (!order) {
-      return null;
-    }
-
-    const containerList = await db
-      .select()
-      .from(containers)
-      .where(eq(containers.orderId, order.id));
-
-    const containerListWithItems = containerList.map(async (container) => {
-      const mainItems = await db
-        .select({ itemId: containersToMenu.itemId })
-        .from(containersToMenu)
-        .where(
-          and(
-            eq(containersToMenu.containerId, container.id),
-            eq(containersToMenu.itemType, "main"),
-          ),
-        );
-
-      const sideItems = await db
-        .select({ itemId: containersToMenu.itemId })
-        .from(containersToMenu)
-        .where(
-          and(
-            eq(containersToMenu.containerId, container.id),
-            eq(containersToMenu.itemType, "side"),
-          ),
-        );
-      return {
-        ...container,
-        mainItems,
-        sideItems,
-      };
-    });
-
-    return {
-      ...order,
-      containers: containerListWithItems,
-    };
+  getAllOrders: publicProcedure.query(async () => {
+    const orderIds = await db.select({ id: orders.id }).from(orders);
+    return orderIds.map((orderId) => getOneOrder(orderId.id));
   }),
 });
