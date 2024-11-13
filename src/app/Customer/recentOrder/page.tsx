@@ -1,13 +1,17 @@
 "use client";
 import { useEffect, useState } from 'react';
 
+// insert a function for reorder button
+// get the data from the table: total price, list of items ordered, order date
+// list of items contain individual items, such as drinks and meals.
+// in case it is a meal, then use subItems to list out the entrees and sides.
 
 interface Item{
     name: string;
     type: string;
     price: number;
     quantity: number;
-    subItems: string[];
+    subItems?: string[];
 }
 interface Order {
     total: number;
@@ -48,7 +52,7 @@ export default function PreviousOrders() {
     ]);
 
     return (
-        <div className="p-4">
+        <div className="p-4" style={{ backgroundColor: '#ce123c', color: 'white' }}>
             <h2 className="text-2xl font-bold mb-4">Your Orders</h2>
             <div className="space-y-6">
                 {orders.map((order, index) => (
