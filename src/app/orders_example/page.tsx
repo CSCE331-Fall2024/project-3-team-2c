@@ -4,7 +4,7 @@ import { api } from "~/trpc/react";
 import { Suspense, useEffect, useState } from "react";
 
 export default function OrdersPage() {
-  const { data: data } = api.orders.getAllOrders.useQuery();
+  const orders = api.orders.getAllOrders.useQuery();
 
   const placeOrder = () => {
     api.orders.placeOrder.useMutation({});
@@ -17,7 +17,7 @@ export default function OrdersPage() {
 
         <p>These are the orders:</p>
         <Suspense fallback={<div>Loading...</div>}>
-          {JSON.stringify(data)}
+          {JSON.stringify(orders.data)}
         </Suspense>
       </div>
       <div>
