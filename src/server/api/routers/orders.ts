@@ -85,8 +85,8 @@ async function getOneOrder(input: number) {
   };
 }
 
-export const orderRouter = createTRPCRouter({
-  insert: publicProcedure
+export const ordersRouter = createTRPCRouter({
+  placeOrder: publicProcedure
     .input(orderInputSchema)
     .mutation(async ({ input }) => {
       // calculate total from container sizes
