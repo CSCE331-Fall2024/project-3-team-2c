@@ -1,5 +1,5 @@
-import { exampleRouter } from "~/server/api/routers/post";
 import { createCallerFactory, createTRPCRouter } from "~/server/api/trpc";
+import { exampleRouter } from "~/server/api/routers/example";
 
 /**
  * This is the primary router for your server.

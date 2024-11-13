@@ -139,11 +139,11 @@ export const containers = createTable("containers", {
   sizeId: integer("size_id").references(() => sizes.id),
 });
 
-
 export const containersToMenu = createTable("containers_to_menu", {
   id: serial("id").primaryKey(),
   containerId: integer("container_id").references(() => containers.id),
   itemId: integer("item_id").references(() => menuItems.id),
+  itemType: varchar("item_type").notNull(),
 });
 
 export const employees = createTable("employees", {
@@ -170,8 +170,4 @@ export const customers = createTable("customers", {
   id: serial("id").primaryKey(),
   name: varchar("name"),
   email: varchar("email"),
-});
-
-export const blah = createTable("blah", {
-  id: serial("id").primaryKey(),
 });
