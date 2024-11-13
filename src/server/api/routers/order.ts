@@ -8,7 +8,7 @@ const orderSchema = z.object({
 })
 
 export const orderRouter = createTRPCRouter({
-    insert: publicProcedure.input().mutation(async ({input}) => {
+    insert: publicProcedure.input(orderSchema).mutation(async ({input}) => {
 
     }
 
