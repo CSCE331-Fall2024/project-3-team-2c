@@ -53,12 +53,10 @@ const getSelectionLimits = (category: string): Record<string, number> => {
 export default function SelectionPage({
   category,
   setSelectedCategory,
-  addItemToCart,
   addComboToCart,
 }: {
   category: string;
   setSelectedCategory: (category: string | null) => void;
-  addItemToCart: (item: string) => void;
   addComboToCart: (comboName: string, comboItems: Record<string, string[]>) => void;
 }) {
   const router = useRouter();
