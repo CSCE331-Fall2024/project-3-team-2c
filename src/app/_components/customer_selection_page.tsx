@@ -228,7 +228,7 @@ import {
   SidebarTrigger,
 } from "~/components/ui/sidebar";
 
-const steps: string[] = ["Side", "Entree", "Drinks", "Appetizers"];
+const steps = ["Side", "Entree", "Drinks", "Appetizers"];
 
 const getSelectionLimits = (category: string): Record<string, number> => {
   switch (category) {
@@ -272,34 +272,39 @@ export default function SelectionPage({
   category: string;
   setSelectedCategory: (category: string | null) => void;
   addItemToCart: (item: string) => void;
-  addComboToCart: (comboName: string, comboItems: Record<string, string[]>) => void;
+  addComboToCart: (
+    comboName: string,
+    comboItems: Record<string, string[]>,
+  ) => void;
 }) {
   const router = useRouter();
 
   const [currentStep, setCurrentStep] = useState<number>(0);
   const [selections, setSelections] = useState<Record<string, string[]>>({});
-  const [selectedItems, setSelectedItems] = useState<Record<string, string[]>>({});
+  const [selectedItems, setSelectedItems] = useState<Record<string, string[]>>(
+    {},
+  );
 
   const limits = getSelectionLimits(category);
-  const limit = limits[steps[currentStep]];
+  const limit = limits[steps[currentStep]!];
 
   const handleNext = () => {
-    const stepName = steps[currentStep];
+    const stepName = steps[currentStep]!;
     setSelections(() => ({
       ...selections,
-      [stepName]: selectedItems[stepName],
+      [stepName]: selectedItems[stepName]!,
     }));
     if (currentStep < steps.length - 1) {
       setCurrentStep((prev) => prev + 1);
     } else {
       const finalSelections = { ...selections };
-    
+
       steps.forEach((step) => {
         if (!finalSelections[step]) {
-          finalSelections[step] = selectedItems[step] || [];
+          finalSelections[step] = selectedItems[step] ?? [];
         }
       });
-    
+
       addComboToCart(category, finalSelections);
       setSelectedCategory(null);
       router.push("/Customer");
@@ -317,22 +322,22 @@ export default function SelectionPage({
 
   const handleSelection = (item: string) => {
     const stepName = steps[currentStep];
-    const currentSelections = selectedItems[stepName] || [];
+    const currentSelections = selectedItems[stepName!] ?? [];
 
     if (limit === 1) {
       setSelectedItems((prev) => ({
         ...prev,
-        [stepName]: [item],
+        [stepName!]: [item],
       }));
     } else if (currentSelections.includes(item)) {
       setSelectedItems((prev) => ({
         ...prev,
-        [stepName]: currentSelections.filter((selected) => selected !== item),
+        [stepName!]: currentSelections.filter((selected) => selected !== item),
       }));
-    } else if (currentSelections.length < limit) {
+    } else if (currentSelections.length < limit!) {
       setSelectedItems((prev) => ({
         ...prev,
-        [stepName]: [...currentSelections, item],
+        [stepName!]: [...currentSelections, item],
       }));
     }
   };
@@ -353,16 +358,19 @@ export default function SelectionPage({
         />
         <SidebarTrigger />
         <div className="flex-1 p-10">
-          <h1 className="text-2xl font-bold mb-6">{steps[currentStep]} Options (Select {limit})</h1>
+          <h1 className="mb-6 text-2xl font-bold">
+            {steps[currentStep]} Options (Select {limit})
+          </h1>
           <div className="grid grid-cols-3 gap-4">
             {Array.from({ length: 6 }).map((_, index) => {
               const itemName = `${steps[currentStep]} Item ${index + 1}`;
-              const isSelected = selectedItems[steps[currentStep]]?.includes(itemName);
+              const isSelected =
+                selectedItems[steps[currentStep]!]?.includes(itemName);
 
               return (
                 <div
                   key={index}
-                  className={`p-5 bg-[#d82c2c] text-white rounded-lg cursor-pointer hover:bg-[#ff474c] transition ${
+                  className={`cursor-pointer rounded-lg bg-[#d82c2c] p-5 text-white transition hover:bg-[#ff474c] ${
                     isSelected ? "bg-[#ff474c]" : ""
                   }`}
                   onClick={() => handleSelection(itemName)}
@@ -374,7 +382,7 @@ export default function SelectionPage({
           </div>
           <button
             onClick={handleNext}
-            className="mt-6 bg-[#d82c2c] text-white p-3 rounded-lg"
+            className="mt-6 rounded-lg bg-[#d82c2c] p-3 text-white"
           >
             {currentStep === steps.length - 1 ? "Add to Cart" : "Next"}
           </button>
@@ -384,52 +392,56 @@ export default function SelectionPage({
   );
 }
 
-
 function OrderSidebar({
-    currentStep,
-    selections,
-    category,
-    handleBack,
-    handleStepSelect,
-  }: {
-    currentStep: number;
-    selections: Record<string, string[]>;
-    category: string;
-    handleBack: () => void;
-    handleStepSelect: (index: number) => void;
-  }) {
-    return (
-      <Sidebar className="w-64 bg-gray-200 p-4 flex flex-col ">
-        <button onClick={handleBack} className="bg-[#d82c2c] text-white p-2 rounded mb-4">
-          Back
-        </button>
-        <SidebarContent>
-          <SidebarGroup>
-            <SidebarGroupLabel>{category}</SidebarGroupLabel>
-            <SidebarGroupContent>
-              <SidebarMenu>
-                {steps.map((step, index) => (
-                  <SidebarMenuItem
-                    key={step}
-                    className={`p-2 ${index === currentStep ? "bg-gray-200" : ""}`}
-                    onClick={() => handleStepSelect(index)}
-                  >
-                    <SidebarMenuButton asChild>
-                      <a className="flex flex-col justify-start">
-                        <span className="text-lg font-semibold text-black">{step.charAt(0).toUpperCase() + step.slice(1)}</span>
-                        <div className="text-sm text-gray-600">
-                          {selections[step]?.map((item, i) => (
-                            <div key={i}>{item}</div>
-                          ))}
-                        </div>
-                      </a>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
-        </SidebarContent>
-      </Sidebar>
-    );
-  }
+  currentStep,
+  selections,
+  category,
+  handleBack,
+  handleStepSelect,
+}: {
+  currentStep: number;
+  selections: Record<string, string[]>;
+  category: string;
+  handleBack: () => void;
+  handleStepSelect: (index: number) => void;
+}) {
+  return (
+    <Sidebar className="flex w-64 flex-col bg-gray-200 p-4">
+      <button
+        onClick={handleBack}
+        className="mb-4 rounded bg-[#d82c2c] p-2 text-white"
+      >
+        Back
+      </button>
+      <SidebarContent>
+        <SidebarGroup>
+          <SidebarGroupLabel>{category}</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {steps.map((step, index) => (
+                <SidebarMenuItem
+                  key={step}
+                  className={`p-2 ${index === currentStep ? "bg-gray-200" : ""}`}
+                  onClick={() => handleStepSelect(index)}
+                >
+                  <SidebarMenuButton asChild>
+                    <a className="flex flex-col justify-start">
+                      <span className="text-lg font-semibold text-black">
+                        {step.charAt(0).toUpperCase() + step.slice(1)}
+                      </span>
+                      <div className="text-sm text-gray-600">
+                        {selections[step]?.map((item, i) => (
+                          <div key={i}>{item}</div>
+                        ))}
+                      </div>
+                    </a>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+      </SidebarContent>
+    </Sidebar>
+  );
+}
