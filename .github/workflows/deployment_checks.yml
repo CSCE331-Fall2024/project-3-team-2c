@@ -1,7 +1,10 @@
 name: Important pre-deployment checks (typecheck, lint, build)
 
 on:
-  - pull_request
+  pull_request:
+  push:
+    branches:
+      - main
 
 jobs:
   build:
