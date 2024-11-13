@@ -57,107 +57,107 @@ export default function SelectionPage({
   category: string;
   setSelectedCategory: (category: string | null) => void;
 }) {
-  const router = useRouter();
-
-  const [currentStep, setCurrentStep] = useState<number>(0);
-  const [selections, setSelections] = useState<Record<string, string[]>>({});
-  const [selectedItems, setSelectedItems] = useState<Record<string, string[]>>({});
-
-  const limits = getSelectionLimits(category);
-  const limit = limits[steps[currentStep]];
-
-  const handleNext = () => {
-    const stepName = steps[currentStep];
-    setSelections(() => ({
-      ...selections,
-      [stepName]: selectedItems[stepName],
-    }));
-    if (currentStep < steps.length - 1) {
-      setCurrentStep((prev) => prev + 1);
-    }
-  };
-
-  const handleBack = () => {
-    if (currentStep > 0) {
-      setCurrentStep((prev) => prev - 1);
-    } else {
-      setSelectedCategory(null);
-      router.push("/Customer");
-    }
-  };
-
-  const handleSelection = (item: string) => {
-    const stepName = steps[currentStep];
-
-    // Get the current selections for this step
-    const currentSelections = selectedItems[stepName] || [];
-
-    if (limit == 1) {
-      setSelectedItems((prev) => ({
-        ...prev,
-        [stepName]: [item],
-      }));
-    } else if (currentSelections.includes(item)) {
-      // Deselect the item if it was already selected
-      setSelectedItems((prev) => ({
-        ...prev,
-        [stepName]: currentSelections.filter((selected) => selected !== item),
-      }));
-    } else if (currentSelections.length < limit) {
-      // Allow selection if the limit is not reached
-      setSelectedItems((prev) => ({
-        ...prev,
-        [stepName]: [...currentSelections, item],
-      }));
-    }
-  };
-
-  const handleStepSelect = (index: number) => {
-    setCurrentStep(index); // Set the currentStep to the selected step
-  };
+  // const router = useRouter();
+  //
+  // const [currentStep, setCurrentStep] = useState<number>(0);
+  // const [selections, setSelections] = useState<Record<string, string[]>>({});
+  // const [selectedItems, setSelectedItems] = useState<Record<string, string[]>>({});
+  //
+  // const limits = getSelectionLimits(category);
+  // const limit = limits[steps[currentStep]];
+  //
+  // const handleNext = () => {
+  //   const stepName = steps[currentStep];
+  //   setSelections(() => ({
+  //     ...selections,
+  //     [stepName]: selectedItems[stepName],
+  //   }));
+  //   if (currentStep < steps.length - 1) {
+  //     setCurrentStep((prev) => prev + 1);
+  //   }
+  // };
+  //
+  // const handleBack = () => {
+  //   if (currentStep > 0) {
+  //     setCurrentStep((prev) => prev - 1);
+  //   } else {
+  //     setSelectedCategory(null);
+  //     router.push("/Customer");
+  //   }
+  // };
+  //
+  // const handleSelection = (item: string) => {
+  //   const stepName = steps[currentStep];
+  //
+  //   // Get the current selections for this step
+  //   const currentSelections = selectedItems[stepName] || [];
+  //
+  //   if (limit == 1) {
+  //     setSelectedItems((prev) => ({
+  //       ...prev,
+  //       [stepName]: [item],
+  //     }));
+  //   } else if (currentSelections.includes(item)) {
+  //     // Deselect the item if it was already selected
+  //     setSelectedItems((prev) => ({
+  //       ...prev,
+  //       [stepName]: currentSelections.filter((selected) => selected !== item),
+  //     }));
+  //   } else if (currentSelections.length < limit) {
+  //     // Allow selection if the limit is not reached
+  //     setSelectedItems((prev) => ({
+  //       ...prev,
+  //       [stepName]: [...currentSelections, item],
+  //     }));
+  //   }
+  // };
+  //
+  // const handleStepSelect = (index: number) => {
+  //   setCurrentStep(index); // Set the currentStep to the selected step
+  // };
 
   return (
     <div className="flex h-full">
       {/* Sidebar */}
-      <SidebarProvider>
-        <OrderSidebar
-          currentStep={currentStep}
-          selections={selections}
-          category={category}
-          handleBack={handleBack}
-          handleStepSelect={handleStepSelect}
-        />
-        <SidebarTrigger />
-        {/* Main content area */}
-        <div className="flex-1 p-10">
-          <h1 className="text-2xl font-bold mb-6">{steps[currentStep]} Options (Select {limit})</h1>
-            <div className="grid grid-cols-3 gap-4">
-              {Array.from({ length: 6 }).map((_, index) => {
-                const itemName = `${steps[currentStep]} Item ${index + 1}`;
-                const isSelected = selectedItems[steps[currentStep]]?.includes(itemName);
+      {/*<SidebarProvider>*/}
+      {/*  <OrderSidebar*/}
+      {/*    currentStep={currentStep}*/}
+      {/*    selections={selections}*/}
+      {/*    category={category}*/}
+      {/*    handleBack={handleBack}*/}
+      {/*    handleStepSelect={handleStepSelect}*/}
+      {/*  />*/}
+      {/*  <SidebarTrigger />*/}
+      {/*  /!* Main content area *!/*/}
+      {/*  <div className="flex-1 p-10">*/}
+      {/*    <h1 className="text-2xl font-bold mb-6">{steps[currentStep]} Options (Select {limit})</h1>*/}
+      {/*      <div className="grid grid-cols-3 gap-4">*/}
+      {/*        {Array.from({ length: 6 }).map((_, index) => {*/}
+      {/*          const itemName = `${steps[currentStep]} Item ${index + 1}`;*/}
+      {/*          const isSelected = selectedItems[steps[currentStep]]?.includes(itemName);*/}
 
-                return (
-                  <div
-                    key={index}
-                    className={`p-5 bg-[#d82c2c] text-white rounded-lg cursor-pointer hover:bg-[#ff474c] transition ${
-                      isSelected ? "bg-[#ff474c]" : ""
-                    }`} // Apply highlight class if selected
-                    onClick={() => handleSelection(itemName)}
-                  >
-                    {itemName}
-                  </div>
-                );
-              })}
-            </div>
-          <button
-            onClick={handleNext}
-            className="mt-6 bg-[#d82c2c] text-white p-3 rounded-lg"
-            disabled={currentStep === steps.length - 1 && false}
-          >
-            {currentStep === steps.length - 1 ? "Pay Now" : "Next"}
-          </button>
-        </div>
-      </SidebarProvider>
+      {/*          return (*/}
+      {/*            <div*/}
+      {/*              key={index}*/}
+      {/*              className={`p-5 bg-[#d82c2c] text-white rounded-lg cursor-pointer hover:bg-[#ff474c] transition ${*/}
+      {/*                isSelected ? "bg-[#ff474c]" : ""*/}
+      {/*              }`} // Apply highlight class if selected*/}
+      {/*              onClick={() => handleSelection(itemName)}*/}
+      {/*            >*/}
+      {/*              {itemName}*/}
+      {/*            </div>*/}
+      {/*          );*/}
+      {/*        })}*/}
+      {/*      </div>*/}
+      {/*    <button*/}
+      {/*      onClick={handleNext}*/}
+      {/*      className="mt-6 bg-[#d82c2c] text-white p-3 rounded-lg"*/}
+      {/*      disabled={currentStep === steps.length - 1 && false}*/}
+      {/*    >*/}
+      {/*      {currentStep === steps.length - 1 ? "Pay Now" : "Next"}*/}
+      {/*    </button>*/}
+      {/*  </div>*/}
+      {/*</SidebarProvider>*/}
     </div>
   );
 }
@@ -176,8 +176,11 @@ function OrderSidebar({
   handleStepSelect: (index: number) => void;
 }) {
   return (
-    <Sidebar className="w-64 bg-gray-200 p-4 flex flex-col ">
-      <button onClick={handleBack} className="bg-[#d82c2c] text-white p-2 rounded mb-4">
+    <Sidebar className="flex w-64 flex-col bg-gray-200 p-4">
+      <button
+        onClick={handleBack}
+        className="mb-4 rounded bg-[#d82c2c] p-2 text-white"
+      >
         Back
       </button>
       <SidebarContent>
@@ -193,7 +196,9 @@ function OrderSidebar({
                 >
                   <SidebarMenuButton asChild>
                     <a className="flex flex-col justify-start">
-                      <span className="text-lg font-semibold text-black">{step.charAt(0).toUpperCase() + step.slice(1)}</span>
+                      <span className="text-lg font-semibold text-black">
+                        {step.charAt(0).toUpperCase() + step.slice(1)}
+                      </span>
                       <div className="text-sm text-gray-600">
                         {selections[step]?.map((item, i) => (
                           <div key={i}>{item}</div>
