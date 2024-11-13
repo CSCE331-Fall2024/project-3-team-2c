@@ -58,7 +58,6 @@ export default function CustomerPage() {
           <SelectionPage 
             category={selectedCategory} 
             setSelectedCategory={setSelectedCategory}
-            addItemToCart={addItemToCart}
             addComboToCart={addComboToCart}
           />
         ) : (
