@@ -8,7 +8,7 @@ interface MenuBarProps {
 
 export default function MenuBar({ onCartClick, onHomeClick }: MenuBarProps) {
   return (
-    <nav className="bg-[#d1282e] text-white p-4 fixed top-0 w-full z-10">
+    <nav className="bg-[#d1282e] text-white p-4 top-0 w-full z-10">
       <div className="flex row justify-around">
         {/* Use a button with onClick to trigger the home function */}
         <button onClick={onHomeClick} className="text-white">Home</button>

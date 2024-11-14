@@ -152,6 +152,7 @@ export const ordersRouter = createTRPCRouter({
   }),
 
   // Returns the 5 most recent orders for a customer
+  // 
   getLatestOrdersByCustomer: publicProcedure
     .input(z.number())
     .query(async ({ input }) => {

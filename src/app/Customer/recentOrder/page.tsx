@@ -1,5 +1,7 @@
 "use client";
 import { useEffect, useState } from 'react';
+import MenuBar from '../../_components/customer_menu_bar';
+import { api } from '~/trpc/react';
 
 // insert a function for reorder button
 // get the data from the table: total price, list of items ordered, order date
@@ -19,68 +21,75 @@ interface Order {
     date: string;
 }
 
+
+
+
 export default function PreviousOrders() {
-    const [orders, setOrders] = useState<Order[]>([
-        {
-            total: 12.99,
-            date: "9/4/2014",
-            items: [
-                {
-                    name: "Plate",
-                    type: "Meal",
-                    quantity: 1,
-                    price: 12.99,
-                    subItems: ["Orange Chicken", "Black Pepper Chicken", "White Rice"]
-                },
-              
-            ]
-        },
-        {
-            total: 15.99,
-            date: "9/4/2014",
-            items: [
-                {
-                    name: "Bigger Plate",
-                    type: "TMeal",
-                    quantity: 1,
-                    price: 15.99,
-                    subItems: ["Orange Chicken", "Kungpao Chicken", "Black Pepper Chicken", "White Rice"]
-                },
-                
-            ]
-        }
-    ]);
+    const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [cart, setCart] = useState<{ individualItems: string[]; combos: { name: string; items: Record<string, string[]> }[] }>({
+    individualItems: [],
+    combos: [],
+    });
+    const [showCart, setShowCart] = useState(false);
+
+    const handleCartClick = () => {
+        console.log("Cart button clicked");
+        setShowCart(true); // Show the cart view
+    };
+
+    const handleHomeClick = () => {
+        console.log("Home button clicked");
+        setSelectedCategory(null); // Reset any selected category
+        setShowCart(false);       // Hide the cart view, returning to CustomerGrid
+    };    
+    // hard-coded customer id 0
+    const { data: orders } = api.orders.getLatestOrdersByCustomer.useQuery(0);
+
+    // const placeOrdersMutation = api.orders.placeOrder.useMutation();
+
+    // const placeOrder = () => {
+    //     placeOrdersMutation.mutate({
+    //     customerId: 1,
+    //     containers: [{ sizeId: 1, mainIds: [1], sideIds: [1] }],
+    //     });
+    // };
 
     return (
-        <div className="p-4" style={{ backgroundColor: '#ce123c', color: 'white' }}>
-            <h2 className="text-2xl font-bold mb-4">Your Orders</h2>
+        <div className="h-full flex flex-col">
+            <MenuBar onCartClick={handleCartClick} onHomeClick={handleHomeClick} />
+            <h2 className="text-2xl font-bold p-8 border-t-4 border-black" style={{ backgroundColor: '#d1282e', color: 'white' }}>Your Orders</h2>
+            
             <div className="space-y-6">
-                {orders.map((order, index) => (
-                    <div key={index} className="border p-4 rounded-lg shadow-md">
+                {orders?.map((order) => (
+                    <div key={order?.id} className="border p-4 rounded-lg shadow-md">
                         <div className="flex justify-between items-center">
                             <div>
-                                <p className="text-lg font-bold">Order on {order.date}</p>
+                                <p className="text-lg font-bold">Order on {order?.timestamp ? new Date(order.timestamp).toLocaleDateString() : "Unknown Date"}</p>
                             </div>
                             <div className="text-right">
-                                <p className="text-xl font-bold">${order.total.toFixed(2)}</p>
+                                <p className="text-xl font-bold">${order?.total}</p>
                             </div>
                         </div>
                         <div className="mt-4 space-y-2">
-                            {order.items.map((item, itemIndex) => (
+                            {order?.containers.map((item, itemIndex) => (
                                 <div key={itemIndex}>
                                     <div className="flex justify-between items-center">
                                         <p>
-                                            {item.quantity} x {item.name}
+                                            {item.sizeId}
                                         </p>
-                                        <p className="text-right">${item.price.toFixed(2)}</p>
+                                        {/*<p className="text-right">${item.price.toFixed(2)}</p>*/}
                                     </div>
-                                    {/* Render subItems if they exist */}
-                                    {item.subItems && item.subItems.length > 0 && (
+                                    {item.mainItems && item.mainItems.length > 0 && item.sideItems && item.sideItems.length > 0 && (
                                         <ul className="ml-4 mt-1 text-sm text-gray-500 list-disc">
-                                            {item.subItems.map((subItem, subIndex) => (
-                                                <li key={subIndex}>{subItem}</li>
+                                            {item.mainItems.map((subItem, subIndex) => (
+                                                <li key={subIndex}>{subItem.itemId ?? "none"}</li>
+                                            ))}
+
+                                            {item.sideItems.map((subItem, subIndex) => (
+                                                <li key={subIndex}>{subItem.itemId ?? "none"}</li>
                                             ))}
                                         </ul>
+                                        
                                     )}
                                 </div>
                             ))}
