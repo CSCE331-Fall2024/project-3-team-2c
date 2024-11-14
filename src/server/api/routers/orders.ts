@@ -24,7 +24,7 @@ const orderOutputSchema = z.object({
   ...orderInputSchema.shape,
   orderId: z.number(),
   total: z.number(),
-  timestamp: z.string(),
+  timestamp: z.date(),
 });
 
 function getPriceFromSizes(sizeIds: number[]) {
@@ -43,14 +43,10 @@ async function getOneOrder(input: number) {
     await db.select().from(orders).where(eq(orders.id, input))
   )?.at(0);
 
-  if (!order) {
-    return null;
-  }
-
   const containerList = await db
     .select()
     .from(containers)
-    .where(eq(containers.orderId, order.id));
+    .where(eq(containers.orderId, order!.id));
 
   const containerListWithItems = containerList.map(async (container) => {
     const mainItems = await db
@@ -140,20 +136,26 @@ export const ordersRouter = createTRPCRouter({
       return { orderId };
     }),
 
-  getOrder: publicProcedure.input(z.number()).query(({ input }) => {
-    return getOneOrder(input);
-  }),
+  getOrder: publicProcedure
+    .input(z.number())
+    .output(orderOutputSchema)
+    .query(async ({ input }) => {
+      return { ...(await getOneOrder(input)), orderId: input };
+    }),
 
-  getAllOrders: publicProcedure.query(async () => {
-    const orderIds = await db.select({ id: orders.id }).from(orders);
-    return await Promise.all(
-      orderIds.map((orderId) => getOneOrder(orderId.id)),
-    );
-  }),
+  getAllOrders: publicProcedure
+    .output(z.array(orderOutputSchema))
+    .query(async () => {
+      const orderIds = await db.select({ id: orders.id }).from(orders);
+      return await Promise.all(
+        orderIds.map((orderId) => getOneOrder(orderId.id)),
+      );
+    }),
 
   // Returns the 5 most recent orders for a customer
   getLatestOrdersByCustomer: publicProcedure
     .input(z.number())
+    .output(orderOutputSchema)
     .query(async ({ input }) => {
       const orderIds = await db
         .select({ id: orders.id })
