@@ -40,7 +40,7 @@ function TranslatePage() {
       };
 
       const textNodes = getTextNodes(document.body);
-      const originalText = textNodes.map((node) => node.textContent || "");
+      const originalText = textNodes.map((node) => node.textContent ?? "");
 
       try {
         const translatedTexts = await Promise.all(

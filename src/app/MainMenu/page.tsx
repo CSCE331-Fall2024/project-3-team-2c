@@ -195,7 +195,9 @@ export default function MainMenu() {
             description:
               data.weather?.[0]?.description ?? "No description available",
             temp: data.main.temp,
-            icon: `https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`,
+            icon: data.weather[0]?.icon
+              ? `https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`
+              : "",
           });
         } else {
           console.log("Incomplete weather data");
