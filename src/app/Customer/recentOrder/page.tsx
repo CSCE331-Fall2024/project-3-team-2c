@@ -56,6 +56,8 @@ export default function PreviousOrders() {
     const names = orderItemIds.map((ids) => ({
         data: api.menu.getMenuItemsByIds.useQuery( ids ),
     }));
+
+    const {output: ordering} = api.menu.getMenuItemsByIds.useQuery( [1, 2, 3] )
     
 
 
