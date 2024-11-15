@@ -293,13 +293,15 @@ export default function MainMenu() {
           </div>
         </Link>
 
-        <div className="relative flex h-48 w-48 transform cursor-pointer items-center justify-center rounded-lg border border-black transition-transform hover:scale-105 hover:shadow-lg">
-          <span className="z-10 text-2xl font-bold text-black">Cashier</span>
-          <div
-            className="absolute inset-0 rounded-lg bg-cover bg-center opacity-60"
-            style={{ backgroundImage: "url('/MainMenuImages/food2.jpeg')" }}
-          ></div>
-        </div>
+        <Link href="./cashier">
+          <div className="relative flex h-48 w-48 transform cursor-pointer items-center justify-center rounded-lg border border-black transition-transform hover:scale-105 hover:shadow-lg">
+            <span className="z-10 text-2xl font-bold text-black">Cashier</span>
+            <div
+              className="absolute inset-0 rounded-lg bg-cover bg-center opacity-60"
+              style={{ backgroundImage: "url('/MainMenuImages/food2.jpeg')" }}
+            ></div>
+          </div>
+        </Link>
 
         <Link href="./Customer">
           <div className="relative flex h-48 w-48 transform cursor-pointer items-center justify-center rounded-lg border border-black transition-transform hover:scale-105 hover:shadow-lg">
