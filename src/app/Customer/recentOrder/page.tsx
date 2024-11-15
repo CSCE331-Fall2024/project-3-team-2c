@@ -1,32 +1,19 @@
 "use client";
-import { useEffect, useState } from 'react';
+import { useMemo, useState } from 'react';
 import MenuBar from '../../_components/customer_menu_bar';
 import { api } from '~/trpc/react';
+
 
 // insert a function for reorder button
 // get the data from the table: total price, list of items ordered, order date
 // list of items contain individual items, such as drinks and meals.
 // in case it is a meal, then use subItems to list out the entrees and sides.
 
-interface Item{
-    name: string;
-    type: string;
-    price: number;
-    quantity: number;
-    subItems?: string[];
-}
-interface Order {
-    total: number;
-    items: Item[];
-    date: string;
-}
-
-
 
 
 export default function PreviousOrders() {
     const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [cart, setCart] = useState<{ individualItems: string[]; combos: { name: string; items: Record<string, string[]> }[] }>({
+    const [cart, setCart] = useState<{ individualItems: string[]; combos: { name: string; items: Record<string, string[]> }[] }>({
     individualItems: [],
     combos: [],
     });
@@ -44,6 +31,35 @@ export default function PreviousOrders() {
     };    
     // hard-coded customer id 0
     const { data: orders } = api.orders.getLatestOrdersByCustomer.useQuery(0);
+
+    const orderItemIds = useMemo(() => {
+        return orders?.map(order => {
+            const ids: number[] = [];
+            order?.containers?.forEach(container => {
+                // Collect item IDs from mainItems
+                container.mainItems.forEach(mainItem => {
+                    if (mainItem.itemId !== null) {
+                        ids.push(mainItem.itemId);
+                    }
+                });
+                // Collect item IDs from sideItems
+                container.sideItems.forEach(sideItem => {
+                    if (sideItem.itemId !== null) {
+                        ids.push(sideItem.itemId);
+                    }
+                });
+            });
+            return ids;
+        }) || [];
+    }, [orders]);
+   
+    const names = orderItemIds.map((ids) => ({
+        data: api.menu.getMenuItemsByIds.useQuery( ids ),
+    }));
+    
+
+
+    
 
     // const placeOrdersMutation = api.orders.placeOrder.useMutation();
 
@@ -71,17 +87,16 @@ export default function PreviousOrders() {
                             </div>
                         </div>
                         <div className="mt-4 space-y-2">
-                            {order?.containers.map((item, itemIndex) => (
+                            {names.map((order, itemIndex) => (
                                 <div key={itemIndex}>
                                     <div className="flex justify-between items-center">
                                         <p>
-                                            {item.sizeId}
                                         </p>
                                         {/*<p className="text-right">${item.price.toFixed(2)}</p>*/}
                                     </div>
-                                    {item.mainItems && item.mainItems.length > 0 && item.sideItems && item.sideItems.length > 0 && (
+                                    { (
                                         <ul className="ml-4 mt-1 text-sm text-gray-500 list-disc">
-                                            {item.mainItems.map((subItem, subIndex) => (
+                                            {order?.data map((subItem, subIndex) => (
                                                 <li key={subIndex}>{subItem.itemId ?? "none"}</li>
                                             ))}
 
