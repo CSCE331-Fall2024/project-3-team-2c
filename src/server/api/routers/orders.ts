@@ -7,7 +7,7 @@ import {
   sizes,
 } from "~/server/db/schema";
 import { db } from "~/server/db";
-import { and, eq } from "drizzle-orm";
+import { and, desc, eq } from "drizzle-orm";
 
 const containerInputSchema = z.object({
   sizeId: z.number(),
@@ -38,7 +38,9 @@ function getPriceFromSizes(sizeIds: number[]) {
   return sizeIds.reduce((sum, price) => sum + price, 0.0);
 }
 
-async function getOneOrder(input: number) {
+async function getOneOrder(
+  input: number,
+): Promise<z.infer<typeof orderOutputSchema>> {
   const order = (
     await db.select().from(orders).where(eq(orders.id, input))
   )?.at(0);
@@ -69,14 +71,17 @@ async function getOneOrder(input: number) {
         ),
       );
     return {
-      ...container,
-      mainItems,
-      sideItems,
+      sizeId: container.sizeId!,
+      mainIds: mainItems.map((item) => item.itemId!),
+      sideIds: sideItems.map((item) => item.itemId!),
     };
   });
 
   return {
-    ...order,
+    customerId: order!.customerId,
+    orderId: order!.id,
+    total: parseFloat(order!.total),
+    timestamp: order!.timestamp!,
     containers: await Promise.all(containerListWithItems),
   };
 }
@@ -155,12 +160,13 @@ export const ordersRouter = createTRPCRouter({
   // Returns the 5 most recent orders for a customer
   getLatestOrdersByCustomer: publicProcedure
     .input(z.number())
-    .output(orderOutputSchema)
+    .output(z.array(orderOutputSchema))
     .query(async ({ input }) => {
       const orderIds = await db
         .select({ id: orders.id })
         .from(orders)
-        .where(eq(orders.customerId, input));
+        .where(eq(orders.customerId, input))
+        .orderBy(desc(orders.timestamp));
 
       return await Promise.all(
         orderIds.slice(0, 5).map((orderId) => getOneOrder(orderId.id)),
