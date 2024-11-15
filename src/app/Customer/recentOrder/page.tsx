@@ -2,6 +2,9 @@
 import { useMemo, useState } from 'react';
 import MenuBar from '../../_components/customer_menu_bar';
 import { api } from '~/trpc/react';
+import { tap } from 'node:test/reporters';
+import { NavigationMenuSub } from '@radix-ui/react-navigation-menu';
+import Item from './Item';
 
 
 // insert a function for reorder button
@@ -10,27 +13,8 @@ import { api } from '~/trpc/react';
 // in case it is a meal, then use subItems to list out the entrees and sides.
 
 
-
 export default function PreviousOrders() {
-    const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-    const [cart, setCart] = useState<{ individualItems: string[]; combos: { name: string; items: Record<string, string[]> }[] }>({
-    individualItems: [],
-    combos: [],
-    });
-    const [showCart, setShowCart] = useState(false);
-
-    const handleCartClick = () => {
-        console.log("Cart button clicked");
-        setShowCart(true); // Show the cart view
-    };
-
-    const handleHomeClick = () => {
-        console.log("Home button clicked");
-        setSelectedCategory(null); // Reset any selected category
-        setShowCart(false);       // Hide the cart view, returning to CustomerGrid
-    };    
-    // hard-coded customer id 0
-    const { data: orders } = api.orders.getLatestOrdersByCustomer.useQuery(0);
+    const { data: orders } = api.orders.getLatestOrdersByCustomer.useQuery(1);
 
     const orderItemIds = useMemo(() => {
         return orders?.map(order => {
@@ -53,11 +37,29 @@ export default function PreviousOrders() {
         }) || [];
     }, [orders]);
    
-    const names = orderItemIds.map((ids) => ({
-        data: api.menu.getMenuItemsByIds.useQuery( ids ),
-    }));
+    
 
-    const {output: ordering} = api.menu.getMenuItemsByIds.useQuery( [1, 2, 3] )
+    const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+    const [cart, setCart] = useState<{ individualItems: string[]; combos: { name: string; items: Record<string, string[]> }[] }>({
+    individualItems: [],
+    combos: [],
+    });
+    const [showCart, setShowCart] = useState(false);
+
+    const handleCartClick = () => {
+        console.log("Cart button clicked");
+        setShowCart(true); // Show the cart view
+    };
+
+    const handleHomeClick = () => {
+        console.log("Home button clicked");
+        setSelectedCategory(null); // Reset any selected category
+        setShowCart(false);       // Hide the cart view, returning to CustomerGrid
+    };    
+    // hard-coded customer id 0
+    
+
+    //const {output: ordering} = api.menu.getMenuItemsByIds.useQuery( [1, 2, 3] )
     
 
 
@@ -89,27 +91,7 @@ export default function PreviousOrders() {
                             </div>
                         </div>
                         <div className="mt-4 space-y-2">
-                            {names.map((order, itemIndex) => (
-                                <div key={itemIndex}>
-                                    <div className="flex justify-between items-center">
-                                        <p>
-                                        </p>
-                                        {/*<p className="text-right">${item.price.toFixed(2)}</p>*/}
-                                    </div>
-                                    { (
-                                        <ul className="ml-4 mt-1 text-sm text-gray-500 list-disc">
-                                            {order?.data map((subItem, subIndex) => (
-                                                <li key={subIndex}>{subItem.itemId ?? "none"}</li>
-                                            ))}
-
-                                            {item.sideItems.map((subItem, subIndex) => (
-                                                <li key={subIndex}>{subItem.itemId ?? "none"}</li>
-                                            ))}
-                                        </ul>
-                                        
-                                    )}
-                                </div>
-                            ))}
+                            {orderItemIds.map((orderArray) =>(<Item orderId = {orderArray}/>))}
                         </div>
                         <div className="mt-4 flex justify-end">
                             <button className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600">
