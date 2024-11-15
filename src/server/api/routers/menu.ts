@@ -35,4 +35,14 @@ export const menuRouter = createTRPCRouter({
         }),
       );
     }),
+
+  getMenuItemsByType: publicProcedure
+    .input(z.string())
+    .output(z.array(outputSchema))
+    .query(async ({ input }) => {
+      return db
+        .select()
+        .from(menuItems)
+        .where(eq(menuItems.type, input.toUpperCase()));
+    }),
 });
