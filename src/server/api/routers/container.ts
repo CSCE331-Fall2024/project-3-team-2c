@@ -1,21 +1,9 @@
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import { z } from "zod";
-import {
-  containers,
-  containersToMenu,
-  menuItems,
-  orders,
-  sizes,
-} from "~/server/db/schema";
+import { sizes } from "~/server/db/schema";
 import { db } from "~/server/db";
-import { and, eq } from "drizzle-orm";
-import { createInsertSchema, createSelectSchema } from "drizzle-zod";
-
-const containerInputSchema = z.object({
-  sizeId: z.number(),
-  mainIds: z.array(z.number()),
-  sideIds: z.array(z.number()),
-});
+import { eq } from "drizzle-orm";
+import { createSelectSchema } from "drizzle-zod";
 
 const sizeOutputSchema = createSelectSchema(sizes);
 async function getSize(input: number) {
