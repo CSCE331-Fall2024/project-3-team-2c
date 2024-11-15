@@ -15,6 +15,13 @@ const containerInputSchema = z.object({
   sideIds: z.array(z.number()),
 });
 
+const containerOutputSchema = z.object({
+  containerId: z.number(),
+  sizeId: z.number(),
+  mainIds: z.array(z.number()),
+  sideIds: z.array(z.number()),
+});
+
 const orderInputSchema = z.object({
   customerId: z.number(),
   containers: z.array(containerInputSchema),
@@ -22,6 +29,7 @@ const orderInputSchema = z.object({
 
 const orderOutputSchema = z.object({
   ...orderInputSchema.shape,
+  containers: z.array(containerOutputSchema),
   orderId: z.number(),
   total: z.number(),
   timestamp: z.date(),
@@ -71,6 +79,7 @@ async function getOneOrder(
         ),
       );
     return {
+      containerId: container.id,
       sizeId: container.sizeId!,
       mainIds: mainItems.map((item) => item.itemId!),
       sideIds: sideItems.map((item) => item.itemId!),
