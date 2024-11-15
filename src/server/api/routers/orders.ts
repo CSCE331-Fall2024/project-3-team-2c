@@ -7,7 +7,7 @@ import {
   sizes,
 } from "~/server/db/schema";
 import { db } from "~/server/db";
-import { and, desc, eq } from "drizzle-orm";
+import { and, between, desc, eq } from "drizzle-orm";
 
 const containerInputSchema = z.object({
   sizeId: z.number(),
@@ -166,6 +166,21 @@ export const ordersRouter = createTRPCRouter({
         .select({ id: orders.id })
         .from(orders)
         .where(eq(orders.customerId, input))
+        .orderBy(desc(orders.timestamp));
+
+      return await Promise.all(
+        orderIds.slice(0, 5).map((orderId) => getOneOrder(orderId.id)),
+      );
+    }),
+
+  getOrdersWithinTimePeriod: publicProcedure
+    .input(z.object({ start: z.date(), end: z.date() }))
+    .output(z.array(orderOutputSchema))
+    .query(async ({ input }) => {
+      const orderIds = await db
+        .select({ id: orders.id })
+        .from(orders)
+        .where(between(orders.timestamp, input.start, input.end))
         .orderBy(desc(orders.timestamp));
 
       return await Promise.all(
