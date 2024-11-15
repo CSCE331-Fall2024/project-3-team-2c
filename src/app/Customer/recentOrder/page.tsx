@@ -45,7 +45,13 @@ export default function PreviousOrders() {
     combos: [],
   });
   const [showCart, setShowCart] = useState(false);
+  });
+  const [showCart, setShowCart] = useState(false);
 
+  const handleCartClick = () => {
+    console.log("Cart button clicked");
+    setShowCart(true); // Show the cart view
+  };
   const handleCartClick = () => {
     console.log("Cart button clicked");
     setShowCart(true); // Show the cart view
@@ -66,7 +72,14 @@ export default function PreviousOrders() {
     
 
   // const placeOrdersMutation = api.orders.placeOrder.useMutation();
+  // const placeOrdersMutation = api.orders.placeOrder.useMutation();
 
+  // const placeOrder = () => {
+  //     placeOrdersMutation.mutate({
+  //     customerId: 1,
+  //     containers: [{ sizeId: 1, mainIds: [1], sideIds: [1] }],
+  //     });
+  // };
   // const placeOrder = () => {
   //     placeOrdersMutation.mutate({
   //     customerId: 1,
@@ -104,3 +117,4 @@ export default function PreviousOrders() {
         </div>
     );
 }
+
