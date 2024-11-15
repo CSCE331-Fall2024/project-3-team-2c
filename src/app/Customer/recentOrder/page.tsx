@@ -21,15 +21,15 @@ export default function PreviousOrders() {
             const ids: number[] = [];
             order?.containers?.forEach(container => {
                 // Collect item IDs from mainItems
-                container.mainItems.forEach(mainItem => {
-                    if (mainItem.itemId !== null) {
-                        ids.push(mainItem.itemId);
+                container.mainIds.forEach(mainItem => {
+                    if (mainItem !== null) {
+                        ids.push(mainItem);
                     }
                 });
                 // Collect item IDs from sideItems
-                container.sideItems.forEach(sideItem => {
-                    if (sideItem.itemId !== null) {
-                        ids.push(sideItem.itemId);
+                container.sideIds.forEach(sideItem => {
+                    if (sideItem !== null) {
+                        ids.push(sideItem);
                     }
                 });
             });
@@ -43,13 +43,13 @@ export default function PreviousOrders() {
     const [cart, setCart] = useState<{ individualItems: string[]; combos: { name: string; items: Record<string, string[]> }[] }>({
     individualItems: [],
     combos: [],
-    });
-    const [showCart, setShowCart] = useState(false);
+  });
+  const [showCart, setShowCart] = useState(false);
 
-    const handleCartClick = () => {
-        console.log("Cart button clicked");
-        setShowCart(true); // Show the cart view
-    };
+  const handleCartClick = () => {
+    console.log("Cart button clicked");
+    setShowCart(true); // Show the cart view
+  };
 
     const handleHomeClick = () => {
         console.log("Home button clicked");
@@ -65,14 +65,14 @@ export default function PreviousOrders() {
 
     
 
-    // const placeOrdersMutation = api.orders.placeOrder.useMutation();
+  // const placeOrdersMutation = api.orders.placeOrder.useMutation();
 
-    // const placeOrder = () => {
-    //     placeOrdersMutation.mutate({
-    //     customerId: 1,
-    //     containers: [{ sizeId: 1, mainIds: [1], sideIds: [1] }],
-    //     });
-    // };
+  // const placeOrder = () => {
+  //     placeOrdersMutation.mutate({
+  //     customerId: 1,
+  //     containers: [{ sizeId: 1, mainIds: [1], sideIds: [1] }],
+  //     });
+  // };
 
     return (
         <div className="h-full flex flex-col">
@@ -81,7 +81,7 @@ export default function PreviousOrders() {
             
             <div className="space-y-6">
                 {orders?.map((order) => (
-                    <div key={order?.id} className="border p-4 rounded-lg shadow-md">
+                    <div key={order?.orderId} className="border p-4 rounded-lg shadow-md">
                         <div className="flex justify-between items-center">
                             <div>
                                 <p className="text-lg font-bold">Order on {order?.timestamp ? new Date(order.timestamp).toLocaleDateString() : "Unknown Date"}</p>

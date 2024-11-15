@@ -26,8 +26,8 @@ export default function OrdersPage() {
           <div>
             {orders?.map((order) => {
               return (
-                <div key={order?.id}>
-                  <h2>Order {order?.id}</h2>
+                <div key={order?.orderId}>
+                  <h2>Order {order?.orderId}</h2>
                   <p>Total: {order?.total}</p>
                   <p>Containers:</p>
                   {order?.containers.map((container) => {
@@ -39,16 +39,10 @@ export default function OrdersPage() {
                         <p>
                           ---------------------------------------------------------
                         </p>
-                        <p>Container {container.id}</p>
+                        <p>Container {container.containerId}</p>
                         <p>Size: {container.sizeId}</p>
-                        <p>
-                          Main Items:{" "}
-                          {container.mainItems.map(({ itemId }) => itemId)}
-                        </p>
-                        <p>
-                          Side Items:{" "}
-                          {container.sideItems.map(({ itemId }) => itemId)}
-                        </p>
+                        <p>Main Items: {container.mainIds}</p>
+                        <p>Side Items: {container.sideIds}</p>
                         <p>
                           ---------------------------------------------------------
                         </p>
