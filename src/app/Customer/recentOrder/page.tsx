@@ -2,8 +2,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import MenuBar from '../../_components/customer_menu_bar';
 import { api } from '~/trpc/react';
-import { tap } from 'node:test/reporters';
-import { NavigationMenuSub } from '@radix-ui/react-navigation-menu';
 import Container from './Container';
 
 
