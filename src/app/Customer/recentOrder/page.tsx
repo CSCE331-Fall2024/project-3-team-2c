@@ -20,35 +20,11 @@ export default function PreviousOrders() {
         }) || [];
     }, [orders]);
    
-    
 
-    const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-    const [cart, setCart] = useState<{ individualItems: string[]; combos: { name: string; items: Record<string, string[]> }[] }>({
-    individualItems: [],
-    combos: [],
-  });
-  const [showCart, setShowCart] = useState(false);
-  useEffect(() => {
-    setSelectedCategory(null);
-  }, []);
-  const handleCartClick = () => {
-    console.log("Cart button clicked");
-    setShowCart(true); // Show the cart view
-  };
-
-
-    const handleHomeClick = () => {
-        console.log("Home button clicked");
-        setSelectedCategory(null); // Reset any selected category
-        setShowCart(false);       // Hide the cart view, returning to CustomerGrid
-    };    
 
 
     return (
-        <div className="h-full flex flex-col">
-            <MenuBar onCartClick={handleCartClick} onHomeClick={handleHomeClick} />
-            <h2 className="text-2xl font-bold p-8 border-t-4 border-black" style={{ backgroundColor: '#d1282e', color: 'white' }}>Your Orders</h2>
-            
+        <div className="h-full flex flex-col">            
             <div className="space-y-6">
                 {orders?.map((order) => (
                     <div key={order?.orderId} className="border p-4 rounded-lg shadow-md">
