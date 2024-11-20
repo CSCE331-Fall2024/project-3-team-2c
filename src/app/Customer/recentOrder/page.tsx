@@ -1,10 +1,10 @@
 "use client";
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import MenuBar from '../../_components/customer_menu_bar';
 import { api } from '~/trpc/react';
 import { tap } from 'node:test/reporters';
 import { NavigationMenuSub } from '@radix-ui/react-navigation-menu';
-import Item from './Item';
+import Container from './Container';
 
 
 // insert a function for reorder button
@@ -18,22 +18,7 @@ export default function PreviousOrders() {
 
     const orderItemIds = useMemo(() => {
         return orders?.map(order => {
-            const ids: number[] = [];
-            order?.containers?.forEach(container => {
-                // Collect item IDs from mainItems
-                container.mainIds.forEach(mainItem => {
-                    if (mainItem !== null) {
-                        ids.push(mainItem);
-                    }
-                });
-                // Collect item IDs from sideItems
-                container.sideIds.forEach(sideItem => {
-                    if (sideItem !== null) {
-                        ids.push(sideItem);
-                    }
-                });
-            });
-            return ids;
+            return order.containers;
         }) || [];
     }, [orders]);
    
@@ -45,47 +30,21 @@ export default function PreviousOrders() {
     combos: [],
   });
   const [showCart, setShowCart] = useState(false);
-  });
-  const [showCart, setShowCart] = useState(false);
+  useEffect(() => {
+    setSelectedCategory(null);
+  }, []);
+  const handleCartClick = () => {
+    console.log("Cart button clicked");
+    setShowCart(true); // Show the cart view
+  };
 
-  const handleCartClick = () => {
-    console.log("Cart button clicked");
-    setShowCart(true); // Show the cart view
-  };
-  const handleCartClick = () => {
-    console.log("Cart button clicked");
-    setShowCart(true); // Show the cart view
-  };
 
     const handleHomeClick = () => {
         console.log("Home button clicked");
         setSelectedCategory(null); // Reset any selected category
         setShowCart(false);       // Hide the cart view, returning to CustomerGrid
     };    
-    // hard-coded customer id 0
-    
 
-    //const {output: ordering} = api.menu.getMenuItemsByIds.useQuery( [1, 2, 3] )
-    
-
-
-    
-
-  // const placeOrdersMutation = api.orders.placeOrder.useMutation();
-  // const placeOrdersMutation = api.orders.placeOrder.useMutation();
-
-  // const placeOrder = () => {
-  //     placeOrdersMutation.mutate({
-  //     customerId: 1,
-  //     containers: [{ sizeId: 1, mainIds: [1], sideIds: [1] }],
-  //     });
-  // };
-  // const placeOrder = () => {
-  //     placeOrdersMutation.mutate({
-  //     customerId: 1,
-  //     containers: [{ sizeId: 1, mainIds: [1], sideIds: [1] }],
-  //     });
-  // };
 
     return (
         <div className="h-full flex flex-col">
@@ -104,7 +63,9 @@ export default function PreviousOrders() {
                             </div>
                         </div>
                         <div className="mt-4 space-y-2">
-                            {orderItemIds.map((orderArray) =>(<Item orderId = {orderArray}/>))}
+                            {order.containers.map((eachContainer) => (<Container mainList = {eachContainer.mainIds} 
+                            sideList = {eachContainer.sideIds} sizeId={eachContainer.sizeId}/>)
+                            )}
                         </div>
                         <div className="mt-4 flex justify-end">
                             <button className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600">
