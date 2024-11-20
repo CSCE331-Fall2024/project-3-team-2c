@@ -5,6 +5,7 @@ import MenuBar from '../_components/customer_menu_bar';
 import CustomerGrid from '../_components/customer_grid';
 import SelectionPage from '../_components/customer_selection_page';
 import CustomerCart from '../_components/customer_cart';
+import PreviousOrders from './recentOrder/page';
 
 export default function CustomerPage() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -12,6 +13,7 @@ export default function CustomerPage() {
     individualItems: [],
     combos: [],
   });
+
   const [showCart, setShowCart] = useState(false);
 
   useEffect(() => {
@@ -48,22 +50,41 @@ export default function CustomerPage() {
     }));
   };
 
+  const showRecentOrders = (category: string) => {
+    setSelectedCategory(category)
+    setShowCart(false);
+  };
+
   return (
     <div className="h-full flex flex-col">
       <MenuBar onCartClick={handleCartClick} onHomeClick={handleHomeClick} />
+      
+      {/* Circular Button Below MenuBar */}
+      <div className="flex justify-end mt-8 pr-8">
+        <button
+          onClick={() => showRecentOrders("recentOrders")} // Call showRecentOrders function
+          className="w-20 h-20 rounded-full bg-blue-500 text-white text-center flex items-center justify-center shadow-md hover:bg-blue-600 hover:scale-110 transition-all duration-300 ease-in-out"
+        >
+          Show Recent Order
+        </button>
+      </div>
+  
       <div className="flex-1 p-8 mt-16 h-full">
         {showCart ? (
           <CustomerCart cart={cart} />
-        ) : selectedCategory ? (
+        ) : selectedCategory === "selectionPage" ? (
           <SelectionPage 
             category={selectedCategory} 
             setSelectedCategory={setSelectedCategory}
             addComboToCart={addComboToCart}
           />
+        ) : selectedCategory === "recentOrders" ? (
+          <PreviousOrders />
         ) : (
-          <CustomerGrid onClick={handleGridClick} />
+          <CustomerGrid onClick={() => handleGridClick("selectionPage")} />
         )}
       </div>
     </div>
   );
+  
 }
