@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from 'react';
 import MenuBar from '../../_components/customer_menu_bar';
 import { api } from '~/trpc/react';
 import Container from './Container';
+import { containers } from '~/server/db/schema';
 
 
 // insert a function for reorder button
@@ -17,7 +18,7 @@ export default function PreviousOrders() {
     const orderItemIds = useMemo(() => {
         return orders?.map(order => {
             return order.containers;
-        }) || [];
+        }) ?? [];
     }, [orders]);
    
 
@@ -37,8 +38,12 @@ export default function PreviousOrders() {
                             </div>
                         </div>
                         <div className="mt-4 space-y-2">
-                            {order.containers.map((eachContainer) => (<Container mainList = {eachContainer.mainIds} 
-                            sideList = {eachContainer.sideIds} sizeId={eachContainer.sizeId}/>)
+                            {order.containers.map((eachContainer, index) => (
+                                <Container 
+                                key={eachContainer.containerId || index}
+                                mainList = {eachContainer.mainIds} 
+                                sideList = {eachContainer.sideIds} 
+                                sizeId={eachContainer.sizeId}/>)
                             )}
                         </div>
                         <div className="mt-4 flex justify-end">
