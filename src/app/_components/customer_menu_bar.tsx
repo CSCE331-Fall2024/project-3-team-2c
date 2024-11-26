@@ -15,7 +15,7 @@ export default function MenuBar({ onCartClick, onHomeClick }: MenuBarProps) {
         <Link href="/combo" passHref>
           Combo
         </Link>
-        <Link href="/entree" passHref>
+        <Link href="./entrees.tsx" passHref>
           Entree
         </Link>
         <Link href="/appetizers" passHref>

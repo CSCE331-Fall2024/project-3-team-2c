@@ -23,9 +23,13 @@
 // }
 
 import MainMenu from "./MainMenu/page";
+import EntreesPage from "./_components/entrees";
 
 export default function Home() {
+  // return (
+  //   <MainMenu />
+  // );
   return (
-    <MainMenu />
+    <EntreesPage />
   );
 }
