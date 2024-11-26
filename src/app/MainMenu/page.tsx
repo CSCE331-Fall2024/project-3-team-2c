@@ -256,7 +256,7 @@ export default function MainMenu() {
         </PopoverTrigger>
         <PopoverContent className="rounded-lg border border-black bg-white p-2">
           <div
-            onClick={() => setSelectedLanguage("en")}
+            onClick={() => setSelectedLanguage("en-GB")}
             className="cursor-pointer p-2 hover:bg-gray-200"
           >
             English
