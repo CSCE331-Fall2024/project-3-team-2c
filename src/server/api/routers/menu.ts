@@ -6,8 +6,9 @@ import { eq } from "drizzle-orm";
 import { createSelectSchema } from "drizzle-zod";
 
 async function getOneItem(input: number) {
+  console.log("getOneItem", input);
   return (
-    await db.select().from(menuItems).where(eq(containers.id, input))
+    await db.select().from(menuItems).where(eq(menuItems.id, input))
   )?.at(0);
 }
 
@@ -29,8 +30,13 @@ export const menuRouter = createTRPCRouter({
     .input(z.array(z.number()))
     .output(z.array(outputSchema))
     .query(async ({ input }) => {
+      console.log("running getOneItem Query", input.length);
+      if(input.length == 0){
+        return [];
+      }
       return Promise.all(
         input.map(async (id) => {
+          console.log(id);
           return (await getOneItem(id))!;
         }),
       );

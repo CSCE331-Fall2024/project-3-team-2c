@@ -285,7 +285,7 @@ export default function MainMenu() {
       <div className="grid grid-cols-2 gap-5">
         <Link href="./manager/menu_item">
           <div className="relative flex h-48 w-48 transform cursor-pointer items-center justify-center rounded-lg border border-black transition-transform hover:scale-105 hover:shadow-lg">
-            <span className="z-10 text-2xl font-bold text-black">Manager</span>
+            <span className="z-10 text-3xl font-bold text-black">Manager</span>
             <div
               className="absolute inset-0 rounded-lg bg-cover bg-center opacity-60"
               style={{ backgroundImage: "url('/MainMenuImages/food1.jpg')" }}
@@ -295,7 +295,7 @@ export default function MainMenu() {
 
         <Link href="./cashier">
           <div className="relative flex h-48 w-48 transform cursor-pointer items-center justify-center rounded-lg border border-black transition-transform hover:scale-105 hover:shadow-lg">
-            <span className="z-10 text-2xl font-bold text-black">Cashier</span>
+            <span className="z-10 text-3xl font-bold text-black">Cashier</span>
             <div
               className="absolute inset-0 rounded-lg bg-cover bg-center opacity-60"
               style={{ backgroundImage: "url('/MainMenuImages/food2.jpeg')" }}
@@ -305,7 +305,7 @@ export default function MainMenu() {
 
         <Link href="./Customer">
           <div className="relative flex h-48 w-48 transform cursor-pointer items-center justify-center rounded-lg border border-black transition-transform hover:scale-105 hover:shadow-lg">
-            <span className="z-10 text-2xl font-bold text-black">Customer</span>
+            <span className="z-10 text-3xl font-bold text-black">Customer</span>
             <div
               className="absolute inset-0 rounded-lg bg-cover bg-center opacity-60"
               style={{ backgroundImage: "url('/MainMenuImages/food3.jpg')" }}
@@ -314,7 +314,7 @@ export default function MainMenu() {
         </Link>
 
         <div className="relative flex h-48 w-48 transform cursor-pointer items-center justify-center rounded-lg border border-black transition-transform hover:scale-105 hover:shadow-lg">
-          <span className="z-10 text-2xl font-bold text-black">Menu Board</span>
+          <span className="z-10 text-3xl font-bold text-black">Menu Board</span>
           <div
             className="absolute inset-0 rounded-lg bg-cover bg-center opacity-60"
             style={{ backgroundImage: "url('/MainMenuImages/food4.jpg')" }}
