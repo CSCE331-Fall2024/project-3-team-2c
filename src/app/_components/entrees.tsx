@@ -49,6 +49,18 @@ const EntreesPage: React.FC = () => {
   // Calculate total entrees in selectedEntrees
   const totalEntrees = Object.values(selectedEntrees).reduce((sum, count) => sum + count, 0);
 
+  // Placeholder function to handle order submission
+  const handleSubmitOrder = () => {
+    // Create a list of selected items with their quantities for submission
+    const orderList = Object.entries(selectedEntrees).map(([itemName, quantity]) => ({
+      name: itemName,
+      quantity,
+    }));
+
+    // For now, just log the order list
+    console.log("Order submitted:", orderList);
+  };
+
   return (
     <div className="flex">
       {/* Left section for entrees */}
@@ -56,7 +68,7 @@ const EntreesPage: React.FC = () => {
         <h1 className="text-2xl font-bold mb-4">Entrees</h1>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {entrees.map((item) => {
-            const quantity = selectedEntrees[item.name]?? 0;
+            const quantity = selectedEntrees[item.name] ?? 0;
 
             return (
               <div
@@ -88,9 +100,8 @@ const EntreesPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Right section for cart summary */}
       <div className="w-1/4 pl-4">
-        <h2 className="text-xl font-bold mb-4">Cart Summary</h2>
+        <h2 className="text-xl font-bold mb-4">Entrees Selected</h2>
         <div className="bg-gray-100 p-4 rounded-lg shadow-md">
           <p className="text-lg font-semibold">Total Entrees: {totalEntrees}</p>
           <ul className="mt-4">
@@ -101,6 +112,14 @@ const EntreesPage: React.FC = () => {
               </li>
             ))}
           </ul>
+
+          {/* Submit Order Button */}
+          <button
+            onClick={handleSubmitOrder}
+            className="mt-4 w-full py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition"
+          >
+            Submit Order
+          </button>
         </div>
       </div>
     </div>
