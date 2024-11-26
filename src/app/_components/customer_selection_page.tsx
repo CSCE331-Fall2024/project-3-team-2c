@@ -408,16 +408,16 @@ export default function SelectionPage({
   };
 
   const renderItems = () => {
-    let data: (Drink | Entree | Appetizer)[] = [];
+    let data: (Drink | Entree | Appetizer | Side)[] = [];
 
     if (steps[currentStep] === "Drinks") {
-      data = drinksData;
+      data = drinksData || [];
     } else if (steps[currentStep] === "Entree") {
-      data = entreesData;
+      data = entreesData || [];
     } else if (steps[currentStep] === "Appetizers") {
-      data = appetizersData;
+      data = appetizersData || [];
     } else if (steps[currentStep] === "Side") {
-      data = sidesData;
+      data = sidesData || [];
     }
 
     return data.map((item) => {
