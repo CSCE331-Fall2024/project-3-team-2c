@@ -6,6 +6,9 @@ import CustomerGrid from '../_components/customer_grid';
 import SelectionPage from '../_components/customer_selection_page';
 import CustomerCart from '../_components/customer_cart';
 import PreviousOrders from './recentOrder/page';
+import DrinksPage from '../_components/drinks';
+import AppetizersPage from '../_components/appetizers';
+import EntreesPage from '../_components/entrees';
 
 export default function CustomerPage() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -55,7 +58,7 @@ export default function CustomerPage() {
 
   return (
     <div className="h-full flex flex-col">
-      <MenuBar onCartClick={handleCartClick} onHomeClick={handleHomeClick} />
+      <MenuBar onCartClick={handleCartClick} onHomeClick={handleHomeClick} onItemClick={handleGridClick}/>
       
       {/* Circular Button Below MenuBar */}
       <div className="flex justify-end mt-8 pr-8">
@@ -76,6 +79,12 @@ export default function CustomerPage() {
             setSelectedCategory={setSelectedCategory}
             addComboToCart={addComboToCart}
           />
+        ) : selectedCategory === "drinks" ? (
+          <DrinksPage />
+        ) : selectedCategory === "appetizers" ? (
+          <AppetizersPage />
+        ) : selectedCategory === "entrees" ? (
+          <EntreesPage />
         ) : selectedCategory === "recentOrders" ? (
           <PreviousOrders />
         ) : (
