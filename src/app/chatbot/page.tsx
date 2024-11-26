@@ -4,7 +4,7 @@ import { Box, Stack, TextField, Button } from "@mui/material";
 import MenuBar from '../_components/customer_menu_bar';
 import Link from "next/link";
 
-export default function chatBot() {
+export default function ChatBot() {
   const [messages, setMessages] = useState([
     { role: "Bot", content: "Hi im fAIshonBot! How can I help you today?" },
   ]);
