@@ -3,9 +3,16 @@
 import React, { useState } from "react";
 import { api } from "~/trpc/react";
 
+// Define the type for an appetizer item
+interface Appetizer {
+  id: number;
+  name: string;
+  type: string;
+}
+
 const AppetizersPage: React.FC = () => {
-  // Fetch all menu items using tRPC
-  const { data, isLoading, error } = api.menu.getAllMenuItems.useQuery();
+  // Fetch appetizers using tRPC and type the response correctly
+  const { data: appetizers, isLoading, error } = api.menu.getMenuItemsByType.useQuery<Appetizer[]>("appetizer");
 
   // State to track the quantities of selected items
   const [selectedAppetizers, setSelectedAppetizers] = useState<Record<string, number>>({});
@@ -20,8 +27,10 @@ const AppetizersPage: React.FC = () => {
     return <div>Error: {error.message}</div>;
   }
 
-  // Filter the data to include only appetizers
-  const appetizers = data?.filter((item) => item.type === "APPETIZER") ?? [];
+  // Check if appetizers is undefined before trying to map over it
+  if (!appetizers) {
+    return <div>No appetizers available.</div>; // You can handle it in any way you'd prefer
+  }
 
   // Increment item quantity
   const incrementItem = (itemName: string) => {
@@ -100,7 +109,7 @@ const AppetizersPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Right section for appetizer summary */}
+      {/* Right section for cart summary */}
       <div className="w-1/4 pl-4">
         <h2 className="text-xl font-bold mb-4">Appetizers Selected</h2>
         <div className="bg-gray-100 p-4 rounded-lg shadow-md">

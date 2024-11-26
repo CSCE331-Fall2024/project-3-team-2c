@@ -3,9 +3,16 @@
 import React, { useState } from "react";
 import { api } from "~/trpc/react";
 
+// Define the type for an entree item
+interface Entree {
+  id: number;
+  name: string;
+  type: string;
+}
+
 const EntreesPage: React.FC = () => {
-  // Fetch all menu items using tRPC
-  const { data, isLoading, error } = api.menu.getAllMenuItems.useQuery();
+  // Fetch entrees using tRPC and type the response correctly
+  const { data: entrees, isLoading, error } = api.menu.getMenuItemsByType.useQuery<Entree[]>("entree");
 
   // State to track the quantities of selected items
   const [selectedEntrees, setSelectedEntrees] = useState<Record<string, number>>({});
@@ -20,8 +27,10 @@ const EntreesPage: React.FC = () => {
     return <div>Error: {error.message}</div>;
   }
 
-  // Filter the data to include only entrees
-  const entrees = data?.filter((item) => item.type === "ENTREE") ?? [];
+  // Check if entrees is undefined before trying to map over it
+  if (!entrees) {
+    return <div>No entrees available.</div>; // You can handle it in any way you'd prefer
+  }
 
   // Increment item quantity
   const incrementItem = (itemName: string) => {
@@ -100,6 +109,7 @@ const EntreesPage: React.FC = () => {
         </div>
       </div>
 
+      {/* Right section for cart summary */}
       <div className="w-1/4 pl-4">
         <h2 className="text-xl font-bold mb-4">Entrees Selected</h2>
         <div className="bg-gray-100 p-4 rounded-lg shadow-md">

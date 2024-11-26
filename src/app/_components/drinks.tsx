@@ -3,9 +3,16 @@
 import React, { useState } from "react";
 import { api } from "~/trpc/react";
 
+// Define the type for a drink item
+interface Drink {
+  id: number;
+  name: string;
+  type: string;
+}
+
 const DrinksPage: React.FC = () => {
-  // Fetch all menu items using tRPC
-  const { data, isLoading, error } = api.menu.getAllMenuItems.useQuery();
+  // Fetch drinks using tRPC and type the response correctly
+  const { data: drinks, isLoading, error } = api.menu.getMenuItemsByType.useQuery<Drink[]>("drink");
 
   // State to track the quantities of selected items
   const [selectedDrinks, setSelectedDrinks] = useState<Record<string, number>>({});
@@ -20,8 +27,9 @@ const DrinksPage: React.FC = () => {
     return <div>Error: {error.message}</div>;
   }
 
-  // Filter the data to include only drinks
-  const drinks = data?.filter((item) => item.type === "DRINK") ?? [];
+  if (!drinks) {
+    return <div>No drinks available.</div>;
+  }
 
   // Increment item quantity
   const incrementItem = (itemName: string) => {
