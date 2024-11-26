@@ -17,6 +17,9 @@ export default function MenuBar({ onCartClick, onHomeClick, onItemClick }: MenuB
         <button onClick={() => onItemClick("entrees")} className="text-white">Entree</button>
         <button onClick={() => onItemClick("appetizers")} className="text-white">Appetizers</button>
         <button onClick={() => onItemClick("drinks")} className="text-white">Drinks</button>
+        <Link href="/chatbot" passHref>
+          BambooBot
+        </Link>
         <button onClick={onCartClick} className="text-white">Cart</button>
       </div>
     </nav>
