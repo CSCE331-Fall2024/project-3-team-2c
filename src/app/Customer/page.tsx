@@ -26,12 +26,10 @@ export default function CustomerPage() {
   };
 
   const handleCartClick = () => {
-    console.log("Cart button clicked");
     setShowCart(true); // Show the cart view
   };
 
   const handleHomeClick = () => {
-    console.log("Home button clicked");
     setSelectedCategory(null); // Reset any selected category
     setShowCart(false);       // Hide the cart view, returning to CustomerGrid
   };
@@ -72,7 +70,7 @@ export default function CustomerPage() {
       <div className="flex-1 p-8 mt-16 h-full">
         {showCart ? (
           <CustomerCart cart={cart} />
-        ) : selectedCategory === "selectionPage" ? (
+        ) : selectedCategory && ["bowl", "plate", "biggerPlate"].includes(selectedCategory) ? (
           <SelectionPage 
             category={selectedCategory} 
             setSelectedCategory={setSelectedCategory}
@@ -81,7 +79,7 @@ export default function CustomerPage() {
         ) : selectedCategory === "recentOrders" ? (
           <PreviousOrders />
         ) : (
-          <CustomerGrid onClick={() => handleGridClick("selectionPage")} />
+          <CustomerGrid onClick={handleGridClick} />
         )}
       </div>
     </div>
