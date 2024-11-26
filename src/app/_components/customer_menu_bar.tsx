@@ -24,6 +24,9 @@ export default function MenuBar({ onCartClick, onHomeClick }: MenuBarProps) {
         <Link href="/drinks" passHref>
           Drinks
         </Link>
+        <Link href="/chatbot" passHref>
+          BambooBot
+        </Link>
         {/* Use a button to trigger the cart function */}
         <button onClick={onCartClick} className="text-white">Cart</button>
       </div>
