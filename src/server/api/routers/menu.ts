@@ -5,6 +5,13 @@ import { db } from "~/server/db";
 import { eq } from "drizzle-orm";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 
+const outputSchema = createSelectSchema(menuItems);
+const insertSchema = createInsertSchema(menuItems);
+const updateSchema = z.object({
+  ...insertSchema.partial().shape,
+  id: z.number(),
+});
+
 async function getOneItem(input: number) {
   console.log("getOneItem", input);
   return (await db.select().from(menuItems).where(eq(menuItems.id, input)))?.at(
@@ -12,12 +19,22 @@ async function getOneItem(input: number) {
   );
 }
 
-const outputSchema = createSelectSchema(menuItems);
-const insertSchema = createInsertSchema(menuItems);
-const updateSchema = z.object({
-  ...insertSchema.partial().shape,
-  id: z.number(),
-});
+async function addOneItem(input: z.infer<typeof insertSchema>) {
+  console.log("addOneItem", input);
+  return (await db.insert(menuItems).values(input))?.at(0);
+}
+
+async function updateOneItem(input: z.infer<typeof updateSchema>) {
+  console.log("updateOneItem", input);
+  return (
+    await db.update(menuItems).set(input).where(eq(menuItems.id, input.id))
+  )?.at(0);
+}
+
+async function deleteOneItem(input: number) {
+  console.log("updateOneItem", input);
+  return (await db.delete(menuItems).where(eq(menuItems.id, input)))?.at(0);
+}
 
 export const menuRouter = createTRPCRouter({
   getMenuItemById: publicProcedure
@@ -59,19 +76,22 @@ export const menuRouter = createTRPCRouter({
 
   addMenuItem: publicProcedure
     .input(insertSchema)
+    .output(outputSchema)
     .mutation(async ({ input }) => {
-      return db.insert(menuItems).values(input);
+      return (await addOneItem(input))!;
     }),
 
   updateMenuItem: publicProcedure
     .input(updateSchema)
+    .output(outputSchema)
     .mutation(async ({ input }) => {
-      return db.update(menuItems).set(input).where(eq(menuItems.id, input.id));
+      return (await updateOneItem(input))!;
     }),
 
   deleteMenuItem: publicProcedure
     .input(z.number())
+    .output(outputSchema)
     .mutation(async ({ input }) => {
-      return db.delete(menuItems).where(eq(menuItems.id, input));
+      return (await deleteOneItem(input))!;
     }),
 });
