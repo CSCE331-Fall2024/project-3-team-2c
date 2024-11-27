@@ -22,9 +22,10 @@ export default function MainMenu() {
   useEffect(() => {
     const fetchWeather = async (latitude: number, longitude: number) => {
       console.log("Fetching weather data for:", { latitude, longitude });
+
       try {
         const response = await fetch(
-          `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&units=metric&appid=${process.env.WEATHER_API_KEY}`,
+          `/api/weather?lat=${latitude}&lon=${longitude}`,
         );
 
         if (!response.ok) {
