@@ -15,7 +15,7 @@ async function getOneIngredient(input: number) {
 const outputSchema = createSelectSchema(ingredients);
 const insertSchema = createInsertSchema(ingredients);
 const updateSchema = z.object({
-  ...insertSchema.shape,
+  ...insertSchema.partial().shape,
   id: z.number(),
 });
 

@@ -15,7 +15,7 @@ async function getOneEmployee(input: number) {
 const outputSchema = createSelectSchema(employees);
 const insertSchema = createInsertSchema(employees);
 const updateSchema = z.object({
-  ...insertSchema.shape,
+  ...insertSchema.partial().shape,
   id: z.number(),
 });
 
