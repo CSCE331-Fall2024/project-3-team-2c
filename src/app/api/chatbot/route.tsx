@@ -44,7 +44,7 @@ export async function POST(req: { json: () => any }) {
       );
     }
 
-    const text = await response.text();
+    const text: string = await response.text();
 
     if (!text) {
       console.error("Empty response from API.");
