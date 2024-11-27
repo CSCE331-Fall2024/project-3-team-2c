@@ -78,7 +78,7 @@ export default function chatBot() {
             value={message}
             onChange={(e) => setMessage(e.target.value)}
           />
-          <Button varient="contained" onClick={sendMessage}>
+          <Button variant="contained" onClick={sendMessage}>
             Send
           </Button>
         </Stack>

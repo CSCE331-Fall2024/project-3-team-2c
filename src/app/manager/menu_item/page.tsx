@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { Card } from "~/app/card_component/Card";
 import { api } from "~/trpc/react";
+import { CardTemp } from "~/app/card_component/card-temp";
 
 interface Item {
   id: number;
@@ -46,7 +46,7 @@ export default function menuItemsPage() {
           refetch(); // Refresh the list after update
           setEditId(null);
         },
-      }
+      },
     );
   };
 
@@ -62,7 +62,7 @@ export default function menuItemsPage() {
             setNewType("entree");
             setEditId(null);
           },
-        }
+        },
       );
     }
   };
@@ -127,7 +127,7 @@ export default function menuItemsPage() {
         <div className="grid grid-cols-1 place-items-center gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
           {items.map((item) => (
             <div key={item.id}>
-              <Card
+              <CardTemp
                 imageUrl="/dog.jpg"
                 name={item.name}
                 onEdit={() => enableEditing(item.id)}
