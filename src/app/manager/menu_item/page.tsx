@@ -1,131 +1,71 @@
 "use client";
-import React, { useState } from "react";
-import { Card } from "../../card_component/card";
-import { redirect } from "next/navigation";
-import { useEffect } from "react";
-import { TRPCUntypedClient } from "@trpc/client";
+import React, { useState, useEffect } from "react";
+import { Card } from "~/app/card_component/Card";
+import { api } from "~/trpc/react";
 
 interface Item {
   id: number;
-  content: string;
+  name: string;
   type: string;
 }
 
-const MenuItemsPage: React.FC = () => {
-  // useEffect(() => {
-  //   const fetchMenuItems = async () => {
-  //     try {
-  //       const response = await fetch("/api/manager");
-  //       if (!response.ok) {
-  //         throw new Error("Network response was not ok");
-  //       }
-  //       const data = await response.json();
-  //       console.log("Menu Items:", data.items);
-  //       setItems(
-  //           data.items.map((item: any) => ({
-  //             id: item.id,
-  //             content: item.name,
-  //             type: item.type,
-  //           }))
-  //         );
-  //     } catch (error) {
-  //       console.error("Error fetching menu items:", error);
-  //     }
-  //   };
-  //
-  //   fetchMenuItems();
-  // }, []);
-
+export default function menuItemsPage() {
   const [items, setItems] = useState<Item[]>([]);
   const [newContent, setNewContent] = useState<string>("");
-  const [newType, setNewType] = useState<string>("");
+  const [newType, setNewType] = useState<string>("entree");
   const [editId, setEditId] = useState<number | null>(null);
+
+  const { data, refetch } = api.menu.getAllMenuItems.useQuery();
+
+  // Sync items state with query data
+  useEffect(() => {
+    if (data) {
+      setItems(data);
+    }
+  }, [data]);
 
   const enableEditing = (id: number) => {
     setEditId(id);
   };
 
-  // const deleteItem = async (id: number) => {
-  //     setItems(items.filter((item) => item.id !== id));
-  //     try{
-  //         const response = await fetch("/api/manager", {
-  //         method: "DELETE",
-  //         headers: {
-  //             "Content-Type": "application/json",
-  //         },
-  //         body: JSON.stringify(id),
-  //         });
-  //
-  //         if (!response.ok) {
-  //         throw new Error("Failed to delete a menu item");
-  //         }
-  //
-  //         const data = await response.json();
-  //         console.log("Menu item deleted:", data);
-  //     }
-  //     catch(error){
-  //         console.error("Failed to delete a menu item from the table", error);
-  //     }
-  // };
+  const deleteMutation = api.menu.deleteMenuItem.useMutation();
+  const deleteItem = async (id: number) => {
+    deleteMutation.mutate(id, {
+      onSuccess: () => {
+        refetch(); // Refresh the list after deletion
+      },
+    });
+  };
 
-  //Save an edited item
-  // const saveEdit = async (id: number, newContent: string) => {
-  //     try{
-  //         const response = await fetch("/api/manager", {
-  //             method: "PUT",
-  //             headers: {
-  //               "Content-Type": "application/json",
-  //             },
-  //             body: JSON.stringify({ name: newContent, id }),
-  //           });
-  //
-  //           if (!response.ok) {
-  //             throw new Error("Failed to update menu item");
-  //           }
-  //           const data = await response.json();
-  //           console.log("Menu item updated:", data);
-  //     }
-  //     catch(error){
-  //         console.error("Failed to update menu item", error);
-  //     }
-  //     setItems(items.map((item) => (item.id === id ? { ...item, content: newContent } : item)));
-  //     setEditId(null); // Disable editing mode after saving
-  // };
+  const updateMutation = api.menu.updateMenuItem.useMutation();
+  const saveEdit = async (id: number, newContent: string) => {
+    updateMutation.mutate(
+      { id, name: newContent },
+      {
+        onSuccess: () => {
+          refetch(); // Refresh the list after update
+          setEditId(null);
+        },
+      }
+    );
+  };
 
-  //Add a new item
-  // const addItem = async () => {
-  //     if (newContent.trim() !== "") {
-  //         try {
-  //             console.log("name and type:", newContent, " and ", newType)
-  //             const response = await fetch("/api/manager", {
-  //               method: "POST",
-  //               headers: {
-  //                 "Content-Type": "application/json",
-  //               },
-  //               body: JSON.stringify({ name: newContent, type: newType }),
-  //             });
-  //
-  //             if (!response.ok) {
-  //               throw new Error("Failed to add menu item");
-  //             }
-  //             const data = await response.json();
-  //             console.log("Menu item added:", data);
-  //             const newItem: Item = {
-  //                 id: data.id,
-  //                 content: data.name,
-  //                 type: data.type
-  //             };
-  //             setItems([...items, newItem]);
-  //
-  //             setNewContent("");
-  //             setNewType("entree");
-  //             // setting Edit ID to null fixed the issue of not being able to edit right after adding a new item
-  //             setEditId(null);
-  //           } catch (error) {
-  //             console.error("Error adding menu item:", error);
-  //           }
-  //     }
-  // };
+  const addMutation = api.menu.addMenuItem.useMutation();
+  const addItem = async () => {
+    if (newContent.trim() !== "") {
+      addMutation.mutate(
+        { name: newContent, type: newType },
+        {
+          onSuccess: () => {
+            refetch(); // Refresh the list after addition
+            setNewContent("");
+            setNewType("entree");
+            setEditId(null);
+          },
+        }
+      );
+    }
+  };
 
   return (
     <div>
@@ -159,7 +99,6 @@ const MenuItemsPage: React.FC = () => {
       </header>
 
       <div className="p-4">
-        {/* Add new item section */}
         <div className="mb-6 flex justify-center">
           <input
             type="text"
@@ -173,36 +112,33 @@ const MenuItemsPage: React.FC = () => {
             onChange={(e) => setNewType(e.target.value)}
             className="mr-2 rounded border p-2"
           >
-            <option>None</option>
             <option value="ENTREE">Entree</option>
             <option value="DRINK">Drink</option>
             <option value="SIDE">Side</option>
           </select>
           <button
-            // onClick={addItem}
+            onClick={addItem}
             className="rounded bg-blue-500 px-3 py-2 text-white hover:bg-blue-700"
           >
             Add
           </button>
         </div>
 
-        {/* Render the list of cards */}
         <div className="grid grid-cols-1 place-items-center gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-          {/*{items.map((item) => (*/}
-          {/*    <Card*/}
-          {/*        key={item.id}*/}
-          {/*        imageUrl="/dog.jpg"*/}
-          {/*        name={item.content}*/}
-          {/*        onEdit={() => enableEditing(item.id)}*/}
-          {/*        // onDelete={() => deleteItem(item.id)}*/}
-          {/*        isEditing={editId === item.id}*/}
-          {/*        // onSave={(newContent) => saveEdit(item.id, newContent)}*/}
-          {/*    />*/}
-          {/*))}*/}
+          {items.map((item) => (
+            <div key={item.id}>
+              <Card
+                imageUrl="/dog.jpg"
+                name={item.name}
+                onEdit={() => enableEditing(item.id)}
+                onDelete={() => deleteItem(item.id)}
+                isEditing={editId === item.id}
+                onSave={(newContent) => saveEdit(item.id, newContent)}
+              />
+            </div>
+          ))}
         </div>
       </div>
     </div>
   );
-};
-
-export default MenuItemsPage;
+}
