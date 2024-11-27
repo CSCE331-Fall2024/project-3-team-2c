@@ -3,16 +3,21 @@ import { z } from "zod";
 import { containers, menuItems } from "~/server/db/schema";
 import { db } from "~/server/db";
 import { eq } from "drizzle-orm";
-import { createSelectSchema } from "drizzle-zod";
+import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 
 async function getOneItem(input: number) {
   console.log("getOneItem", input);
-  return (
-    await db.select().from(menuItems).where(eq(menuItems.id, input))
-  )?.at(0);
+  return (await db.select().from(menuItems).where(eq(menuItems.id, input)))?.at(
+    0,
+  );
 }
 
 const outputSchema = createSelectSchema(menuItems);
+const insertSchema = createInsertSchema(menuItems);
+const updateSchema = z.object({
+  ...insertSchema.shape,
+  id: z.number(),
+});
 
 export const menuRouter = createTRPCRouter({
   getMenuItemById: publicProcedure
@@ -31,7 +36,7 @@ export const menuRouter = createTRPCRouter({
     .output(z.array(outputSchema))
     .query(async ({ input }) => {
       console.log("running getOneItem Query", input.length);
-      if(input.length == 0){
+      if (input.length == 0) {
         return [];
       }
       return Promise.all(
@@ -50,5 +55,23 @@ export const menuRouter = createTRPCRouter({
         .select()
         .from(menuItems)
         .where(eq(menuItems.type, input.toUpperCase()));
+    }),
+
+  addMenuItem: publicProcedure
+    .input(insertSchema)
+    .mutation(async ({ input }) => {
+      return db.insert(menuItems).values(input);
+    }),
+
+  updateMenuItem: publicProcedure
+    .input(updateSchema)
+    .mutation(async ({ input }) => {
+      return db.update(menuItems).set(input).where(eq(menuItems.id, input.id));
+    }),
+
+  deleteMenuItem: publicProcedure
+    .input(z.number())
+    .mutation(async ({ input }) => {
+      return db.delete(menuItems).where(eq(menuItems.id, input));
     }),
 });
