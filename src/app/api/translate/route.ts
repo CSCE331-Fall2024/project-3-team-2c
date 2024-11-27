@@ -5,7 +5,7 @@ export async function POST(request: Request) {
     text: string;
     target: string;
   };
-  const apiKey = process.env.NEXT_PUBLIC_GOOGLE_TRANSLATE_API_KEY;
+  const apiKey = process.env.GOOGLE_TRANSLATE_API_KEY;
 
   const url = `https://translation.googleapis.com/language/translate/v2?key=${apiKey}`;
 
