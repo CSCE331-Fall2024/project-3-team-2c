@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { api } from "~/trpc/react";
 import { Card } from "~/app/card_component/Card";
+import Header from "~/app/_components/header";
 
 interface Item {
   id: number;
@@ -86,7 +87,7 @@ export default function MenuItemsPage() {
 
   return (
     <div>
-      <header
+      {/* <header
         style={{
           backgroundColor: "red",
           padding: "1rem",
@@ -113,7 +114,8 @@ export default function MenuItemsPage() {
           </a>
           <a href="#disposables">Disposables</a>
         </nav>
-      </header>
+      </header> */}
+      <Header />
 
       <div className="p-4">
         <div className="mb-6 flex justify-center">
