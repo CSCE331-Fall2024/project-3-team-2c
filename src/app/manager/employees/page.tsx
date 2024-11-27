@@ -9,6 +9,7 @@ import {
   DialogTitle,
 } from "~/components/ui/dialog";
 import { Input } from "~/components/ui/input";
+import Header from "~/app/_components/header";
 
 export default function EmployeesPage() {
   const [employees, setEmployees] = useState([]);
@@ -79,93 +80,105 @@ export default function EmployeesPage() {
   }, []);
 
   return (
-    <div className="p-6">
-      <h1 className="mb-4 text-xl font-bold">Manage Employees</h1>
+    <>
+      <Header />
+      <div className="p-6">
+        <h1 className="mb-4 flex justify-center text-xl font-bold">
+          Manage Employees
+        </h1>
 
-      <table className="w-full table-auto border-collapse border border-gray-300">
-        <thead className="bg-gray-100">
-          <tr>
-            <th className="border border-gray-300 px-4 py-2 text-left">ID</th>
-            <th className="border border-gray-300 px-4 py-2 text-left">Name</th>
-            <th className="border border-gray-300 px-4 py-2 text-left">
-              Email
-            </th>
-            <th className="border border-gray-300 px-4 py-2 text-left">Role</th>
-            <th className="border border-gray-300 px-4 py-2 text-left">
-              Actions
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {employees.map((employee) => (
-            <tr key={employee.id} className="hover:bg-gray-50">
-              <td className="border border-gray-300 px-4 py-2">
-                {employee.id}
-              </td>
-              <td className="border border-gray-300 px-4 py-2">
-                {employee.name}
-              </td>
-              <td className="border border-gray-300 px-4 py-2">
-                {employee.email}
-              </td>
-              <td className="border border-gray-300 px-4 py-2">
-                {employee.role}
-              </td>
-              <td className="flex gap-2 border border-gray-300 px-4 py-2">
-                <Button variant="outline" onClick={() => handleEdit(employee)}>
-                  Edit
-                </Button>
-                <Button
-                  variant="destructive"
-                  onClick={() => handleDelete(employee.id)}
-                >
-                  Delete
-                </Button>
-              </td>
+        <table className="w-full table-auto border-collapse border border-gray-300">
+          <thead className="bg-gray-100">
+            <tr>
+              <th className="border border-gray-300 px-4 py-2 text-left">ID</th>
+              <th className="border border-gray-300 px-4 py-2 text-left">
+                Name
+              </th>
+              <th className="border border-gray-300 px-4 py-2 text-left">
+                Email
+              </th>
+              <th className="border border-gray-300 px-4 py-2 text-left">
+                Role
+              </th>
+              <th className="border border-gray-300 px-4 py-2 text-left">
+                Actions
+              </th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {employees.map((employee) => (
+              <tr key={employee.id} className="hover:bg-gray-50">
+                <td className="border border-gray-300 px-4 py-2">
+                  {employee.id}
+                </td>
+                <td className="border border-gray-300 px-4 py-2">
+                  {employee.name}
+                </td>
+                <td className="border border-gray-300 px-4 py-2">
+                  {employee.email}
+                </td>
+                <td className="border border-gray-300 px-4 py-2">
+                  {employee.role}
+                </td>
+                <td className="flex gap-2 border border-gray-300 px-4 py-2">
+                  <Button
+                    variant="outline"
+                    onClick={() => handleEdit(employee)}
+                  >
+                    Edit
+                  </Button>
+                  <Button
+                    variant="destructive"
+                    onClick={() => handleDelete(employee.id)}
+                  >
+                    Delete
+                  </Button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
 
-      <Button className="mt-4" onClick={handleAdd}>
-        Add Employee
-      </Button>
+        <Button className="mt-4" onClick={handleAdd}>
+          Add Employee
+        </Button>
 
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>
-              {formValues.id ? "Edit Employee" : "Add Employee"}
-            </DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4">
-            <Input
-              placeholder="Name"
-              value={formValues.name}
-              onChange={(e) =>
-                setFormValues({ ...formValues, name: e.target.value })
-              }
-            />
-            <Input
-              placeholder="Email"
-              value={formValues.email}
-              onChange={(e) =>
-                setFormValues({ ...formValues, email: e.target.value })
-              }
-            />
-            <Input
-              placeholder="Role"
-              value={formValues.role}
-              onChange={(e) =>
-                setFormValues({ ...formValues, role: e.target.value })
-              }
-            />
-          </div>
-          <Button className="mt-4" onClick={handleSave}>
-            Save
-          </Button>
-        </DialogContent>
-      </Dialog>
-    </div>
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>
+                {formValues.id ? "Edit Employee" : "Add Employee"}
+              </DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <Input
+                placeholder="Name"
+                value={formValues.name}
+                onChange={(e) =>
+                  setFormValues({ ...formValues, name: e.target.value })
+                }
+              />
+              <Input
+                placeholder="Email"
+                value={formValues.email}
+                onChange={(e) =>
+                  setFormValues({ ...formValues, email: e.target.value })
+                }
+              />
+              <Input
+                placeholder="Role"
+                value={formValues.role}
+                onChange={(e) =>
+                  setFormValues({ ...formValues, role: e.target.value })
+                }
+              />
+            </div>
+            <Button className="mt-4" onClick={handleSave}>
+              Save
+            </Button>
+          </DialogContent>
+        </Dialog>
+      </div>
+    </>
   );
 }

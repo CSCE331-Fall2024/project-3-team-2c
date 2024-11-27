@@ -4,6 +4,7 @@ import { Card } from "../../card_component/card";
 import { redirect } from "next/navigation";
 import { useEffect } from "react";
 import { TRPCUntypedClient } from "@trpc/client";
+import Header from "~/app/_components/header";
 
 interface Item {
   id: number;
@@ -129,7 +130,7 @@ const MenuItemsPage: React.FC = () => {
 
   return (
     <div>
-      <header
+      {/* <header
         style={{
           backgroundColor: "red",
           padding: "1rem",
@@ -156,7 +157,8 @@ const MenuItemsPage: React.FC = () => {
           </a>
           <a href="#disposables">Disposables</a>
         </nav>
-      </header>
+      </header> */}
+      <Header />
 
       <div className="p-4">
         {/* Add new item section */}
