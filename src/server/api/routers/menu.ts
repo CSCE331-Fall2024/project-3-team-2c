@@ -3,16 +3,38 @@ import { z } from "zod";
 import { containers, menuItems } from "~/server/db/schema";
 import { db } from "~/server/db";
 import { eq } from "drizzle-orm";
-import { createSelectSchema } from "drizzle-zod";
+import { createInsertSchema, createSelectSchema } from "drizzle-zod";
+
+const outputSchema = createSelectSchema(menuItems);
+const insertSchema = createInsertSchema(menuItems);
+const updateSchema = z.object({
+  ...insertSchema.partial().shape,
+  id: z.number(),
+});
 
 async function getOneItem(input: number) {
   console.log("getOneItem", input);
+  return (await db.select().from(menuItems).where(eq(menuItems.id, input)))?.at(
+    0,
+  );
+}
+
+async function addOneItem(input: z.infer<typeof insertSchema>) {
+  console.log("addOneItem", input);
+  return (await db.insert(menuItems).values(input))?.at(0);
+}
+
+async function updateOneItem(input: z.infer<typeof updateSchema>) {
+  console.log("updateOneItem", input);
   return (
-    await db.select().from(menuItems).where(eq(menuItems.id, input))
+    await db.update(menuItems).set(input).where(eq(menuItems.id, input.id))
   )?.at(0);
 }
 
-const outputSchema = createSelectSchema(menuItems);
+async function deleteOneItem(input: number) {
+  console.log("updateOneItem", input);
+  return (await db.delete(menuItems).where(eq(menuItems.id, input)))?.at(0);
+}
 
 export const menuRouter = createTRPCRouter({
   getMenuItemById: publicProcedure
@@ -31,7 +53,7 @@ export const menuRouter = createTRPCRouter({
     .output(z.array(outputSchema))
     .query(async ({ input }) => {
       console.log("running getOneItem Query", input.length);
-      if(input.length == 0){
+      if (input.length == 0) {
         return [];
       }
       return Promise.all(
@@ -50,5 +72,26 @@ export const menuRouter = createTRPCRouter({
         .select()
         .from(menuItems)
         .where(eq(menuItems.type, input.toUpperCase()));
+    }),
+
+  addMenuItem: publicProcedure
+    .input(insertSchema)
+    .output(outputSchema)
+    .mutation(async ({ input }) => {
+      return (await addOneItem(input))!;
+    }),
+
+  updateMenuItem: publicProcedure
+    .input(updateSchema)
+    .output(outputSchema)
+    .mutation(async ({ input }) => {
+      return (await updateOneItem(input))!;
+    }),
+
+  deleteMenuItem: publicProcedure
+    .input(z.number())
+    .output(outputSchema)
+    .mutation(async ({ input }) => {
+      return (await deleteOneItem(input))!;
     }),
 });
