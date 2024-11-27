@@ -12,7 +12,11 @@ export default function MenuBar({
   onHomeClick,
   onItemClick,
 }: MenuBarProps) {
-  onItemClick = onItemClick ?? (() => {});
+  onItemClick =
+    onItemClick ??
+    ((category) => {
+      console.log("There onItemClick not defined. Category: ", category);
+    });
 
   return (
     <nav className="top-0 z-10 w-full bg-[#d1282e] p-4 text-white">
