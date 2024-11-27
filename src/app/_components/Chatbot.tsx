@@ -3,7 +3,7 @@ import { useState } from "react";
 import Button from "@mui/material/Button";
 import { Box, Stack, TextField } from "@mui/material";
 
-export default function ChatbotTemp() {
+export default function Chatbot() {
   const [messages, setMessages] = useState([
     { role: "Bot", content: "Hi im fAIshonBot! How can I help you today?" },
   ]);
