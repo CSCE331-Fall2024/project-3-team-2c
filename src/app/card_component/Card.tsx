@@ -10,7 +10,7 @@ interface SquareBlockProps {
   onSave: (newName: string) => void;
 }
 
-export const CardTemp: React.FC<SquareBlockProps> = ({
+export const Card: React.FC<SquareBlockProps> = ({
   imageUrl,
   name,
   onEdit,
