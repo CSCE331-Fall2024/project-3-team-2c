@@ -4,9 +4,9 @@
 /* eslint @typescript-eslint/no-require-imports: 0 */
 /* eslint @typescript-eslint/no-explicit-any: 0 */
 
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function POST(req: { json: () => any }) {
+export async function POST(req: NextRequest) {
   try {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const promptResponse = await req.json();
