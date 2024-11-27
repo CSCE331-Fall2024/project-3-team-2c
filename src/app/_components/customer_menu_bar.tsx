@@ -15,7 +15,7 @@ export default function MenuBar({
   onItemClick =
     onItemClick ??
     ((category) => {
-      console.log("There onItemClick not defined. Category: ", category);
+      console.log("onItemClick not defined. Category: ", category);
     });
 
   return (
