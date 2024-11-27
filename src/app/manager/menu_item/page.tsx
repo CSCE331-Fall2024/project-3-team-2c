@@ -9,7 +9,7 @@ interface Item {
   type: string;
 }
 
-export default function menuItemsPage() {
+export default function MenuItemsPage() {
   const [items, setItems] = useState<Item[]>([]);
   const [newContent, setNewContent] = useState<string>("");
   const [newType, setNewType] = useState<string>("entree");
@@ -32,7 +32,13 @@ export default function menuItemsPage() {
   const deleteItem = async (id: number) => {
     deleteMutation.mutate(id, {
       onSuccess: () => {
-        refetch(); // Refresh the list after deletion
+        refetch()
+          .then(() => {
+            setEditId(null);
+          })
+          .catch((e) => {
+            console.log(e);
+          }); // Refresh the list after deletion
       },
     });
   };
@@ -43,8 +49,13 @@ export default function menuItemsPage() {
       { id, name: newContent },
       {
         onSuccess: () => {
-          refetch(); // Refresh the list after update
-          setEditId(null);
+          refetch()
+            .then(() => {
+              setEditId(null);
+            })
+            .catch((e) => {
+              console.log(e);
+            }); // Refresh the list after update
         },
       },
     );
@@ -57,10 +68,16 @@ export default function menuItemsPage() {
         { name: newContent, type: newType },
         {
           onSuccess: () => {
-            refetch(); // Refresh the list after addition
-            setNewContent("");
-            setNewType("entree");
-            setEditId(null);
+            refetch()
+              .then(() => {
+                // Refresh the list after addition
+                setNewContent("");
+                setNewType("entree");
+                setEditId(null);
+              })
+              .catch((e) => {
+                console.log(e);
+              });
           },
         },
       );
