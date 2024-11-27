@@ -57,19 +57,19 @@ export const employeesRouter = createTRPCRouter({
         .where(eq(employees.role, input.toUpperCase()));
     }),
 
-  addMenuItem: publicProcedure
+  addEmployee: publicProcedure
     .input(insertSchema)
     .mutation(async ({ input }) => {
       return db.insert(employees).values(input);
     }),
 
-  updateMenuItem: publicProcedure
+  updateEmployee: publicProcedure
     .input(updateSchema)
     .mutation(async ({ input }) => {
       return db.update(employees).set(input).where(eq(employees.id, input.id));
     }),
 
-  deleteMenuItem: publicProcedure
+  deleteEmployee: publicProcedure
     .input(z.number())
     .mutation(async ({ input }) => {
       return db.delete(employees).where(eq(employees.id, input));
