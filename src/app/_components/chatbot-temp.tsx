@@ -3,7 +3,7 @@ import { useState } from "react";
 import Button from "@mui/material/Button";
 import { Box, Stack, TextField } from "@mui/material";
 
-export default function chatBot() {
+export default function ChatbotTemp() {
   const [messages, setMessages] = useState([
     { role: "Bot", content: "Hi im fAIshonBot! How can I help you today?" },
   ]);
@@ -20,7 +20,9 @@ export default function chatBot() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify([...messages, { role: "User", content: message }]),
     });
-    const data = await response.json();
+
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const data: { message: string } = await response.json();
     setMessages((messages) => [
       ...messages,
       { role: "Bot", content: data.message },
