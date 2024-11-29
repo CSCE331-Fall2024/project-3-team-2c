@@ -12,7 +12,7 @@ import EntreesPage from '../_components/entrees';
 
 export default function CustomerPage() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [cart, setCart] = useState<{ individualItems: string[]; combos: { name: string; items: Record<string, string[]> }[] }>({
+  const [cart, setCart] = useState<{ individualItems: string[]; combos: { name: string; items: Record<string, { id: number; name: string }[]> }[] }>({
     individualItems: [],
     combos: [],
   });
@@ -37,19 +37,33 @@ export default function CustomerPage() {
     setShowCart(false);       // Hide the cart view, returning to CustomerGrid
   };
 
-  const addItemToCart = (item: string) => {
+  const addComboToCart = (
+    packageName: string,
+    packageItems: Record<string, { id: number; name: string }[]>
+  ) => {
+    console.log(packageName);
+    console.log(packageItems);
+  
+    // Prepare the cart data structure to include the new format
+    const formattedItems = Object.fromEntries(
+      Object.entries(packageItems).map(([step, items]) => [
+        step,
+        items.map(({ id, name }) => ({ id, name })),
+      ])
+    );
+  
     setCart((prevCart) => ({
       ...prevCart,
-      individualItems: [...prevCart.individualItems, item],
+      combos: [
+        ...prevCart.combos,
+        {
+          name: packageName,
+          items: formattedItems,
+        },
+      ],
     }));
   };
-
-  const addComboToCart = (packageName: string, packageItems: Record<string, string[]>) => {
-    setCart((prevCart) => ({
-      ...prevCart,
-      combos: [...prevCart.combos, { name: packageName, items: packageItems }],
-    }));
-  };
+  
 
   const showRecentOrders = (category: string) => {
     setSelectedCategory(category)
@@ -70,7 +84,7 @@ export default function CustomerPage() {
         </button>
       </div>
   
-      <div className="flex-1 p-8 mt-16 h-full">
+      <div className="flex-1 p-8 mt-2 h-full">
         {showCart ? (
           <CustomerCart cart={cart} />
         ) : selectedCategory && ["bowl", "plate", "biggerPlate"].includes(selectedCategory) ? (
@@ -84,7 +98,9 @@ export default function CustomerPage() {
         ) : selectedCategory === "appetizers" ? (
           <AppetizersPage />
         ) : selectedCategory === "entrees" ? (
-          <EntreesPage />
+          <EntreesPage 
+            addComboToCart={addComboToCart}
+          />
         ) : selectedCategory === "recentOrders" ? (
           <PreviousOrders />
         ) : (

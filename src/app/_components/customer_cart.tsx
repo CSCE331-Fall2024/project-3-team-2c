@@ -1,6 +1,6 @@
 import React from "react";
 
-type ComboItems = Record<string, string[]>;
+type ComboItems = Record<string, { id: number; name: string }[]>;
 
 interface Combo {
   name: string;
@@ -21,25 +21,10 @@ const CustomerCart: React.FC<CustomerCartProps> = ({ cart }) => {
     <div className="p-4">
       <h2 className="text-2xl font-bold mb-4">Your Cart</h2>
 
-      {/* Individual Items Section */}
-      <div className="mb-6">
-        <h3 className="text-xl font-semibold mb-2">Individual Items</h3>
-        {individualItems.length === 0 ? (
-          <p className="text-gray-600">No individual items in your cart.</p>
-        ) : (
-          <ul className="ml-4 list-disc">
-            {individualItems.map((item, index) => (
-              <li key={index} className="text-gray-700">{item}</li>
-            ))}
-          </ul>
-        )}
-      </div>
-
-      {/* Combos Section */}
-      <div className="mb-6">
-        <h3 className="text-xl font-semibold mb-2">Combos</h3>
+      {/* Scrollable container */}
+      <div className="mb-6 max-h-64 overflow-y-auto border border-gray-300 rounded-md p-2">
         {combos.length === 0 ? (
-          <p className="text-gray-600">No combos in your cart.</p>
+          <p className="text-gray-600">No items in your cart.</p>
         ) : (
           combos.map((combo, index) => (
             <div key={index} className="mb-3">
@@ -49,7 +34,7 @@ const CustomerCart: React.FC<CustomerCartProps> = ({ cart }) => {
                   <li key={idx} className="text-gray-700">
                     <span className="font-medium">{category}:</span>{" "}
                     <span className="text-gray-600">
-                      {items.join(", ")}
+                      {items.map(item => item.name).join(", ")}
                     </span>
                   </li>
                 ))}
