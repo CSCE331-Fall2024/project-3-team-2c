@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { api } from "~/trpc/react";
+import { useRouter } from "next/navigation";
 
 // Define the type for a drink item
 interface Drink {
@@ -11,10 +12,16 @@ interface Drink {
 }
 
 export default function DrinksPage({
+  category,
+  setSelectedCategory,
   addComboToCart,
 }: {
+  category: string;
+  setSelectedCategory: (category: string | null) => void;
   addComboToCart: (comboName: string, comboItems: Record<string, { id: number; name: string }[]>) => void;
 }) {
+  const router = useRouter();
+
   // Fetch drinks using tRPC and type the response correctly
   const { data: drinks, isLoading, error } = api.menu.getMenuItemsByType.useQuery<Drink[]>("drink");
 
@@ -89,6 +96,9 @@ export default function DrinksPage({
         addComboToCart("Item", { "drink": [{ id: item.id, name: item.name }] });
       }
     });
+
+    setSelectedCategory(null);
+    router.push("/Customer");
   };
 
   return (

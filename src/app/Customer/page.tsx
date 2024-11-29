@@ -95,14 +95,20 @@ export default function CustomerPage() {
           />
         ) : selectedCategory === "drinks" ? (
           <DrinksPage 
+            category={selectedCategory} 
+            setSelectedCategory={setSelectedCategory}
             addComboToCart={addComboToCart}
           />
         ) : selectedCategory === "appetizers" ? (
           <SidesPage 
+            category={selectedCategory} 
+            setSelectedCategory={setSelectedCategory}
             addComboToCart={addComboToCart}
           />
         ) : selectedCategory === "entrees" ? (
           <EntreesPage 
+            category={selectedCategory} 
+            setSelectedCategory={setSelectedCategory}
             addComboToCart={addComboToCart}
           />
         ) : selectedCategory === "recentOrders" ? (
