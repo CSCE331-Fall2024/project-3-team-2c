@@ -7,8 +7,8 @@ import SelectionPage from '../_components/customer_selection_page';
 import CustomerCart from '../_components/customer_cart';
 import PreviousOrders from './recentOrder/page';
 import DrinksPage from '../_components/drinks';
-import AppetizersPage from '../_components/appetizers';
 import EntreesPage from '../_components/entrees';
+import SidesPage from '../_components/sides';
 
 export default function CustomerPage() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -94,9 +94,13 @@ export default function CustomerPage() {
             addComboToCart={addComboToCart}
           />
         ) : selectedCategory === "drinks" ? (
-          <DrinksPage />
+          <DrinksPage 
+            addComboToCart={addComboToCart}
+          />
         ) : selectedCategory === "appetizers" ? (
-          <AppetizersPage />
+          <SidesPage 
+            addComboToCart={addComboToCart}
+          />
         ) : selectedCategory === "entrees" ? (
           <EntreesPage 
             addComboToCart={addComboToCart}

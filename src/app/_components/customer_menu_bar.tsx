@@ -33,7 +33,7 @@ export default function MenuBar({
           onClick={() => onItemClick("appetizers")}
           className="text-white"
         >
-          Appetizers
+          Sides
         </button>
         <button onClick={() => onItemClick("drinks")} className="text-white">
           Drinks

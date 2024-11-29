@@ -10,12 +10,18 @@ interface Drink {
   type: string;
 }
 
-const DrinksPage: React.FC = () => {
+export default function DrinksPage({
+  addComboToCart,
+}: {
+  addComboToCart: (comboName: string, comboItems: Record<string, { id: number; name: string }[]>) => void;
+}) {
   // Fetch drinks using tRPC and type the response correctly
   const { data: drinks, isLoading, error } = api.menu.getMenuItemsByType.useQuery<Drink[]>("drink");
 
   // State to track the quantities of selected items
-  const [selectedDrinks, setSelectedDrinks] = useState<Record<string, number>>({});
+  const [selectedDrinks, setSelectedDrinks] = useState<
+    Record<string, { id: number; name: string; quantity: number }>
+  >({});
 
   // Handle loading state
   if (isLoading) {
@@ -27,46 +33,62 @@ const DrinksPage: React.FC = () => {
     return <div>Error: {error.message}</div>;
   }
 
+  // Check if drinks is undefined before trying to map over it
   if (!drinks) {
-    return <div>No drinks available.</div>;
+    return <div>No drinks available.</div>; // You can handle it in any way you'd prefer
   }
 
   // Increment item quantity
-  const incrementItem = (itemName: string) => {
+  const incrementItem = (item: Drink) => {
     setSelectedDrinks((prevSelectedDrinks) => ({
       ...prevSelectedDrinks,
-      [itemName]: (prevSelectedDrinks[itemName] ?? 0) + 1,
+      [item.name]: {
+        ...prevSelectedDrinks[item.name],
+        id: item.id,
+        name: item.name,
+        quantity: (prevSelectedDrinks[item.name]?.quantity ?? 0) + 1,
+      },
     }));
   };
 
   // Decrement item quantity
   const decrementItem = (itemName: string) => {
     setSelectedDrinks((prevSelectedDrinks) => {
-      const currentCount = prevSelectedDrinks[itemName] ?? 0;
-      if (currentCount <= 1) {
+      const currentItem = prevSelectedDrinks[itemName];
+      if (!currentItem) return prevSelectedDrinks;
+
+      if (currentItem.quantity <= 1) {
         const { [itemName]: _, ...rest } = prevSelectedDrinks; // Remove item from selectedDrinks
         return rest;
       }
+
       return {
         ...prevSelectedDrinks,
-        [itemName]: currentCount - 1,
+        [itemName]: {
+          ...currentItem,
+          quantity: currentItem.quantity - 1,
+        },
       };
     });
   };
 
   // Calculate total drinks in selectedDrinks
-  const totalDrinks = Object.values(selectedDrinks).reduce((sum, count) => sum + count, 0);
+  const totalDrinks = Object.values(selectedDrinks).reduce((sum, item) => sum + item.quantity, 0);
 
   // Placeholder function to handle order submission
   const handleSubmitOrder = () => {
-    // Create a list of selected items with their quantities for submission
-    const orderList = Object.entries(selectedDrinks).map(([itemName, quantity]) => ({
-      name: itemName,
-      quantity,
+    const orderList = Object.values(selectedDrinks).map((item) => ({
+      id: item.id,
+      name: item.name,
+      quantity: item.quantity,
     }));
 
-    // For now, just log the order list
-    console.log("Order submitted:", orderList);
+    // Iterate through each item and its quantity
+    orderList.forEach((item) => {
+      for (let i = 0; i < item.quantity; i++) {
+        addComboToCart("Item", { "drink": [{ id: item.id, name: item.name }] });
+      }
+    });
   };
 
   return (
@@ -76,7 +98,7 @@ const DrinksPage: React.FC = () => {
         <h1 className="text-2xl font-bold mb-4">Drinks</h1>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {drinks.map((item) => {
-            const quantity = selectedDrinks[item.name] ?? 0;
+            const quantity = selectedDrinks[item.name]?.quantity ?? 0;
 
             return (
               <div
@@ -96,7 +118,7 @@ const DrinksPage: React.FC = () => {
                   </button>
                   <span className="px-3 py-1 bg-gray-800 text-white rounded-lg">{quantity}</span>
                   <button
-                    onClick={() => incrementItem(item.name)}
+                    onClick={() => incrementItem(item)}
                     className="px-3 py-1 bg-white text-black rounded-lg"
                   >
                     +
@@ -114,10 +136,10 @@ const DrinksPage: React.FC = () => {
         <div className="bg-gray-100 p-4 rounded-lg shadow-md">
           <p className="text-lg font-semibold">Total Drinks: {totalDrinks}</p>
           <ul className="mt-4">
-            {Object.entries(selectedDrinks).map(([itemName, quantity]) => (
-              <li key={itemName} className="flex justify-between">
-                <span>{itemName}</span>
-                <span>{quantity}</span>
+            {Object.values(selectedDrinks).map((item) => (
+              <li key={item.id} className="flex justify-between">
+                <span>{item.name}</span>
+                <span>{item.quantity}</span>
               </li>
             ))}
           </ul>
@@ -133,6 +155,4 @@ const DrinksPage: React.FC = () => {
       </div>
     </div>
   );
-};
-
-export default DrinksPage;
+}
