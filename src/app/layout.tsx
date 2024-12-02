@@ -21,6 +21,7 @@ import type { ReactNode } from "react";
 import { useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { LanguageProvider, useLanguage } from "~/context/LanguageContext";
+import Head from "next/head";
 
 function TranslatePage() {
   const { selectedLanguage } = useLanguage();
@@ -77,6 +78,9 @@ function TranslatePage() {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
+      <Head>
+        <title>BambooPOS</title>
+      </Head>
       <body>
         <LanguageProvider>
           <TRPCReactProvider>
