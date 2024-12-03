@@ -12,8 +12,7 @@ import SidesPage from '../_components/sides';
 
 export default function CustomerPage() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [cart, setCart] = useState<{ individualItems: string[]; combos: { name: string; items: Record<string, { id: number; name: string }[]> }[] }>({
-    individualItems: [],
+  const [cart, setCart] = useState<{ combos: { name: string; items: Record<string, { id: number; name: string }[]> }[] }>({
     combos: [],
   });
 
@@ -41,7 +40,6 @@ export default function CustomerPage() {
     packageName: string,
     packageItems: Record<string, { id: number; name: string }[]>
   ) => {
-    console.log(packageName);
     console.log(packageItems);
   
     // Prepare the cart data structure to include the new format
@@ -86,7 +84,7 @@ export default function CustomerPage() {
   
       <div className="flex-1 p-8 mt-2 h-full">
         {showCart ? (
-          <CustomerCart cart={cart} />
+          <CustomerCart setCart={setCart} cart={cart} />
         ) : selectedCategory && ["bowl", "plate", "biggerPlate"].includes(selectedCategory) ? (
           <SelectionPage 
             category={selectedCategory} 

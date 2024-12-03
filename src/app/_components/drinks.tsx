@@ -93,7 +93,7 @@ export default function DrinksPage({
     // Iterate through each item and its quantity
     orderList.forEach((item) => {
       for (let i = 0; i < item.quantity; i++) {
-        addComboToCart("Item", { "drink": [{ id: item.id, name: item.name }] });
+        addComboToCart("Item", { "Drink": [{ id: item.id, name: item.name }] });
       }
     });
 

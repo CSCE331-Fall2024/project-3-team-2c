@@ -1,21 +1,84 @@
 import React from "react";
+import { api } from "~/trpc/react";
 
-type ComboItems = Record<string, { id: number; name: string }[]>;
-
-interface Combo {
+// Define the types for your container data
+type Container = {
+  id: number;
+  price: number;
   name: string;
-  items: ComboItems;
-}
+  num_mains: number;
+  num_sides: number;
+};
 
-interface CustomerCartProps {
+type ComboItem = {
+  id: number;
+  name: string;
+};
+
+type CartProps = {
   cart: {
-    individualItems: string[];
-    combos: Combo[];
+    combos: { name: string; items: Record<string, ComboItem[]> }[];
   };
-}
+  setCart: React.Dispatch<React.SetStateAction<{
+    combos: { name: string; items: Record<string, ComboItem[]> }[];
+  }>>;
+};
 
-const CustomerCart: React.FC<CustomerCartProps> = ({ cart }) => {
-  const { individualItems, combos } = cart;
+// Hardcoded container data (id, price, name, num_mains, num_sides)
+const containerData: Container[] = [
+  { id: 1, price: 8, name: "bowl", num_mains: 1, num_sides: 1 },
+  { id: 2, price: 2.5, name: "item", num_mains: 0, num_sides: 1 },
+  { id: 3, price: 10, name: "plate", num_mains: 1, num_sides: 2 },
+  { id: 4, price: 12, name: "biggerplate", num_mains: 1, num_sides: 3 },
+];
+
+// Function to get the `sizeId` based on the container name
+const getSizeId = (name: string): number => {
+  const container = containerData.find((c) => c.name.toLowerCase() === name.toLowerCase());
+  return container ? container.id : -1; // Return -1 if no match found
+};
+
+// Function to format the data into ContainerInput format
+const formatContainerData = (container: Container, comboItems: Record<string, ComboItem[]>): ContainerInput => {
+  // Assuming comboItems contains both mains and sides (as per your data structure)
+  const mainItems = comboItems.Entree ?? [];
+  const sideItems = comboItems.Side ?? comboItems.Drink ?? [];
+
+  // Extracting the ids for mains and sides
+  const mainIds = mainItems.map((item) => item.id);
+  const sideIds = sideItems.map((item) => item.id);
+
+  return {
+    sizeId: container.id,
+    mainIds,
+    sideIds,
+  };
+};
+
+// ContainerInput type for your formatted data
+type ContainerInput = {
+  sizeId: number;
+  mainIds: number[];
+  sideIds: number[];
+};
+
+const CustomerCart: React.FC<CartProps> = ({ setCart, cart }) => {
+  const formattedContainers = cart.combos.map((combo) => {
+    // Get the sizeId from the container name (e.g. "bowl")
+    const sizeId = getSizeId(combo.name);
+  
+    // Find the container based on the sizeId
+    const foundContainer = containerData.find((container) => container.id === sizeId);
+  
+    if (!foundContainer) {
+      throw new Error(`No container found for sizeId: ${sizeId}`);
+    }
+  
+    // Format the combo items for the API call
+    return formatContainerData(foundContainer, combo.items);
+  });
+  
+  console.log(formattedContainers);
 
   return (
     <div className="p-4">
@@ -23,10 +86,10 @@ const CustomerCart: React.FC<CustomerCartProps> = ({ cart }) => {
 
       {/* Scrollable container */}
       <div className="mb-6 max-h-64 overflow-y-auto border border-gray-300 rounded-md p-2">
-        {combos.length === 0 ? (
+        {cart.combos.length === 0 ? (
           <p className="text-gray-600">No items in your cart.</p>
         ) : (
-          combos.map((combo, index) => (
+          cart.combos.map((combo, index) => (
             <div key={index} className="mb-3">
               <h4 className="text-lg font-semibold mb-1">{combo.name}</h4>
               <ul className="ml-4">
@@ -34,7 +97,7 @@ const CustomerCart: React.FC<CustomerCartProps> = ({ cart }) => {
                   <li key={idx} className="text-gray-700">
                     <span className="font-medium">{category}:</span>{" "}
                     <span className="text-gray-600">
-                      {items.map(item => item.name).join(", ")}
+                      {items.map((item) => item.name).join(", ")}
                     </span>
                   </li>
                 ))}
@@ -43,8 +106,108 @@ const CustomerCart: React.FC<CustomerCartProps> = ({ cart }) => {
           ))
         )}
       </div>
+
+      {/* Render the formatted container data */}
+      <div className="mb-6">
+        <h3 className="text-xl font-semibold mb-2">Formatted Containers for API</h3>
+        {formattedContainers.map((container, index) => (
+          <div key={index} className="mb-4">
+            <h4 className="text-lg font-semibold">SizeId: {container.sizeId}</h4>
+            <p>Mains: {container.mainIds.join(", ")}</p>
+            <p>Sides: {container.sideIds.join(", ")}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* Pay button */}
+      <div className="flex justify-end">
+        <PlaceOrderButton formattedContainers={formattedContainers} customerId={1} setCart={setCart}/>
+      </div>
     </div>
   );
 };
+
+const PlaceOrderButton: React.FC<{
+  formattedContainers: ContainerInput[];
+  customerId: number;
+  setCart: React.Dispatch<React.SetStateAction<{ combos: { name: string; items: Record<string, ComboItem[]> }[] }>>;
+}> = ({ formattedContainers, customerId, setCart }) => {
+  // Initialize the placeOrder mutation
+  const placeOrderMutation = api.orders.placeOrder.useMutation();
+  
+  const handlePlaceOrder = () => {
+    const orderData = {
+      customerId,
+      containers: formattedContainers,
+    };
+
+    // Call the mutation
+    placeOrderMutation.mutate(orderData, {
+      onSuccess: (data) => {
+        console.log("Order placed successfully!", data);
+        // Clear the cart after successful order
+        setCart({ combos: [] });
+      },
+      onError: (error) => {
+        console.error("Error placing order:", error);
+      },
+    });
+  };
+
+  return (
+    <button
+      className="bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-600"
+      onClick={handlePlaceOrder}
+    >
+      Pay
+    </button>
+  );
+};
+
+// const PlaceOrderButton: React.FC<{
+//   formattedContainers: ContainerInput[];
+//   customerId: number;
+//   setCart: React.Dispatch<
+//     React.SetStateAction<{ combos: { name: string; items: Record<string, ComboItem[]> }[] }>
+//   >;
+// }> = ({ formattedContainers, customerId, setCart }) => {
+//   // Initialize the placeOrder mutation at the top level of the component
+//   const placeOrderMutation = api.orders.placeOrder.useMutation({
+//     onSuccess: (data) => {
+//       console.log("Order placed successfully!", data);
+//       // Clear the cart after successful order
+//       setCart({ combos: [] });
+//     },
+//     onError: (error) => {
+//       console.error("Error placing order:", error);
+//     },
+//   });
+
+//   const handlePlaceOrder = () => {
+//     const exampleOrder = {
+//       customerId: 1,
+//       containers: [
+//         {
+//           sizeId: 1,
+//           mainIds: [1],
+//           sideIds: [5],
+//         },
+//       ],
+//     };
+
+//     // Trigger the mutation
+//     placeOrderMutation.mutate(exampleOrder);
+//   };
+
+//   return (
+//     <button
+//       className="bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-600"
+//       onClick={handlePlaceOrder}
+//     >
+//       Pay
+//     </button>
+//   );
+// };
+
 
 export default CustomerCart;

@@ -93,7 +93,7 @@ export default function SidesPage({
     // Iterate through each item and its quantity
     orderList.forEach((item) => {
       for (let i = 0; i < item.quantity; i++) {
-        addComboToCart("Item", { "side": [{ id: item.id, name: item.name }] });
+        addComboToCart("Item", { "Side": [{ id: item.id, name: item.name }] });
       }
     });
 

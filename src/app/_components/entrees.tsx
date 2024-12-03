@@ -94,7 +94,7 @@ export default function EntreesPage({
     orderList.forEach((item) => {
       for (let i = 0; i < item.quantity; i++) {
         // Call the addComboToCart function for each iteration
-        addComboToCart("Item", { "entree": [{ id: item.id, name: item.name }] });
+        addComboToCart("Item", { "Entree": [{ id: item.id, name: item.name }] });
       }
     });
 
