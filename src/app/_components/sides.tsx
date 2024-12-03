@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { api } from "~/trpc/react";
+import { useRouter } from "next/navigation";
 
 // Define the type for an appetizer item
 interface Appetizer {
@@ -10,12 +11,24 @@ interface Appetizer {
   type: string;
 }
 
-const AppetizersPage: React.FC = () => {
+export default function SidesPage({
+  category,
+  setSelectedCategory,
+  addComboToCart,
+}: {
+  category: string;
+  setSelectedCategory: (category: string | null) => void;
+  addComboToCart: (comboName: string, comboItems: Record<string, { id: number; name: string }[]>) => void;
+}) {
+  const router = useRouter();
+
   // Fetch appetizers using tRPC and type the response correctly
-  const { data: appetizers, isLoading, error } = api.menu.getMenuItemsByType.useQuery<Appetizer[]>("appetizer");
+  const { data: appetizers, isLoading, error } = api.menu.getMenuItemsByType.useQuery<Appetizer[]>("SIDE");
 
   // State to track the quantities of selected items
-  const [selectedAppetizers, setSelectedAppetizers] = useState<Record<string, number>>({});
+  const [selectedAppetizers, setSelectedAppetizers] = useState<
+    Record<string, { id: number; name: string; quantity: number }>
+  >({});
 
   // Handle loading state
   if (isLoading) {
@@ -29,55 +42,73 @@ const AppetizersPage: React.FC = () => {
 
   // Check if appetizers is undefined before trying to map over it
   if (!appetizers) {
-    return <div>No appetizers available.</div>; // You can handle it in any way you'd prefer
+    return <div>No sides available.</div>;
   }
 
   // Increment item quantity
-  const incrementItem = (itemName: string) => {
+  const incrementItem = (item: Appetizer) => {
     setSelectedAppetizers((prevSelectedAppetizers) => ({
       ...prevSelectedAppetizers,
-      [itemName]: (prevSelectedAppetizers[itemName] ?? 0) + 1,
+      [item.name]: {
+        ...prevSelectedAppetizers[item.name],
+        id: item.id,
+        name: item.name,
+        quantity: (prevSelectedAppetizers[item.name]?.quantity ?? 0) + 1,
+      },
     }));
   };
 
   // Decrement item quantity
   const decrementItem = (itemName: string) => {
     setSelectedAppetizers((prevSelectedAppetizers) => {
-      const currentCount = prevSelectedAppetizers[itemName] ?? 0;
-      if (currentCount <= 1) {
+      const currentItem = prevSelectedAppetizers[itemName];
+      if (!currentItem) return prevSelectedAppetizers;
+
+      if (currentItem.quantity <= 1) {
         const { [itemName]: _, ...rest } = prevSelectedAppetizers; // Remove item from selectedAppetizers
         return rest;
       }
+
       return {
         ...prevSelectedAppetizers,
-        [itemName]: currentCount - 1,
+        [itemName]: {
+          ...currentItem,
+          quantity: currentItem.quantity - 1,
+        },
       };
     });
   };
 
   // Calculate total appetizers in selectedAppetizers
-  const totalAppetizers = Object.values(selectedAppetizers).reduce((sum, count) => sum + count, 0);
+  const totalAppetizers = Object.values(selectedAppetizers).reduce((sum, item) => sum + item.quantity, 0);
 
   // Placeholder function to handle order submission
   const handleSubmitOrder = () => {
-    // Create a list of selected items with their quantities for submission
-    const orderList = Object.entries(selectedAppetizers).map(([itemName, quantity]) => ({
-      name: itemName,
-      quantity,
+    const orderList = Object.values(selectedAppetizers).map((item) => ({
+      id: item.id,
+      name: item.name,
+      quantity: item.quantity,
     }));
 
-    // For now, just log the order list
-    console.log("Order submitted:", orderList);
+    // Iterate through each item and its quantity
+    orderList.forEach((item) => {
+      for (let i = 0; i < item.quantity; i++) {
+        addComboToCart("Item", { "Side": [{ id: item.id, name: item.name }] });
+      }
+    });
+
+    setSelectedCategory(null);
+    router.push("/Customer");
   };
 
   return (
     <div className="flex">
       {/* Left section for appetizers */}
       <div className="w-3/4">
-        <h1 className="text-2xl font-bold mb-4">Appetizers</h1>
+        <h1 className="text-2xl font-bold mb-4">Sides</h1>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {appetizers.map((item) => {
-            const quantity = selectedAppetizers[item.name] ?? 0;
+            const quantity = selectedAppetizers[item.name]?.quantity ?? 0;
 
             return (
               <div
@@ -97,7 +128,7 @@ const AppetizersPage: React.FC = () => {
                   </button>
                   <span className="px-3 py-1 bg-gray-800 text-white rounded-lg">{quantity}</span>
                   <button
-                    onClick={() => incrementItem(item.name)}
+                    onClick={() => incrementItem(item)}
                     className="px-3 py-1 bg-white text-black rounded-lg"
                   >
                     +
@@ -111,14 +142,14 @@ const AppetizersPage: React.FC = () => {
 
       {/* Right section for cart summary */}
       <div className="w-1/4 pl-4">
-        <h2 className="text-xl font-bold mb-4">Appetizers Selected</h2>
+        <h2 className="text-xl font-bold mb-4">Sides Selected</h2>
         <div className="bg-gray-100 p-4 rounded-lg shadow-md">
-          <p className="text-lg font-semibold">Total Appetizers: {totalAppetizers}</p>
+          <p className="text-lg font-semibold">Total Sides: {totalAppetizers}</p>
           <ul className="mt-4">
-            {Object.entries(selectedAppetizers).map(([itemName, quantity]) => (
-              <li key={itemName} className="flex justify-between">
-                <span>{itemName}</span>
-                <span>{quantity}</span>
+            {Object.values(selectedAppetizers).map((item) => (
+              <li key={item.id} className="flex justify-between">
+                <span>{item.name}</span>
+                <span>{item.quantity}</span>
               </li>
             ))}
           </ul>
@@ -134,6 +165,4 @@ const AppetizersPage: React.FC = () => {
       </div>
     </div>
   );
-};
-
-export default AppetizersPage;
+}

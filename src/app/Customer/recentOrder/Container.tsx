@@ -22,7 +22,7 @@ export default function Container({
         <p className="text-lg font-bold">
           {sizeType?.name ? sizeType.name : "none"}
         </p>
-        {/*<p className="text-right">${item.price.toFixed(2)}</p>*/}
+        {/* <p className="text-right">${item.price.toFixed(2)}</p> */}
       </div>
       {
         <ul className="ml-4 mt-1 list-disc text-sm text-gray-500">

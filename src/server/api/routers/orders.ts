@@ -35,16 +35,37 @@ const orderOutputSchema = z.object({
   timestamp: z.date(),
 });
 
-function getPriceFromSizes(sizeIds: number[]) {
-  sizeIds.map((id) => {
-    return db
+// function getPriceFromSizes(sizeIds: number[]) {
+//   sizeIds.map((id) => {
+//     return db
+//       .select({ price: sizes.price })
+//       .from(sizes)
+//       .where(eq(sizes.id, id));
+//   });
+//   console.log("PRICE" + sizeIds.reduce((sum, price) => sum + price, 0.0));
+//   return sizeIds.reduce((sum, price) => sum + price, 0.0);
+// }
+
+async function getPriceFromSizes(sizeIds: number[]) {
+  // Fetch prices for each sizeId asynchronously and wait for all to resolve
+  const pricePromises = sizeIds.map(async (id) => {
+    const result = await db
       .select({ price: sizes.price })
       .from(sizes)
       .where(eq(sizes.id, id));
+    return parseFloat(result[0]?.price ?? '0');  // Ensure the price is treated as a number
   });
 
-  return sizeIds.reduce((sum, price) => sum + price, 0.0);
+  // Wait for all promises to resolve and sum the prices
+  const prices = await Promise.all(pricePromises);
+
+  // Log the total price
+  console.log("PRICE", prices.reduce((sum, price) => sum + price, 0.0));
+
+  // Return the sum of prices
+  return prices.reduce((sum, price) => sum + price, 0.0);
 }
+
 
 async function getOneOrder(
   input: number,
@@ -96,12 +117,65 @@ async function getOneOrder(
 }
 
 export const ordersRouter = createTRPCRouter({
+  // placeOrder: publicProcedure
+  //   .input(orderInputSchema)
+  //   .mutation(async ({ input }) => {
+  //     // calculate total from container sizes
+  //     const sizeIds = input.containers.map((container) => container.sizeId);
+  //     const total = getPriceFromSizes(sizeIds);
+
+  //     // insert order and get id
+  //     const orderId = (
+  //       await db
+  //         .insert(orders)
+  //         .values({
+  //           total: total.toString(),
+  //           customerId: input.customerId,
+  //         })
+  //         .returning({ orderId: orders.id })
+  //     )?.at(0)?.orderId;
+
+  //     // insert containers
+  //     const containerIds = (
+  //       await db
+  //         .insert(containers)
+  //         .values(
+  //           input.containers.map((container) => ({
+  //             orderId: orderId,
+  //             sizeId: container.sizeId,
+  //           })),
+  //         )
+  //         .returning({ containerId: containers.id })
+  //     )?.map((row) => row.containerId);
+
+  //     // insert containers_to_menu
+  //     input.containers.forEach((container, index) => {
+  //       const containerId = containerIds[index];
+  //       container.mainIds.forEach((itemId) => {
+  //         db.insert(containersToMenu).values({
+  //           containerId,
+  //           itemId,
+  //           itemType: "main",
+  //         });
+  //       });
+
+  //       container.sideIds.forEach((itemId) => {
+  //         db.insert(containersToMenu).values({
+  //           containerId,
+  //           itemId,
+  //           itemType: "side",
+  //         });
+  //       });
+  //     });
+
+  //     return { orderId };
+  //   }),
   placeOrder: publicProcedure
     .input(orderInputSchema)
     .mutation(async ({ input }) => {
       // calculate total from container sizes
       const sizeIds = input.containers.map((container) => container.sizeId);
-      const total = getPriceFromSizes(sizeIds);
+      const total = await getPriceFromSizes(sizeIds);
 
       // insert order and get id
       const orderId = (
@@ -114,6 +188,10 @@ export const ordersRouter = createTRPCRouter({
           .returning({ orderId: orders.id })
       )?.at(0)?.orderId;
 
+      if (!orderId) {
+        throw new Error("Failed to create order");
+      }
+
       // insert containers
       const containerIds = (
         await db
@@ -122,33 +200,43 @@ export const ordersRouter = createTRPCRouter({
             input.containers.map((container) => ({
               orderId: orderId,
               sizeId: container.sizeId,
-            })),
+            }))
           )
           .returning({ containerId: containers.id })
       )?.map((row) => row.containerId);
 
-      // insert containers_to_menu
-      input.containers.forEach((container, index) => {
-        const containerId = containerIds[index];
-        container.mainIds.forEach((itemId) => {
-          db.insert(containersToMenu).values({
-            containerId,
-            itemId,
-            itemType: "main",
-          });
-        });
+      if (!containerIds) {
+        throw new Error("Failed to create containers");
+      }
 
-        container.sideIds.forEach((itemId) => {
-          db.insert(containersToMenu).values({
-            containerId,
-            itemId,
-            itemType: "side",
-          });
-        });
-      });
+      // insert containers_to_menu
+      await Promise.all(
+        input.containers.map((container, index) => {
+          const containerId = containerIds[index];
+
+          const mainInsertions = container.mainIds.map((itemId) =>
+            db.insert(containersToMenu).values({
+              containerId,
+              itemId,
+              itemType: "main",
+            })
+          );
+
+          const sideInsertions = container.sideIds.map((itemId) =>
+            db.insert(containersToMenu).values({
+              containerId,
+              itemId,
+              itemType: "side",
+            })
+          );
+
+          return Promise.all([...mainInsertions, ...sideInsertions]);
+        })
+      );
 
       return { orderId };
     }),
+
 
   getOrder: publicProcedure
     .input(z.number())

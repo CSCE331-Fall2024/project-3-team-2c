@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { api } from "~/trpc/react";
+import { useRouter } from "next/navigation";
 
 // Define the type for an entree item
 interface Entree {
@@ -10,12 +11,24 @@ interface Entree {
   type: string;
 }
 
-const EntreesPage: React.FC = () => {
+export default function EntreesPage({
+  category,
+  setSelectedCategory,
+  addComboToCart,
+}: {
+  category: string;
+  setSelectedCategory: (category: string | null) => void;
+  addComboToCart: (comboName: string, comboItems: Record<string, { id: number; name: string }[]>) => void;
+}) {
+  const router = useRouter();
+
   // Fetch entrees using tRPC and type the response correctly
   const { data: entrees, isLoading, error } = api.menu.getMenuItemsByType.useQuery<Entree[]>("entree");
 
   // State to track the quantities of selected items
-  const [selectedEntrees, setSelectedEntrees] = useState<Record<string, number>>({});
+  const [selectedEntrees, setSelectedEntrees] = useState<
+    Record<string, { id: number; name: string; quantity: number }>
+  >({});
 
   // Handle loading state
   if (isLoading) {
@@ -33,41 +46,60 @@ const EntreesPage: React.FC = () => {
   }
 
   // Increment item quantity
-  const incrementItem = (itemName: string) => {
+  const incrementItem = (item: Entree) => {
     setSelectedEntrees((prevSelectedEntrees) => ({
       ...prevSelectedEntrees,
-      [itemName]: (prevSelectedEntrees[itemName] ?? 0) + 1,
+      [item.name]: {
+        ...prevSelectedEntrees[item.name],
+        id: item.id,
+        name: item.name,
+        quantity: (prevSelectedEntrees[item.name]?.quantity ?? 0) + 1,
+      },
     }));
   };
 
   // Decrement item quantity
   const decrementItem = (itemName: string) => {
     setSelectedEntrees((prevSelectedEntrees) => {
-      const currentCount = prevSelectedEntrees[itemName] ?? 0;
-      if (currentCount <= 1) {
+      const currentItem = prevSelectedEntrees[itemName];
+      if (!currentItem) return prevSelectedEntrees;
+
+      if (currentItem.quantity <= 1) {
         const { [itemName]: _, ...rest } = prevSelectedEntrees; // Remove item from selectedEntrees
         return rest;
       }
+
       return {
         ...prevSelectedEntrees,
-        [itemName]: currentCount - 1,
+        [itemName]: {
+          ...currentItem,
+          quantity: currentItem.quantity - 1,
+        },
       };
     });
   };
 
   // Calculate total entrees in selectedEntrees
-  const totalEntrees = Object.values(selectedEntrees).reduce((sum, count) => sum + count, 0);
+  const totalEntrees = Object.values(selectedEntrees).reduce((sum, item) => sum + item.quantity, 0);
 
   // Placeholder function to handle order submission
   const handleSubmitOrder = () => {
-    // Create a list of selected items with their quantities for submission
-    const orderList = Object.entries(selectedEntrees).map(([itemName, quantity]) => ({
-      name: itemName,
-      quantity,
+    const orderList = Object.values(selectedEntrees).map((item) => ({
+      id: item.id,
+      name: item.name,
+      quantity: item.quantity,
     }));
 
-    // For now, just log the order list
-    console.log("Order submitted:", orderList);
+    // Iterate through each item and its quantity
+    orderList.forEach((item) => {
+      for (let i = 0; i < item.quantity; i++) {
+        // Call the addComboToCart function for each iteration
+        addComboToCart("Item", { "Entree": [{ id: item.id, name: item.name }] });
+      }
+    });
+
+    setSelectedCategory(null);
+    router.push("/Customer");
   };
 
   return (
@@ -77,7 +109,7 @@ const EntreesPage: React.FC = () => {
         <h1 className="text-2xl font-bold mb-4">Entrees</h1>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {entrees.map((item) => {
-            const quantity = selectedEntrees[item.name] ?? 0;
+            const quantity = selectedEntrees[item.name]?.quantity ?? 0;
 
             return (
               <div
@@ -97,7 +129,7 @@ const EntreesPage: React.FC = () => {
                   </button>
                   <span className="px-3 py-1 bg-gray-800 text-white rounded-lg">{quantity}</span>
                   <button
-                    onClick={() => incrementItem(item.name)}
+                    onClick={() => incrementItem(item)}
                     className="px-3 py-1 bg-white text-black rounded-lg"
                   >
                     +
@@ -115,10 +147,10 @@ const EntreesPage: React.FC = () => {
         <div className="bg-gray-100 p-4 rounded-lg shadow-md">
           <p className="text-lg font-semibold">Total Entrees: {totalEntrees}</p>
           <ul className="mt-4">
-            {Object.entries(selectedEntrees).map(([itemName, quantity]) => (
-              <li key={itemName} className="flex justify-between">
-                <span>{itemName}</span>
-                <span>{quantity}</span>
+            {Object.values(selectedEntrees).map((item) => (
+              <li key={item.id} className="flex justify-between">
+                <span>{item.name}</span>
+                <span>{item.quantity}</span>
               </li>
             ))}
           </ul>
@@ -134,6 +166,4 @@ const EntreesPage: React.FC = () => {
       </div>
     </div>
   );
-};
-
-export default EntreesPage;
+}

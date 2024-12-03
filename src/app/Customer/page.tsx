@@ -7,13 +7,12 @@ import SelectionPage from '../_components/customer_selection_page';
 import CustomerCart from '../_components/customer_cart';
 import PreviousOrders from './recentOrder/page';
 import DrinksPage from '../_components/drinks';
-import AppetizersPage from '../_components/appetizers';
 import EntreesPage from '../_components/entrees';
+import SidesPage from '../_components/sides';
 
 export default function CustomerPage() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [cart, setCart] = useState<{ individualItems: string[]; combos: { name: string; items: Record<string, string[]> }[] }>({
-    individualItems: [],
+  const [cart, setCart] = useState<{ combos: { name: string; items: Record<string, { id: number; name: string }[]> }[] }>({
     combos: [],
   });
 
@@ -37,19 +36,32 @@ export default function CustomerPage() {
     setShowCart(false);       // Hide the cart view, returning to CustomerGrid
   };
 
-  const addItemToCart = (item: string) => {
+  const addComboToCart = (
+    packageName: string,
+    packageItems: Record<string, { id: number; name: string }[]>
+  ) => {
+    console.log(packageItems);
+  
+    // Prepare the cart data structure to include the new format
+    const formattedItems = Object.fromEntries(
+      Object.entries(packageItems).map(([step, items]) => [
+        step,
+        items.map(({ id, name }) => ({ id, name })),
+      ])
+    );
+  
     setCart((prevCart) => ({
       ...prevCart,
-      individualItems: [...prevCart.individualItems, item],
+      combos: [
+        ...prevCart.combos,
+        {
+          name: packageName,
+          items: formattedItems,
+        },
+      ],
     }));
   };
-
-  const addComboToCart = (packageName: string, packageItems: Record<string, string[]>) => {
-    setCart((prevCart) => ({
-      ...prevCart,
-      combos: [...prevCart.combos, { name: packageName, items: packageItems }],
-    }));
-  };
+  
 
   const showRecentOrders = (category: string) => {
     setSelectedCategory(category)
@@ -70,9 +82,9 @@ export default function CustomerPage() {
         </button>
       </div>
   
-      <div className="flex-1 p-8 mt-16 h-full">
+      <div className="flex-1 p-8 mt-2 h-full">
         {showCart ? (
-          <CustomerCart cart={cart} />
+          <CustomerCart setCart={setCart} cart={cart} />
         ) : selectedCategory && ["bowl", "plate", "biggerPlate"].includes(selectedCategory) ? (
           <SelectionPage 
             category={selectedCategory} 
@@ -80,11 +92,23 @@ export default function CustomerPage() {
             addComboToCart={addComboToCart}
           />
         ) : selectedCategory === "drinks" ? (
-          <DrinksPage />
+          <DrinksPage 
+            category={selectedCategory} 
+            setSelectedCategory={setSelectedCategory}
+            addComboToCart={addComboToCart}
+          />
         ) : selectedCategory === "appetizers" ? (
-          <AppetizersPage />
+          <SidesPage 
+            category={selectedCategory} 
+            setSelectedCategory={setSelectedCategory}
+            addComboToCart={addComboToCart}
+          />
         ) : selectedCategory === "entrees" ? (
-          <EntreesPage />
+          <EntreesPage 
+            category={selectedCategory} 
+            setSelectedCategory={setSelectedCategory}
+            addComboToCart={addComboToCart}
+          />
         ) : selectedCategory === "recentOrders" ? (
           <PreviousOrders />
         ) : (

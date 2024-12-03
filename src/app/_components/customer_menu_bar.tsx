@@ -25,7 +25,6 @@ export default function MenuBar({
         <button onClick={onHomeClick} className="text-white">
           Home
         </button>
-        <button className="text-white">Combo</button>
         <button onClick={() => onItemClick("entrees")} className="text-white">
           Entree
         </button>
@@ -33,7 +32,7 @@ export default function MenuBar({
           onClick={() => onItemClick("appetizers")}
           className="text-white"
         >
-          Appetizers
+          Sides
         </button>
         <button onClick={() => onItemClick("drinks")} className="text-white">
           Drinks

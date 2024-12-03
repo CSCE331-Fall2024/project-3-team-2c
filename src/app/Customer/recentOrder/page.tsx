@@ -14,16 +14,12 @@ import { containers } from '~/server/db/schema';
 
 export default function PreviousOrders() {
     const { data: orders } = api.orders.getLatestOrdersByCustomer.useQuery(1);
-
     const orderItemIds = useMemo(() => {
         return orders?.map(order => {
             return order.containers;
         }) ?? [];
     }, [orders]);
    
-
-
-
     return (
         <div className="h-full flex flex-col">            
             <div className="space-y-6">
