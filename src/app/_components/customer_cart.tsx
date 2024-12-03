@@ -78,8 +78,6 @@ const CustomerCart: React.FC<CartProps> = ({ setCart, cart }) => {
     return formatContainerData(foundContainer, combo.items);
   });
   
-  console.log(formattedContainers);
-
   return (
     <div className="p-4">
       <h2 className="text-2xl font-bold mb-4">Your Cart</h2>
@@ -105,18 +103,6 @@ const CustomerCart: React.FC<CartProps> = ({ setCart, cart }) => {
             </div>
           ))
         )}
-      </div>
-
-      {/* Render the formatted container data */}
-      <div className="mb-6">
-        <h3 className="text-xl font-semibold mb-2">Formatted Containers for API</h3>
-        {formattedContainers.map((container, index) => (
-          <div key={index} className="mb-4">
-            <h4 className="text-lg font-semibold">SizeId: {container.sizeId}</h4>
-            <p>Mains: {container.mainIds.join(", ")}</p>
-            <p>Sides: {container.sideIds.join(", ")}</p>
-          </div>
-        ))}
       </div>
 
       {/* Pay button */}
