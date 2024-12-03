@@ -5,7 +5,7 @@ import MenuBar from '../_components/customer_menu_bar';
 import CustomerGrid from '../_components/customer_grid';
 import SelectionPage from '../_components/customer_selection_page';
 import CustomerCart from '../_components/customer_cart';
-import PreviousOrders from './recentOrder/page';
+import PreviousOrders from '../_components/recentOrder/page';
 import DrinksPage from '../_components/drinks';
 import EntreesPage from '../_components/entrees';
 import SidesPage from '../_components/sides';
