@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useMemo, useState } from 'react';
-import MenuBar from '../../_components/customer_menu_bar';
+import MenuBar from '../customer_menu_bar';
 import { api } from '~/trpc/react';
 import Container from './Container';
 import { containers } from '~/server/db/schema';
