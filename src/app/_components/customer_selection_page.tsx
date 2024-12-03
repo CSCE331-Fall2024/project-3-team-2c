@@ -78,24 +78,36 @@ export default function SelectionPage({
   const limits = getSelectionLimits(category);
   const limit = limits[steps[currentStep]!];
 
+  const [errorMessage, setErrorMessage] = useState<string>("");
+
   const handleNext = () => {
     const stepName = steps[currentStep]!;
+    const currentSelections = selectedItems[stepName] ?? [];
+
+    // Validation: Ensure the number of selected items matches the limit
+    if (currentSelections.length !== limit) {
+      setErrorMessage(`Please select exactly ${limit} ${stepName}(s) before proceeding.`);
+      return;
+    }
+
+    setErrorMessage(""); // Clear error if validation passes
+
     setSelections((prev) => ({
       ...prev,
-      [stepName]: selectedItems[stepName] ?? [],
+      [stepName]: currentSelections,
     }));
-  
+
     if (currentStep < steps.length - 1) {
       setCurrentStep((prev) => prev + 1);
     } else {
       const finalSelections = { ...selections };
-  
+
       steps.forEach((step) => {
         if (!finalSelections[step]) {
           finalSelections[step] = selectedItems[step] ?? [];
         }
       });
-  
+
       // Pass finalSelections to addComboToCart
       const formattedSelections = Object.fromEntries(
         Object.entries(finalSelections).map(([key, value]) => [
@@ -103,13 +115,12 @@ export default function SelectionPage({
           value.map((item) => ({ id: item.id, name: item.name })),
         ])
       );
-  
+
       addComboToCart(category, formattedSelections);
       setSelectedCategory(null);
       router.push("/Customer");
     }
   };
-  
 
   const handleBack = () => {
     if (currentStep > 0) {
@@ -143,11 +154,21 @@ export default function SelectionPage({
       }));
     }
   };
-  
 
-  const handleStepSelect = (index: number) => {
-    setCurrentStep(index); // Set the currentStep to the selected step
+  const handleStepSelect = (stepIndex: number) => {
+    const stepName = steps[currentStep]!;
+    const currentSelections = selectedItems[stepName] ?? [];
+  
+    // Validation: Ensure the number of selected items matches the limit
+    if (currentSelections.length !== limit) {
+      setErrorMessage(`Please select exactly ${limit} ${stepName}(s) before switching steps.`);
+      return;
+    }
+  
+    setErrorMessage(""); // Clear error if validation passes
+    setCurrentStep(stepIndex);
   };
+  
 
   const renderItems = () => {
     let data: (Entree | Side)[] = [];
@@ -177,7 +198,6 @@ export default function SelectionPage({
       );
     });
   };
-  
 
   return (
     <div className="flex h-full">
@@ -191,7 +211,12 @@ export default function SelectionPage({
         />
         <SidebarTrigger />
         <div className="flex-1 p-10">
-          <h1 className="text-2xl font-bold mb-6">{steps[currentStep]} Options (Select {limit})</h1>
+          <h1 className="text-2xl font-bold mb-6">
+            {steps[currentStep]} Options (Select {limit})
+          </h1>
+          {errorMessage && (
+            <div className="text-red-500 mb-4">{errorMessage}</div>
+          )}
           <div className="grid grid-cols-3 gap-4">{renderItems()}</div>
           <button
             onClick={handleNext}

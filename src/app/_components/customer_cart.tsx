@@ -77,9 +77,25 @@ const CustomerCart: React.FC<CartProps> = ({ setCart, cart }) => {
     // Format the combo items for the API call
     return formatContainerData(foundContainer, combo.items);
   });
-  
-  console.log(formattedContainers);
 
+  // Calculate the total price
+  const totalPrice = cart.combos.reduce((total, combo) => {
+    const sizeId = getSizeId(combo.name);
+    const foundContainer = containerData.find((container) => container.id === sizeId);
+
+    if (foundContainer) {
+      return total + foundContainer.price;
+    }
+    return total;
+  }, 0);
+
+  // Function to remove an item from the cart
+  const removeFromCart = (index: number) => {
+    setCart((prevCart) => ({
+      combos: prevCart.combos.filter((_, i) => i !== index),
+    }));
+  };
+  
   return (
     <div className="p-4">
       <h2 className="text-2xl font-bold mb-4">Your Cart</h2>
@@ -91,7 +107,7 @@ const CustomerCart: React.FC<CartProps> = ({ setCart, cart }) => {
         ) : (
           cart.combos.map((combo, index) => (
             <div key={index} className="mb-3">
-              <h4 className="text-lg font-semibold mb-1">{combo.name}</h4>
+              <h4 className="mb-3 flex items-center justify-between border-b pb-2">{combo.name}</h4>
               <ul className="ml-4">
                 {Object.entries(combo.items).map(([category, items], idx) => (
                   <li key={idx} className="text-gray-700">
@@ -102,23 +118,21 @@ const CustomerCart: React.FC<CartProps> = ({ setCart, cart }) => {
                   </li>
                 ))}
               </ul>
+                {/* Remove button */}
+                <button
+                  className="bg-red-500 text-white py-1 px-2 rounded hover:bg-red-600 ml-4"
+                  onClick={() => removeFromCart(index)}
+                >
+                  Remove
+                </button>
             </div>
           ))
         )}
       </div>
-
-      {/* Render the formatted container data */}
-      <div className="mb-6">
-        <h3 className="text-xl font-semibold mb-2">Formatted Containers for API</h3>
-        {formattedContainers.map((container, index) => (
-          <div key={index} className="mb-4">
-            <h4 className="text-lg font-semibold">SizeId: {container.sizeId}</h4>
-            <p>Mains: {container.mainIds.join(", ")}</p>
-            <p>Sides: {container.sideIds.join(", ")}</p>
-          </div>
-        ))}
+      {/* Total price */}
+      <div className="mb-4">
+        <h3 className="text-xl font-semibold">Total Price: ${totalPrice.toFixed(2)}</h3>
       </div>
-
       {/* Pay button */}
       <div className="flex justify-end">
         <PlaceOrderButton formattedContainers={formattedContainers} customerId={1} setCart={setCart}/>
@@ -163,51 +177,5 @@ const PlaceOrderButton: React.FC<{
     </button>
   );
 };
-
-// const PlaceOrderButton: React.FC<{
-//   formattedContainers: ContainerInput[];
-//   customerId: number;
-//   setCart: React.Dispatch<
-//     React.SetStateAction<{ combos: { name: string; items: Record<string, ComboItem[]> }[] }>
-//   >;
-// }> = ({ formattedContainers, customerId, setCart }) => {
-//   // Initialize the placeOrder mutation at the top level of the component
-//   const placeOrderMutation = api.orders.placeOrder.useMutation({
-//     onSuccess: (data) => {
-//       console.log("Order placed successfully!", data);
-//       // Clear the cart after successful order
-//       setCart({ combos: [] });
-//     },
-//     onError: (error) => {
-//       console.error("Error placing order:", error);
-//     },
-//   });
-
-//   const handlePlaceOrder = () => {
-//     const exampleOrder = {
-//       customerId: 1,
-//       containers: [
-//         {
-//           sizeId: 1,
-//           mainIds: [1],
-//           sideIds: [5],
-//         },
-//       ],
-//     };
-
-//     // Trigger the mutation
-//     placeOrderMutation.mutate(exampleOrder);
-//   };
-
-//   return (
-//     <button
-//       className="bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-600"
-//       onClick={handlePlaceOrder}
-//     >
-//       Pay
-//     </button>
-//   );
-// };
-
 
 export default CustomerCart;

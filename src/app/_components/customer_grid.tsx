@@ -11,17 +11,17 @@ const CustomerGrid: React.FC<CustomerGridProps> = ({ onClick }) => {
         <button 
           onClick={() => onClick('bowl')} 
           className="grid-item aspect-w-1 aspect-h-1 p-5 bg-[#ce123c] text-white rounded-lg transform transition duration-300 hover:scale-105 hover:bg-red-400">
-          Bowl
+          Bowl<br />$8
         </button>
         <button 
           onClick={() => onClick('plate')} 
           className="grid-item aspect-w-1 aspect-h-1 p-5 bg-[#ce123c] text-white rounded-lg transform transition duration-300 hover:scale-105 hover:g-red-400">
-          Plate
+          Plate<br />$10
         </button>
         <button 
           onClick={() => onClick('biggerPlate')} 
           className="grid-item aspect-w-1 aspect-h-1 p-5 bg-[#ce123c] text-white rounded-lg transform transition duration-300 hover:scale-105 hover:bg-red-400">
-          Bigger Plate
+          Bigger Plate<br />$12
         </button>
         <button 
           onClick={() => onClick('appetizers')} 

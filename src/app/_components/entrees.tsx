@@ -117,7 +117,7 @@ export default function EntreesPage({
                 className="relative p-5 bg-[#d82c2c] text-white rounded-lg cursor-pointer hover:bg-[#ff474c] transition"
               >
                 {/* Item name */}
-                <div className="text-lg font-semibold">{item.name}</div>
+                <div className="text-lg font-semibold">{item.name}<br />$2.50</div>
 
                 {/* Quantity controls */}
                 <div className="absolute bottom-4 right-4 flex gap-2 opacity-0 hover:opacity-100 transition">
@@ -154,7 +154,10 @@ export default function EntreesPage({
               </li>
             ))}
           </ul>
-
+          {/* Total price */}
+          <div className='mt-4 text-xl font-bold mb-4'>
+            Total Price: ${totalEntrees*2.5}
+          </div>
           {/* Submit Order Button */}
           <button
             onClick={handleSubmitOrder}
