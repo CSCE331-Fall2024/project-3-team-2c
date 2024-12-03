@@ -77,6 +77,17 @@ const CustomerCart: React.FC<CartProps> = ({ setCart, cart }) => {
     // Format the combo items for the API call
     return formatContainerData(foundContainer, combo.items);
   });
+
+  // Calculate the total price
+  const totalPrice = cart.combos.reduce((total, combo) => {
+    const sizeId = getSizeId(combo.name);
+    const foundContainer = containerData.find((container) => container.id === sizeId);
+
+    if (foundContainer) {
+      return total + foundContainer.price;
+    }
+    return total;
+  }, 0);
   
   return (
     <div className="p-4">
@@ -104,7 +115,10 @@ const CustomerCart: React.FC<CartProps> = ({ setCart, cart }) => {
           ))
         )}
       </div>
-
+      {/* Total price */}
+      <div className="mb-4">
+        <h3 className="text-xl font-semibold">Total Price: ${totalPrice.toFixed(2)}</h3>
+      </div>
       {/* Pay button */}
       <div className="flex justify-end">
         <PlaceOrderButton formattedContainers={formattedContainers} customerId={1} setCart={setCart}/>
@@ -149,51 +163,5 @@ const PlaceOrderButton: React.FC<{
     </button>
   );
 };
-
-// const PlaceOrderButton: React.FC<{
-//   formattedContainers: ContainerInput[];
-//   customerId: number;
-//   setCart: React.Dispatch<
-//     React.SetStateAction<{ combos: { name: string; items: Record<string, ComboItem[]> }[] }>
-//   >;
-// }> = ({ formattedContainers, customerId, setCart }) => {
-//   // Initialize the placeOrder mutation at the top level of the component
-//   const placeOrderMutation = api.orders.placeOrder.useMutation({
-//     onSuccess: (data) => {
-//       console.log("Order placed successfully!", data);
-//       // Clear the cart after successful order
-//       setCart({ combos: [] });
-//     },
-//     onError: (error) => {
-//       console.error("Error placing order:", error);
-//     },
-//   });
-
-//   const handlePlaceOrder = () => {
-//     const exampleOrder = {
-//       customerId: 1,
-//       containers: [
-//         {
-//           sizeId: 1,
-//           mainIds: [1],
-//           sideIds: [5],
-//         },
-//       ],
-//     };
-
-//     // Trigger the mutation
-//     placeOrderMutation.mutate(exampleOrder);
-//   };
-
-//   return (
-//     <button
-//       className="bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-600"
-//       onClick={handlePlaceOrder}
-//     >
-//       Pay
-//     </button>
-//   );
-// };
-
 
 export default CustomerCart;

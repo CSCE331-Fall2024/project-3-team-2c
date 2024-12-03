@@ -78,38 +78,6 @@ export default function SelectionPage({
   const limits = getSelectionLimits(category);
   const limit = limits[steps[currentStep]!];
 
-  // const handleNext = () => {
-  //   const stepName = steps[currentStep]!;
-  //   setSelections((prev) => ({
-  //     ...prev,
-  //     [stepName]: selectedItems[stepName] ?? [],
-  //   }));
-  
-  //   if (currentStep < steps.length - 1) {
-  //     setCurrentStep((prev) => prev + 1);
-  //   } else {
-  //     const finalSelections = { ...selections };
-  
-  //     steps.forEach((step) => {
-  //       if (!finalSelections[step]) {
-  //         finalSelections[step] = selectedItems[step] ?? [];
-  //       }
-  //     });
-  
-  //     // Pass finalSelections to addComboToCart
-  //     const formattedSelections = Object.fromEntries(
-  //       Object.entries(finalSelections).map(([key, value]) => [
-  //         key,
-  //         value.map((item) => ({ id: item.id, name: item.name })),
-  //       ])
-  //     );
-  
-  //     addComboToCart(category, formattedSelections);
-  //     setSelectedCategory(null);
-  //     router.push("/Customer");
-  //   }
-  // };
-
   const [errorMessage, setErrorMessage] = useState<string>("");
 
   const handleNext = () => {
@@ -186,11 +154,21 @@ export default function SelectionPage({
       }));
     }
   };
-  
 
-  const handleStepSelect = (index: number) => {
-    setCurrentStep(index); // Set the currentStep to the selected step
+  const handleStepSelect = (stepIndex: number) => {
+    const stepName = steps[currentStep]!;
+    const currentSelections = selectedItems[stepName] ?? [];
+  
+    // Validation: Ensure the number of selected items matches the limit
+    if (currentSelections.length !== limit) {
+      setErrorMessage(`Please select exactly ${limit} ${stepName}(s) before switching steps.`);
+      return;
+    }
+  
+    setErrorMessage(""); // Clear error if validation passes
+    setCurrentStep(stepIndex);
   };
+  
 
   const renderItems = () => {
     let data: (Entree | Side)[] = [];
@@ -220,32 +198,6 @@ export default function SelectionPage({
       );
     });
   };
-  
-
-  // return (
-  //   <div className="flex h-full">
-  //     <SidebarProvider>
-  //       <OrderSidebar
-  //         currentStep={currentStep}
-  //         selections={selections}
-  //         category={category}
-  //         handleBack={handleBack}
-  //         handleStepSelect={handleStepSelect}
-  //       />
-  //       <SidebarTrigger />
-  //       <div className="flex-1 p-10">
-  //         <h1 className="text-2xl font-bold mb-6">{steps[currentStep]} Options (Select {limit})</h1>
-  //         <div className="grid grid-cols-3 gap-4">{renderItems()}</div>
-  //         <button
-  //           onClick={handleNext}
-  //           className="mt-6 bg-[#d82c2c] text-white p-3 rounded-lg"
-  //         >
-  //           {currentStep === steps.length - 1 ? "Add to Cart" : "Next"}
-  //         </button>
-  //       </div>
-  //     </SidebarProvider>
-  //   </div>
-  // );
 
   return (
     <div className="flex h-full">
