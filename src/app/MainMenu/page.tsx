@@ -7,7 +7,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "~/components/ui/popover";
-import { Button } from "~/components/ui/button";
+import { Switch } from "~/components/ui/switch";
 import { useLanguage } from "~/context/LanguageContext";
 
 export default function MainMenu() {
@@ -18,6 +18,19 @@ export default function MainMenu() {
     icon: string;
   } | null>(null);
   const [locationError, setLocationError] = useState<string | null>(null);
+  const [isTextLarge, setIsTextLarge] = useState(false);
+
+  useEffect(() => {
+    const persistedSize = localStorage.getItem("textSizeLarge") === "true";
+    setIsTextLarge(persistedSize);
+    document.documentElement.style.fontSize = persistedSize ? "150%" : "";
+  }, []);
+
+  const toggleTextSize = (newSize: boolean) => {
+    setIsTextLarge(newSize);
+    document.documentElement.style.fontSize = newSize ? "150%" : "";
+    localStorage.setItem("textSizeLarge", newSize.toString());
+  };
 
   useEffect(() => {
     const fetchWeather = async (latitude: number, longitude: number) => {
@@ -83,7 +96,7 @@ export default function MainMenu() {
   }, []);
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-[#FEC6B5] p-5">
+    <div className="relative flex min-h-screen flex-col items-center justify-center bg-[#FEC6B5] p-5">
       <header className="mb-5 text-center text-3xl font-bold">
         PANDA EXPRESS
       </header>
@@ -105,7 +118,9 @@ export default function MainMenu() {
 
       <Popover>
         <PopoverTrigger asChild>
-          <Button className="mb-5">Select Language</Button>
+          <button className="mb-5 rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-700">
+            Select Language
+          </button>
         </PopoverTrigger>
         <PopoverContent className="rounded-lg border border-black bg-white p-2">
           <div
@@ -176,6 +191,17 @@ export default function MainMenu() {
             ></div>
           </div>
         </Link>
+      </div>
+
+      <div className="fixed right-2 top-2 flex items-center space-x-2">
+        <label htmlFor="text-size-toggle" className="text-sm font-bold">
+          Increase Text Size
+        </label>
+        <Switch
+          id="text-size-toggle"
+          checked={isTextLarge}
+          onCheckedChange={toggleTextSize}
+        />
       </div>
     </div>
   );
