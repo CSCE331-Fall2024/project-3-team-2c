@@ -10,7 +10,7 @@ interface BotResponse {
 
 export default function ChatBot() {
   const [messages, setMessages] = useState([
-    { role: "Bot", content: "Hi, I'm pandaBot! How can I help you today?" },
+    { role: "Bot", content: "Hi, I'm BambooBot! How can I help you today?" },
   ]);
   const [message, setMessage] = useState("");
 
@@ -88,7 +88,7 @@ export default function ChatBot() {
             alignItems={"center"}
             paddingBottom={2}
           >
-            <h2 style={{ fontSize: "1.5rem", fontWeight: "bold" }}>Chat with pandaBot</h2>
+            <h2 style={{ fontSize: "1.5rem", fontWeight: "bold" }}>Chat with BambooBot</h2>
           </Box>
 
           {/* Chat Messages */}
