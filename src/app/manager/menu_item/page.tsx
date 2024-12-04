@@ -87,49 +87,23 @@ export default function MenuItemsPage() {
 
   return (
     <div>
-      {/* <header
-        style={{
-          backgroundColor: "red",
-          padding: "1rem",
-          color: "#fff",
-          textAlign: "center",
-        }}
-      >
-        <nav>
-          <a href="/" style={{ cursor: "pointer", marginRight: "1rem" }}>
-            Home
-          </a>
-          <a href="#employees" style={{ marginRight: "1rem" }}>
-            Employees
-          </a>
-          <a
-            href="#menu-items"
-            className="mr-4 text-xl font-bold"
-            style={{ marginRight: "1rem" }}
-          >
-            Menu Items
-          </a>
-          <a href="#ingredients" style={{ marginRight: "1rem" }}>
-            Ingredients
-          </a>
-          <a href="#disposables">Disposables</a>
-        </nav>
-      </header> */}
+      {/* Header Component */}
       <Header />
-
-      <div className="p-4">
-        <div className="mb-6 flex justify-center">
+  
+      <div className="p-6 bg-gray-100">
+        {/* New Item Input Section */}
+        <div className="mb-8 flex justify-center items-center space-x-4">
           <input
             type="text"
             value={newContent}
             placeholder="Add new item"
             onChange={(e) => setNewContent(e.target.value)}
-            className="mr-2 rounded border p-2"
+            className="w-full sm:w-auto rounded-lg border border-gray-300 px-4 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <select
             value={newType}
             onChange={(e) => setNewType(e.target.value)}
-            className="mr-2 rounded border p-2"
+            className="w-full sm:w-auto rounded-lg border border-gray-300 px-4 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <option value="ENTREE">Entree</option>
             <option value="DRINK">Drink</option>
@@ -137,15 +111,16 @@ export default function MenuItemsPage() {
           </select>
           <button
             onClick={addItem}
-            className="rounded bg-blue-500 px-3 py-2 text-white hover:bg-blue-700"
+            className="rounded-lg bg-blue-500 px-6 py-3 text-white font-semibold hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             Add
           </button>
         </div>
-
-        <div className="grid grid-cols-1 place-items-center gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+  
+        {/* Menu Item Cards Grid */}
+        <div className="grid grid-cols-1 place-items-center gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
           {items.map((item) => (
-            <div key={item.id}>
+            <div key={item.id} className="w-full max-w-xs">
               <Card
                 imageUrl="/dog.jpg"
                 name={item.name}
@@ -160,4 +135,5 @@ export default function MenuItemsPage() {
       </div>
     </div>
   );
+  
 }

@@ -102,10 +102,10 @@ export default function SidesPage({
   };
 
   return (
-    <div className="flex">
+    <div className="flex flex-col md:flex-row p-4 gap-4">
       {/* Left section for appetizers */}
       <div className="w-3/4">
-        <h1 className="text-2xl font-bold mb-4">Sides</h1>
+        <h1 className="text-2xl font-bold mb-4 text-gray-800">Sides</h1>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {appetizers.map((item) => {
             const quantity = selectedAppetizers[item.name]?.quantity ?? 0;
@@ -113,7 +113,7 @@ export default function SidesPage({
             return (
               <div
                 key={item.id}
-                className="relative p-5 bg-[#d82c2c] text-white rounded-lg cursor-pointer hover:bg-[#ff474c] transition"
+                className="relative p-4 bg-[#d82c2c] text-white rounded-lg shadow-md hover:bg-[#ff474c] transition transform hover:scale-105"
               >
                 {/* Item name */}
                 <div className="text-lg font-semibold">{item.name}<br />$2.50</div>
@@ -122,14 +122,14 @@ export default function SidesPage({
                 <div className="absolute bottom-4 right-4 flex gap-2 opacity-0 hover:opacity-100 transition">
                   <button
                     onClick={() => decrementItem(item.name)}
-                    className="px-3 py-1 bg-white text-black rounded-lg"
+                    className="px-3 py-1 bg-white text-black rounded-lg hover:bg-gray-200 transition"
                   >
                     -
                   </button>
                   <span className="px-3 py-1 bg-gray-800 text-white rounded-lg">{quantity}</span>
                   <button
                     onClick={() => incrementItem(item)}
-                    className="px-3 py-1 bg-white text-black rounded-lg"
+                    className="px-3 py-1 bg-white text-black rounded-lg hover:bg-gray-200 transition"
                   >
                     +
                   </button>
