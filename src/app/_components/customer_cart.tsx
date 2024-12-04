@@ -97,18 +97,23 @@ const CustomerCart: React.FC<CartProps> = ({ setCart, cart }) => {
   };
   
   return (
-    <div className="p-4">
-      <h2 className="text-2xl font-bold mb-4">Your Cart</h2>
-
+    <div className="p-4 bg-gray-50 shadow-md rounded-lg max-w-3xl mx-auto">
+      <h2 className="text-2xl font-bold mb-4 text-gray-800 border-b pb-2">Your Cart</h2>
+  
       {/* Scrollable container */}
-      <div className="mb-6 max-h-64 overflow-y-auto border border-gray-300 rounded-md p-2">
+      <div className="mb-6 max-h-64 overflow-y-auto border border-gray-300 rounded-md bg-white p-3">
         {cart.combos.length === 0 ? (
-          <p className="text-gray-600">No items in your cart.</p>
+          <p className="text-gray-600 text-center">No items in your cart.</p>
         ) : (
           cart.combos.map((combo, index) => (
-            <div key={index} className="mb-3">
-              <h4 className="mb-3 flex items-center justify-between border-b pb-2">{combo.name}</h4>
-              <ul className="ml-4">
+            <div
+              key={index}
+              className="mb-4 p-3 rounded-lg shadow-sm hover:shadow-md transition-shadow bg-gray-100"
+            >
+              <h4 className="mb-2 flex items-center justify-between border-b pb-2 text-lg font-semibold text-gray-700">
+                {combo.name}
+              </h4>
+              <ul className="ml-4 space-y-1">
                 {Object.entries(combo.items).map(([category, items], idx) => (
                   <li key={idx} className="text-gray-700">
                     <span className="font-medium">{category}:</span>{" "}
@@ -118,27 +123,35 @@ const CustomerCart: React.FC<CartProps> = ({ setCart, cart }) => {
                   </li>
                 ))}
               </ul>
-                {/* Remove button */}
-                <button
-                  className="bg-red-500 text-white py-1 px-2 rounded hover:bg-red-600 ml-4"
-                  onClick={() => removeFromCart(index)}
-                >
-                  Remove
-                </button>
+              {/* Remove button */}
+              <button
+                className="mt-3 bg-red-500 text-white py-1 px-3 rounded shadow hover:bg-red-600 transition-colors ml-auto block w-fit"
+                onClick={() => removeFromCart(index)}
+              >
+                Remove
+              </button>
             </div>
           ))
         )}
       </div>
+  
       {/* Total price */}
-      <div className="mb-4">
-        <h3 className="text-xl font-semibold">Total Price: ${totalPrice.toFixed(2)}</h3>
+      <div className="mb-4 flex justify-between items-center">
+        <h3 className="text-xl font-semibold text-gray-800">
+          Total Price: <span className="text-green-600">${totalPrice.toFixed(2)}</span>
+        </h3>
       </div>
+  
       {/* Pay button */}
       <div className="flex justify-end">
-        <PlaceOrderButton formattedContainers={formattedContainers} customerId={1} setCart={setCart}/>
+        <PlaceOrderButton
+          formattedContainers={formattedContainers}
+          customerId={1}
+          setCart={setCart}
+        />
       </div>
     </div>
-  );
+  );  
 };
 
 const PlaceOrderButton: React.FC<{

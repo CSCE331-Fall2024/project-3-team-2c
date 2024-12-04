@@ -69,7 +69,7 @@ export default function CustomerPage() {
   };
 
   return (
-    <div className="h-full flex flex-col">
+    <div className="h-full flex flex-col bg-[#FEC6B5]">
       <MenuBar onCartClick={handleCartClick} onHomeClick={handleHomeClick} onItemClick={handleGridClick}/>
       
       {/* Circular Button Below MenuBar */}
