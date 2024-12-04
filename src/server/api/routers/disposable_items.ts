@@ -22,7 +22,7 @@ const updateSchema = z.object({
   id: z.number(),
 });
 
-export const employeesRouter = createTRPCRouter({
+export const disposableItemsRouter = createTRPCRouter({
   getDisposableItemById: publicProcedure
     .input(z.number())
     .output(outputSchema)
