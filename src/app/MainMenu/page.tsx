@@ -7,6 +7,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "~/components/ui/popover";
+import { Button } from "~/components/ui/button";
 import { Switch } from "~/components/ui/switch";
 import { useLanguage } from "~/context/LanguageContext";
 
@@ -118,9 +119,7 @@ export default function MainMenu() {
 
       <Popover>
         <PopoverTrigger asChild>
-          <button className="mb-5 rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-700">
-            Select Language
-          </button>
+          <Button className="mb-5">Select Language</Button>
         </PopoverTrigger>
         <PopoverContent className="rounded-lg border border-black bg-white p-2">
           <div
