@@ -1,139 +1,180 @@
 "use client";
-import React, { useState, useEffect } from "react";
-import { api } from "~/trpc/react";
-import { Card } from "~/app/card_component/Card";
+
+import React, { useEffect, useState } from "react";
+import { Button } from "~/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "~/components/ui/dialog";
+import { Input } from "~/components/ui/input";
 import Header from "~/app/_components/header";
 
-interface Item {
-  id: number;
-  name: string;
-  type: string;
-}
-
 export default function MenuItemsPage() {
-  const [items, setItems] = useState<Item[]>([]);
-  const [newContent, setNewContent] = useState<string>("");
-  const [newType, setNewType] = useState<string>("entree");
-  const [editId, setEditId] = useState<number | null>(null);
+  const [items, setItems] = useState([]);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [formValues, setFormValues] = useState({
+    id: null,
+    name: "",
+    type: "",
+  });
 
-  const { data, refetch } = api.menu.getAllMenuItems.useQuery();
+  const fetchItems = async () => {
+    const res = await fetch("/api/menu_items");
+    const data = await res.json();
+    setItems(data);
+  };
 
-  // Sync items state with query data
-  useEffect(() => {
-    if (data) {
-      setItems(data);
+  const handleEdit = (item) => {
+    setFormValues(item);
+    setIsDialogOpen(true);
+  };
+
+  const handleAdd = () => {
+    setFormValues({ id: null, name: "", type: "" });
+    setIsDialogOpen(true);
+  };
+
+  const handleSave = async () => {
+    if (formValues.id) {
+      await fetch("/api/menu_items", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formValues),
+      });
+    } else {
+      const { id, ...newItem } = formValues;
+      await fetch("/api/menu_items", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newItem),
+      });
     }
-  }, [data]);
 
-  const enableEditing = (id: number) => {
-    setEditId(id);
+    setIsDialogOpen(false);
+    fetchItems();
   };
 
-  const deleteMutation = api.menu.deleteMenuItem.useMutation();
-  const deleteItem = async (id: number) => {
-    deleteMutation.mutate(id, {
-      onSuccess: () => {
-        refetch()
-          .then(() => {
-            setEditId(null);
-          })
-          .catch((e) => {
-            console.log(e);
-          }); // Refresh the list after deletion
-      },
-    });
-  };
-
-  const updateMutation = api.menu.updateMenuItem.useMutation();
-  const saveEdit = async (id: number, newContent: string) => {
-    updateMutation.mutate(
-      { id, name: newContent },
-      {
-        onSuccess: () => {
-          refetch()
-            .then(() => {
-              setEditId(null);
-            })
-            .catch((e) => {
-              console.log(e);
-            }); // Refresh the list after update
-        },
-      },
-    );
-  };
-
-  const addMutation = api.menu.addMenuItem.useMutation();
-  const addItem = async () => {
-    if (newContent.trim() !== "") {
-      addMutation.mutate(
-        { name: newContent, type: newType },
-        {
-          onSuccess: () => {
-            refetch()
-              .then(() => {
-                // Refresh the list after addition
-                setNewContent("");
-                setNewType("entree");
-                setEditId(null);
-              })
-              .catch((e) => {
-                console.log(e);
-              });
+  const handleDelete = async (id) => {
+    if (confirm("Are you sure you want to delete this item?")) {
+      try {
+        const response = await fetch(`/api/menu_items`, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
           },
-        },
-      );
+          body: JSON.stringify({ id }),
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+          throw new Error(result.error || "Failed to delete item");
+        }
+
+        alert("Item deleted successfully");
+        fetchItems(); // Refresh the list
+      } catch (error) {
+        alert(error.message); // Display the error in a simple alert
+      }
     }
   };
+
+  useEffect(() => {
+    fetchItems();
+  }, []);
 
   return (
-    <div>
-      {/* Header Component */}
+    <>
       <Header />
-  
-      <div className="p-6 bg-gray-100">
-        {/* New Item Input Section */}
-        <div className="mb-8 flex justify-center items-center space-x-4">
-          <input
-            type="text"
-            value={newContent}
-            placeholder="Add new item"
-            onChange={(e) => setNewContent(e.target.value)}
-            className="w-full sm:w-auto rounded-lg border border-gray-300 px-4 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          <select
-            value={newType}
-            onChange={(e) => setNewType(e.target.value)}
-            className="w-full sm:w-auto rounded-lg border border-gray-300 px-4 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            <option value="ENTREE">Entree</option>
-            <option value="DRINK">Drink</option>
-            <option value="SIDE">Side</option>
-          </select>
-          <button
-            onClick={addItem}
-            className="rounded-lg bg-blue-500 px-6 py-3 text-white font-semibold hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            Add
-          </button>
-        </div>
-  
-        {/* Menu Item Cards Grid */}
-        <div className="grid grid-cols-1 place-items-center gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-          {items.map((item) => (
-            <div key={item.id} className="w-full max-w-xs">
-              <Card
-                imageUrl="/dog.jpg"
-                name={item.name}
-                onEdit={() => enableEditing(item.id)}
-                onDelete={() => deleteItem(item.id)}
-                isEditing={editId === item.id}
-                onSave={(newContent) => saveEdit(item.id, newContent)}
+      <div className="p-6">
+        <h1 className="mb-4 flex justify-center text-xl font-bold">
+          Manage Menu Items
+        </h1>
+
+        <table className="w-full table-auto border-collapse border border-gray-300">
+          <thead className="bg-gray-100">
+            <tr>
+              <th className="border border-gray-300 px-4 py-2 text-left">ID</th>
+              <th className="border border-gray-300 px-4 py-2 text-left">
+                Name
+              </th>
+              <th className="border border-gray-300 px-4 py-2 text-left">
+                Type
+              </th>
+              <th className="border border-gray-300 px-4 py-2 text-left">
+                Actions
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {items.map((item) => (
+              <tr key={item.id} className="hover:bg-gray-50">
+                <td className="border border-gray-300 px-4 py-2">{item.id}</td>
+                <td className="border border-gray-300 px-4 py-2">
+                  {item.name}
+                </td>
+                <td className="border border-gray-300 px-4 py-2">
+                  {item.type}
+                </td>
+                <td className="flex gap-2 border border-gray-300 px-4 py-2">
+                  <Button variant="outline" onClick={() => handleEdit(item)}>
+                    Edit
+                  </Button>
+                  <Button
+                    variant="destructive"
+                    onClick={() => handleDelete(item.id)}
+                  >
+                    Delete
+                  </Button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
+        <Button className="mt-4" onClick={handleAdd}>
+          Add Item
+        </Button>
+
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>
+                {formValues.id ? "Edit Item" : "Add Item"}
+              </DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <Input
+                placeholder="Name"
+                value={formValues.name}
+                onChange={(e) =>
+                  setFormValues({ ...formValues, name: e.target.value })
+                }
               />
+              <select
+                value={formValues.type}
+                onChange={(e) =>
+                  setFormValues({ ...formValues, type: e.target.value })
+                }
+                className="w-full rounded border px-2 py-1"
+              >
+                <option value="" disabled>
+                  Select Type
+                </option>
+                <option value="entree">Entree</option>
+                <option value="side">Side</option>
+                <option value="drink">Drink</option>
+              </select>
             </div>
-          ))}
-        </div>
+            <Button className="mt-4" onClick={handleSave}>
+              Save
+            </Button>
+          </DialogContent>
+        </Dialog>
       </div>
-    </div>
+    </>
   );
   
 }
