@@ -81,7 +81,7 @@ export default function DisposableItemsPage() {
   return (
     <>
       <Header />
-      <div className="p-6">
+      <div className="p-6 bg-white">
         <h1 className="mb-4 flex justify-center text-xl font-bold">
           Manage Disposable Items
         </h1>

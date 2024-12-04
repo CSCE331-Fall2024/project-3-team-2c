@@ -81,7 +81,7 @@ export default function IngredientsPage() {
   return (
     <>
       <Header />
-      <div className="p-6">
+      <div className="p-6 bg-white">
         <h1 className="mb-4 flex justify-center text-xl font-bold">
           Manage Ingredients
         </h1>
