@@ -74,9 +74,9 @@ export default function MenuItemsPage() {
         }
 
         alert("Item deleted successfully");
-        fetchItems(); // Refresh the list
+        fetchItems();
       } catch (error) {
-        alert(error.message); // Display the error in a simple alert
+        alert(error.message);
       }
     }
   };
@@ -88,7 +88,7 @@ export default function MenuItemsPage() {
   return (
     <>
       <Header />
-      <div className="p-6">
+      <div className="bg-white p-6">
         <h1 className="mb-4 flex justify-center text-xl font-bold">
           Manage Menu Items
         </h1>
@@ -176,5 +176,4 @@ export default function MenuItemsPage() {
       </div>
     </>
   );
-  
 }

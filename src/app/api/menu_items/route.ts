@@ -79,7 +79,6 @@ export async function DELETE(req: Request) {
 
     return NextResponse.json({ message: "Item deleted successfully" });
   } catch (error: any) {
-    // Check for foreign key constraint violation
     if (error.code === "23503") {
       return NextResponse.json(
         {
