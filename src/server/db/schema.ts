@@ -70,6 +70,12 @@ export const accounts = createTable(
   }),
 );
 
+export const disposable_items = createTable("disposable_items", {
+  id: serial("id").primaryKey(),
+  name: varchar("name"),
+  quantity: integer("quantity").default(0),
+});
+
 export const accountsRelations = relations(accounts, ({ one }) => ({
   user: one(users, { fields: [accounts.userId], references: [users.id] }),
 }));
