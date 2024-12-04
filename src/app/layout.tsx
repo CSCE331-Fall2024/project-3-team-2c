@@ -15,7 +15,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="h-full bg-[#FEC6B5]">
+    <html lang="en" className="h-full">
       <body className="h-full">
         <LanguageProvider>
           <TRPCReactProvider>
