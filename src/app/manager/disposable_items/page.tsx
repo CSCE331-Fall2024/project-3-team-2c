@@ -10,6 +10,7 @@ import {
 } from "~/components/ui/dialog";
 import { Input } from "~/components/ui/input";
 import Header from "~/app/_components/header";
+import { api } from "~/trpc/react";
 
 export default function DisposableItemsPage() {
   const [items, setItems] = useState([]);
@@ -17,12 +18,11 @@ export default function DisposableItemsPage() {
   const [formValues, setFormValues] = useState({
     id: null,
     name: "",
-    quantity: "",
+    quantity: null,
   });
 
   const fetchItems = async () => {
-    const res = await fetch("/api/disposable_items");
-    const data = await res.json();
+    const data = api.
     setItems(data);
   };
 
