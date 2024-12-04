@@ -26,6 +26,8 @@ export const env = createEnv({
     AUTH0_CLIENT_SECRET: z.string(),
     AUTH0_ISSUER: z.string(),
     GEMINI_API_KEY: z.string(),
+    GOOGLE_TRANSLATE_API_KEY: z.string(),
+    WEATHER_API_KEY: z.string(),
   },
 
   /**
