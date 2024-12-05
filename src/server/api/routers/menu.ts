@@ -21,13 +21,22 @@ async function getOneItem(input: number) {
 
 async function addOneItem(input: z.infer<typeof insertSchema>) {
   console.log("addOneItem", input);
-  return (await db.insert(menuItems).values(input))?.at(0);
+  return (await db.insert(menuItems).values(input).returning())?.at(0);
 }
 
 async function updateOneItem(input: z.infer<typeof updateSchema>) {
   console.log("updateOneItem", input);
+
   return (
-    await db.update(menuItems).set(input).where(eq(menuItems.id, input.id))
+    await db
+      .update(menuItems)
+      .set({
+        id: input.id,
+        name: input.name?.toUpperCase(),
+        type: input.type?.toUpperCase(),
+      })
+      .where(eq(menuItems.id, input.id))
+      .returning()
   )?.at(0);
 }
 

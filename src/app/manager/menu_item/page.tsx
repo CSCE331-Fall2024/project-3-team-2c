@@ -29,13 +29,12 @@ export default function MenuItemsPage() {
   const addMutation = api.menu.addMenuItem.useMutation();
   const deleteMutation = api.menu.deleteMenuItem.useMutation();
 
-  const [items, setItems] = useState<Item[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
   const [formValues, setFormValues] = useState<ItemOptional>({});
+  const { data: items, refetch } = api.menu.getAllMenuItems.useQuery();
 
-  const fetchItems = () => {
-    const { data: items } = api.menu.getAllMenuItems.useQuery();
-    setItems(items ?? []);
+  const fetchItems = async () => {
+    await refetch();
   };
 
   const handleEdit = (item: Item) => {
@@ -61,20 +60,16 @@ export default function MenuItemsPage() {
     }
 
     setIsDialogOpen(false);
-    fetchItems();
+    await fetchItems();
   };
 
   const handleDelete = async (id: number) => {
     if (confirm("Are you sure you want to delete this item?")) {
       deleteMutation.mutate(id);
 
-      fetchItems();
+      await fetchItems();
     }
   };
-
-  useEffect(() => {
-    fetchItems();
-  }, []);
 
   return (
     <>
@@ -100,7 +95,7 @@ export default function MenuItemsPage() {
             </tr>
           </thead>
           <tbody>
-            {items.map((item) => (
+            {items?.map((item) => (
               <tr key={item.id} className="hover:bg-gray-50">
                 <td className="border border-gray-300 px-4 py-2">{item.id}</td>
                 <td className="border border-gray-300 px-4 py-2">
