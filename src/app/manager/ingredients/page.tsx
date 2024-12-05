@@ -10,67 +10,64 @@ import {
 } from "~/components/ui/dialog";
 import { Input } from "~/components/ui/input";
 import Header from "~/app/_components/header";
+import { api } from "~/trpc/react";
+
+interface Ingredient {
+  id: number;
+  name: string;
+  quantity: number;
+}
+
+interface IngredientOptional {
+  id?: number;
+  name?: string;
+  quantity?: number;
+}
 
 export default function IngredientsPage() {
-  const [ingredients, setIngredients] = useState([]);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [formValues, setFormValues] = useState({
-    id: null,
-    name: "",
-    quantity: "",
-  });
+  const addMutation = api.ingredients.addIngredient.useMutation();
+  const updateMutation = api.ingredients.updateIngredient.useMutation();
+  const deleteMutation = api.ingredients.deleteIngredient.useMutation();
 
-  const fetchIngredients = async () => {
-    const res = await fetch("/api/ingredients");
-    const data = await res.json();
-    setIngredients(data);
+  const [ingredients, setIngredients] = useState<Ingredient[]>([]);
+  const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
+  const [formValues, setFormValues] = useState<IngredientOptional>({});
+
+  const fetchIngredients = () => {
+    const { data: ingredients } = api.ingredients.getAllIngredients.useQuery();
+    setIngredients(ingredients ?? []);
   };
 
-  const handleEdit = (ingredient) => {
+  const handleEdit = (ingredient: Ingredient) => {
     setFormValues(ingredient);
     setIsDialogOpen(true);
   };
 
   const handleAdd = () => {
-    setFormValues({ id: null, name: "", quantity: "" });
+    setFormValues({});
     setIsDialogOpen(true);
   };
 
   const handleSave = async () => {
     if (formValues.id) {
-      await fetch("/api/ingredients", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formValues),
-      });
+      const tmp = { ...formValues, id: formValues.id };
+      updateMutation.mutate(tmp);
     } else {
-      const { id, ...newIngredient } = formValues;
-      await fetch("/api/ingredients", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newIngredient),
-      });
+      const tmp = {
+        name: formValues.name ?? "",
+        quantity: formValues.quantity ?? 0,
+      };
+      addMutation.mutate(tmp);
     }
 
     setIsDialogOpen(false);
     fetchIngredients();
   };
 
-  const handleDelete = async (id) => {
+  const handleDelete = async (id: number) => {
     if (confirm("Are you sure you want to delete this ingredient?")) {
-      const response = await fetch(`/api/ingredients`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ id }),
-      });
-
-      if (response.ok) {
-        fetchIngredients();
-      } else {
-        console.error("Failed to delete ingredient");
-      }
+      deleteMutation.mutate(id);
+      fetchIngredients();
     }
   };
 
@@ -81,7 +78,7 @@ export default function IngredientsPage() {
   return (
     <>
       <Header />
-      <div className="p-6 bg-white">
+      <div className="bg-white p-6">
         <h1 className="mb-4 flex justify-center text-xl font-bold">
           Manage Ingredients
         </h1>
@@ -156,7 +153,10 @@ export default function IngredientsPage() {
                 type="number"
                 value={formValues.quantity}
                 onChange={(e) =>
-                  setFormValues({ ...formValues, quantity: e.target.value })
+                  setFormValues({
+                    ...formValues,
+                    quantity: Number(e.target.value),
+                  })
                 }
               />
             </div>

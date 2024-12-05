@@ -53,19 +53,21 @@ async function getPriceFromSizes(sizeIds: number[]) {
       .select({ price: sizes.price })
       .from(sizes)
       .where(eq(sizes.id, id));
-    return parseFloat(result[0]?.price ?? '0');  // Ensure the price is treated as a number
+    return parseFloat(result[0]?.price ?? "0"); // Ensure the price is treated as a number
   });
 
   // Wait for all promises to resolve and sum the prices
   const prices = await Promise.all(pricePromises);
 
   // Log the total price
-  console.log("PRICE", prices.reduce((sum, price) => sum + price, 0.0));
+  console.log(
+    "PRICE",
+    prices.reduce((sum, price) => sum + price, 0.0),
+  );
 
   // Return the sum of prices
   return prices.reduce((sum, price) => sum + price, 0.0);
 }
-
 
 async function getOneOrder(
   input: number,
@@ -101,9 +103,9 @@ async function getOneOrder(
       );
     return {
       containerId: container.id,
-      sizeId: container.sizeId!,
-      mainIds: mainItems.map((item) => item.itemId!),
-      sideIds: sideItems.map((item) => item.itemId!),
+      sizeId: container.sizeId,
+      mainIds: mainItems.map((item) => item.itemId),
+      sideIds: sideItems.map((item) => item.itemId),
     };
   });
 
@@ -111,7 +113,7 @@ async function getOneOrder(
     customerId: order!.customerId,
     orderId: order!.id,
     total: parseFloat(order!.total),
-    timestamp: order!.timestamp!,
+    timestamp: order!.timestamp,
     containers: await Promise.all(containerListWithItems),
   };
 }
@@ -200,7 +202,7 @@ export const ordersRouter = createTRPCRouter({
             input.containers.map((container) => ({
               orderId: orderId,
               sizeId: container.sizeId,
-            }))
+            })),
           )
           .returning({ containerId: containers.id })
       )?.map((row) => row.containerId);
@@ -212,14 +214,14 @@ export const ordersRouter = createTRPCRouter({
       // insert containers_to_menu
       await Promise.all(
         input.containers.map((container, index) => {
-          const containerId = containerIds[index];
+          const containerId = containerIds[index]!;
 
           const mainInsertions = container.mainIds.map((itemId) =>
             db.insert(containersToMenu).values({
               containerId,
               itemId,
               itemType: "main",
-            })
+            }),
           );
 
           const sideInsertions = container.sideIds.map((itemId) =>
@@ -227,16 +229,15 @@ export const ordersRouter = createTRPCRouter({
               containerId,
               itemId,
               itemType: "side",
-            })
+            }),
           );
 
           return Promise.all([...mainInsertions, ...sideInsertions]);
-        })
+        }),
       );
 
       return { orderId };
     }),
-
 
   getOrder: publicProcedure
     .input(z.number())
@@ -255,7 +256,7 @@ export const ordersRouter = createTRPCRouter({
     }),
 
   // Returns the 5 most recent orders for a customer
-  // 
+  //
   getLatestOrdersByCustomer: publicProcedure
     .input(z.number())
     .output(z.array(orderOutputSchema))

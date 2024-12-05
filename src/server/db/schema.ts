@@ -70,6 +70,12 @@ export const accounts = createTable(
   }),
 );
 
+export const disposable_items = createTable("disposable_items", {
+  id: serial("id").primaryKey(),
+  name: varchar("name").notNull(),
+  quantity: integer("quantity").default(0).notNull(),
+});
+
 export const accountsRelations = relations(accounts, ({ one }) => ({
   user: one(users, { fields: [accounts.userId], references: [users.id] }),
 }));
@@ -120,7 +126,9 @@ export const menuItems = createTable("menu_items", {
 
 export const orders = createTable("orders", {
   id: serial("id").primaryKey(),
-  timestamp: timestamp("timestamp").default(sql`now()`),
+  timestamp: timestamp("timestamp")
+    .default(sql`now()`)
+    .notNull(),
   total: numeric("total", { scale: 2 }).notNull(),
   customerId: integer("customer_id").notNull(),
 });
@@ -135,39 +143,51 @@ export const sizes = createTable("sizes", {
 
 export const containers = createTable("containers", {
   id: serial("id").primaryKey(),
-  orderId: integer("order_id").references(() => orders.id),
-  sizeId: integer("size_id").references(() => sizes.id),
+  orderId: integer("order_id")
+    .references(() => orders.id)
+    .notNull(),
+  sizeId: integer("size_id")
+    .references(() => sizes.id)
+    .notNull(),
 });
 
 export const containersToMenu = createTable("containers_to_menu", {
   id: serial("id").primaryKey(),
-  containerId: integer("container_id").references(() => containers.id),
-  itemId: integer("item_id").references(() => menuItems.id),
+  containerId: integer("container_id")
+    .references(() => containers.id)
+    .notNull(),
+  itemId: integer("item_id")
+    .references(() => menuItems.id)
+    .notNull(),
   itemType: varchar("item_type").notNull(),
 });
 
 export const employees = createTable("employees", {
   id: serial("id").primaryKey(),
-  name: varchar("name"),
-  email: varchar("email"),
-  role: varchar("role"),
+  name: varchar("name").notNull(),
+  email: varchar("email").notNull(),
+  role: varchar("role").notNull(),
 });
 
 export const ingredients = createTable("ingredients", {
   id: serial("id").primaryKey(),
-  name: varchar("name"),
-  quantity: integer("quantity").default(0),
+  name: varchar("name").notNull(),
+  quantity: integer("quantity").default(0).notNull(),
 });
 
 export const menuToIngredients = createTable("menu_to_ingredients", {
   id: serial("id").primaryKey(),
-  menuId: integer("menu_id").references(() => menuItems.id),
-  ingredientId: integer("ingredient_id").references(() => ingredients.id),
+  menuId: integer("menu_id")
+    .references(() => menuItems.id)
+    .notNull(),
+  ingredientId: integer("ingredient_id")
+    .references(() => ingredients.id)
+    .notNull(),
 });
 
 // TODO: See if it's better to merge this into the employees table so that we can have a "users" table instead
 export const customers = createTable("customers", {
   id: serial("id").primaryKey(),
-  name: varchar("name"),
-  email: varchar("email"),
+  name: varchar("name").notNull(),
+  email: varchar("email").notNull(),
 });
