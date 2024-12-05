@@ -12,65 +12,67 @@ import { Input } from "~/components/ui/input";
 import Header from "~/app/_components/header";
 import { api } from "~/trpc/react";
 
+interface Item {
+  id: number;
+  name: string;
+  quantity: number;
+}
+
+interface ItemOptional {
+  id?: number;
+  name?: string;
+  quantity?: number;
+}
+
 export default function DisposableItemsPage() {
-  const [items, setItems] = useState([]);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [formValues, setFormValues] = useState({
-    id: null,
-    name: "",
-    quantity: null,
+  const updateMutation = api.disposable.updateDisposableItem.useMutation();
+  const addMutation = api.disposable.addDisposableItem.useMutation();
+  const deleteMutation = api.disposable.deleteDisposableItem.useMutation();
+
+  const [items, setItems] = useState<Item[]>([]);
+  const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
+  const [formValues, setFormValues] = useState<ItemOptional>({
+    id: undefined,
+    name: undefined,
+    quantity: undefined,
   });
 
-  const fetchItems = async () => {
-    const data = api.
-    setItems(data);
+  const fetchItems = () => {
+    const { data: items } = api.disposable.getAllDisposableItems.useQuery();
+    setItems(items ?? []);
   };
 
-  const handleEdit = (item) => {
+  const handleEdit = (item: Item) => {
     setFormValues(item);
     setIsDialogOpen(true);
   };
 
   const handleAdd = () => {
-    setFormValues({ id: null, name: "", quantity: "" });
+    setFormValues({ id: undefined, name: "", quantity: undefined });
     setIsDialogOpen(true);
   };
 
   const handleSave = async () => {
     if (formValues.id) {
-      await fetch("/api/disposable_items", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formValues),
-      });
+      const tmp = { ...formValues, id: formValues.id };
+      updateMutation.mutate(tmp);
     } else {
-      const { id, ...newItem } = formValues;
-      await fetch("/api/disposable_items", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newItem),
-      });
+      const tmp = {
+        name: formValues.name ?? "",
+        quantity: formValues.quantity ?? 0,
+      };
+      addMutation.mutate(tmp);
     }
 
     setIsDialogOpen(false);
     fetchItems();
   };
 
-  const handleDelete = async (id) => {
+  const handleDelete = async (id: number) => {
     if (confirm("Are you sure you want to delete this item?")) {
-      const response = await fetch(`/api/disposable_items`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ id }),
-      });
+      deleteMutation.mutate(id);
 
-      if (response.ok) {
-        fetchItems();
-      } else {
-        console.error("Failed to delete item");
-      }
+      fetchItems();
     }
   };
 
@@ -81,7 +83,7 @@ export default function DisposableItemsPage() {
   return (
     <>
       <Header />
-      <div className="p-6 bg-white">
+      <div className="bg-white p-6">
         <h1 className="mb-4 flex justify-center text-xl font-bold">
           Manage Disposable Items
         </h1>
@@ -151,11 +153,14 @@ export default function DisposableItemsPage() {
                 type="number"
                 value={formValues.quantity}
                 onChange={(e) =>
-                  setFormValues({ ...formValues, quantity: e.target.value })
+                  setFormValues({
+                    ...formValues,
+                    quantity: Number(e.target.value),
+                  })
                 }
               />
             </div>
-            <Button className="mt-4" onClick={handleSave}>
+            <Button type="submit" className="mt-4" onClick={handleSave}>
               Save
             </Button>
           </DialogContent>
