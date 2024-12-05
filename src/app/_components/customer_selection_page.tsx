@@ -57,10 +57,12 @@ const getSelectionLimits = (category: string): Record<string, number> => {
 
 export default function SelectionPage({
   category,
+  user,
   setSelectedCategory,
   addComboToCart,
 }: {
   category: string;
+  user: string;
   setSelectedCategory: (category: string | null) => void;
   addComboToCart: (comboName: string, comboItems: Record<string, { id: number; name: string }[]>) => void;
 }) {
@@ -118,7 +120,11 @@ export default function SelectionPage({
 
       addComboToCart(category, formattedSelections);
       setSelectedCategory(null);
-      router.push("/Customer");
+      if (user.toLowerCase() == "customer") {
+        router.push("/Customer");
+      } else if (user.toLowerCase() == "cashier") {
+        router.push("/cashier");
+      }
     }
   };
 
@@ -127,7 +133,11 @@ export default function SelectionPage({
       setCurrentStep((prev) => prev - 1);
     } else {
       setSelectedCategory(null);
-      router.push("/Customer");
+      if (user.toLowerCase() == "customer") {
+        router.push("/Customer");
+      } else if (user.toLowerCase() == "cashier") {
+        router.push("/cashier");
+      }
     }
   };
 

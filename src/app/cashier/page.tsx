@@ -70,7 +70,8 @@ export default function CustomerPage() {
           <CustomerCart setCart={setCart} cart={cart} />
         ) : selectedCategory && ["bowl", "plate", "biggerPlate"].includes(selectedCategory) ? (
           <SelectionPage 
-            category={selectedCategory} 
+            category={selectedCategory}
+            user="cashier"
             setSelectedCategory={setSelectedCategory}
             addComboToCart={addComboToCart}
           />
