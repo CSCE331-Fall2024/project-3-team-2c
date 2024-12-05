@@ -10,74 +10,65 @@ import {
 } from "~/components/ui/dialog";
 import { Input } from "~/components/ui/input";
 import Header from "~/app/_components/header";
+import { api } from "~/trpc/react";
+
+interface Item {
+  id: number;
+  name: string;
+  type: string;
+}
+
+interface ItemOptional {
+  id?: number;
+  name?: string;
+  type?: string;
+}
 
 export default function MenuItemsPage() {
-  const [items, setItems] = useState([]);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [formValues, setFormValues] = useState({
-    id: null,
-    name: "",
-    type: "",
-  });
+  const updateMutation = api.menu.updateMenuItem.useMutation();
+  const addMutation = api.menu.addMenuItem.useMutation();
+  const deleteMutation = api.menu.deleteMenuItem.useMutation();
 
-  const fetchItems = async () => {
-    const res = await fetch("/api/menu_items");
-    const data = await res.json();
-    setItems(data);
+  const [items, setItems] = useState<Item[]>([]);
+  const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
+  const [formValues, setFormValues] = useState<ItemOptional>({});
+
+  const fetchItems = () => {
+    const { data: items } = api.menu.getAllMenuItems.useQuery();
+    setItems(items ?? []);
   };
 
-  const handleEdit = (item) => {
+  const handleEdit = (item: Item) => {
     setFormValues(item);
     setIsDialogOpen(true);
   };
 
   const handleAdd = () => {
-    setFormValues({ id: null, name: "", type: "" });
+    setFormValues({});
     setIsDialogOpen(true);
   };
 
   const handleSave = async () => {
     if (formValues.id) {
-      await fetch("/api/menu_items", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formValues),
-      });
+      const tmp = { ...formValues, id: formValues.id };
+      updateMutation.mutate(tmp);
     } else {
-      const { id, ...newItem } = formValues;
-      await fetch("/api/menu_items", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newItem),
-      });
+      const tmp = {
+        name: formValues.name ?? "",
+        type: formValues.type ?? "",
+      };
+      addMutation.mutate(tmp);
     }
 
     setIsDialogOpen(false);
     fetchItems();
   };
 
-  const handleDelete = async (id) => {
+  const handleDelete = async (id: number) => {
     if (confirm("Are you sure you want to delete this item?")) {
-      try {
-        const response = await fetch(`/api/menu_items`, {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ id }),
-        });
+      deleteMutation.mutate(id);
 
-        const result = await response.json();
-
-        if (!response.ok) {
-          throw new Error(result.error || "Failed to delete item");
-        }
-
-        alert("Item deleted successfully");
-        fetchItems(); // Refresh the list
-      } catch (error) {
-        alert(error.message); // Display the error in a simple alert
-      }
+      fetchItems();
     }
   };
 
@@ -176,5 +167,4 @@ export default function MenuItemsPage() {
       </div>
     </>
   );
-  
 }
