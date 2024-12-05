@@ -31,11 +31,7 @@ export default function DisposableItemsPage() {
 
   const [items, setItems] = useState<Item[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
-  const [formValues, setFormValues] = useState<ItemOptional>({
-    id: undefined,
-    name: undefined,
-    quantity: undefined,
-  });
+  const [formValues, setFormValues] = useState<ItemOptional>({});
 
   const fetchItems = () => {
     const { data: items } = api.disposable.getAllDisposableItems.useQuery();
@@ -48,7 +44,7 @@ export default function DisposableItemsPage() {
   };
 
   const handleAdd = () => {
-    setFormValues({ id: undefined, name: "", quantity: undefined });
+    setFormValues({});
     setIsDialogOpen(true);
   };
 

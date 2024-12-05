@@ -10,68 +10,66 @@ import {
 } from "~/components/ui/dialog";
 import { Input } from "~/components/ui/input";
 import Header from "~/app/_components/header";
+import { api } from "~/trpc/react";
+interface Employee {
+  id: number;
+  name: string;
+  email: string;
+  role: string;
+}
 
+interface EmployeeOptional {
+  id?: number;
+  name?: string;
+  email?: string;
+  role?: string;
+}
 export default function EmployeesPage() {
-  const [employees, setEmployees] = useState([]);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [formValues, setFormValues] = useState({
-    id: null,
-    name: "",
-    email: "",
-    role: "",
-  });
+  const updateMutation = api.employees.updateEmployee.useMutation();
+  const addMutation = api.employees.addEmployee.useMutation();
+  const deleteMutation = api.employees.deleteEmployee.useMutation();
 
-  const fetchEmployees = async () => {
-    const res = await fetch("/api/employees");
-    const data = await res.json();
-    setEmployees(data);
+  const [employees, setEmployees] = useState<Employee[]>([]);
+  const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
+  const [formValues, setFormValues] = useState<EmployeeOptional>({});
+
+  const fetchEmployees = () => {
+    const { data: employees } = api.employees.getAllEmployees.useQuery();
+
+    setEmployees(employees ?? []);
   };
 
-  const handleEdit = (employee) => {
+  const handleEdit = (employee: Employee) => {
     setFormValues(employee);
     setIsDialogOpen(true);
   };
 
   const handleAdd = () => {
-    setFormValues({ id: null, name: "", email: "", role: "" });
+    setFormValues({});
     setIsDialogOpen(true);
   };
 
   const handleSave = async () => {
     if (formValues.id) {
-      await fetch("/api/employees", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formValues),
-      });
+      const tmp = { ...formValues, id: formValues.id };
+      updateMutation.mutate(tmp);
     } else {
-      const { id, ...newEmployee } = formValues;
-      await fetch("/api/employees", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newEmployee),
-      });
+      const tmp = {
+        name: formValues.name ?? "",
+        email: formValues.email ?? "",
+        role: formValues.role ?? "cashier",
+      };
+      addMutation.mutate(tmp);
     }
 
     setIsDialogOpen(false);
     fetchEmployees();
   };
 
-  const handleDelete = async (id) => {
+  const handleDelete = async (id: number) => {
     if (confirm("Are you sure you want to delete this employee?")) {
-      const response = await fetch(`/api/employees`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ id }),
-      });
-
-      if (response.ok) {
-        fetchEmployees();
-      } else {
-        console.error("Failed to delete employee");
-      }
+      deleteMutation.mutate(id);
+      fetchEmployees();
     }
   };
 
@@ -82,7 +80,7 @@ export default function EmployeesPage() {
   return (
     <>
       <Header />
-      <div className="p-6 bg-white">
+      <div className="bg-white p-6">
         <h1 className="mb-4 flex justify-center text-xl font-bold">
           Manage Employees
         </h1>
