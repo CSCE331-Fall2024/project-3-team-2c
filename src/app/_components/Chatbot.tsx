@@ -22,7 +22,7 @@ export default function Chatbot() {
     });
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const data: { message: string } = await response.json();
+    const data = (await response.json()) as { message: string };
     setMessages((messages) => [
       ...messages,
       { role: "Bot", content: data.message },

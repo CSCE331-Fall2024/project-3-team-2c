@@ -4,15 +4,15 @@
 /* eslint @typescript-eslint/no-require-imports: 0 */
 /* eslint @typescript-eslint/no-explicit-any: 0 */
 
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
   try {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const promptResponse = await req.json();
-    const userMessages = promptResponse.filter(
-      (message: { role: string }) => message.role === "User",
-    );
+    const userMessages = (
+      promptResponse as { role: string; content: string }[]
+    ).filter((message: { role: string }) => message.role === "User");
     const prompt = userMessages[userMessages.length - 1]?.content;
 
     if (!prompt) {
