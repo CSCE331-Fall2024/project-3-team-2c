@@ -11,6 +11,32 @@ import { Button } from "~/components/ui/button";
 import { Switch } from "~/components/ui/switch";
 import { useLanguage } from "~/context/LanguageContext";
 
+
+/**
+ * MainMenu Component
+ * 
+ * This component serves as the main entry point for users to navigate to different roles and functionalities 
+ * within the Panda Express system (e.g., Manager, Cashier, Customer, Menu Board). It also includes weather 
+ * information, language selection, and text size toggling features for enhanced usability.
+ * 
+ * **Key Features:**
+ * - **Navigation Buttons:** Four main buttons for navigating to:
+ *   - Manager menu items.
+ *   - Cashier view.
+ *   - Customer interface.
+ *   - Menu board.
+ * - **Weather Display:**
+ *   - Fetches and displays current weather based on the user's geolocation.
+ *   - Shows an error message if location access fails.
+ * - **Language Selection:**
+ *   - Allows users to select from predefined languages (English, Spanish, French, Chinese).
+ * - **Text Size Toggle:**
+ *   - Provides an accessibility feature to toggle between standard and large text sizes.
+ *   - Persists the preference in `localStorage`.
+ * 
+ * @returns {JSX.Element} A responsive main menu interface for Panda Express.
+ */
+
 export default function MainMenu() {
   const { selectedLanguage, setSelectedLanguage } = useLanguage();
   const [weather, setWeather] = useState<{

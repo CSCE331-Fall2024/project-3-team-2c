@@ -9,6 +9,25 @@ import DrinksPage from '../_components/drinks';
 import EntreesPage from '../_components/entrees';
 import SidesPage from '../_components/sides';
 
+
+
+/**
+ * CustomerPage Component
+ * 
+ * This component serves as the main hub for customers to navigate and interact with different sections
+ * of the application, such as selecting menu items, managing a shopping cart, and viewing available categories.
+ * 
+ * **Key Features:**
+ * - **Category Selection:** Allows users to select categories like bowls, plates, entrees, drinks, and sides.
+ * - **Shopping Cart:** Provides functionality to add combos to the cart and view the cart's contents.
+ * - **Dynamic Views:** Dynamically renders content based on the current state:
+ *   - Displays a grid of categories (`CustomerGrid`).
+ *   - Shows category-specific pages (e.g., `SelectionPage`, `DrinksPage`).
+ *   - Renders the shopping cart (`CustomerCart`).
+ * 
+ * @returns {JSX.Element} The rendered customer page.
+ */
+
 export default function CustomerPage() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [cart, setCart] = useState<{ combos: { name: string; items: Record<string, { id: number; name: string }[]> }[] }>({

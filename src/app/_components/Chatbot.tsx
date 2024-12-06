@@ -3,6 +3,16 @@ import { useState } from "react";
 import Button from "@mui/material/Button";
 import { Box, Stack, TextField } from "@mui/material";
 
+
+/**
+ * Chatbot Component
+ * 
+ * This component renders an interactive chatbot interface that allows users to send messages
+ * and receive responses from the bot. It maintains a list of messages exchanged between the user
+ * and the bot, handles user input, and communicates with a backend API to fetch bot responses.
+ * 
+ * @returns {JSX.Element} The rendered Chatbot component.
+ */
 export default function Chatbot() {
   const [messages, setMessages] = useState([
     { role: "Bot", content: "Hi im fAIshonBot! How can I help you today?" },

@@ -6,6 +6,39 @@ interface DisposableItem {
   quantity: number;
 }
 
+
+
+/**
+ * EditDisposableItems Component
+ * 
+ * This component provides an interface for managing disposable items within an application.
+ * It allows users to perform the following actions:
+ * 
+ * - **Display Items:** Shows a list of disposable items, each with a name and quantity.
+ * - **Edit Quantity:** Enables users to edit the quantity of existing items.
+ * - **Delete Items:** Allows users to remove items from the list.
+ * - **Add New Items:** Provides a form for users to add new disposable items with a specified name and quantity.
+ * 
+ * **Functions:**
+ * 
+ * - `handleInputChange`: Updates the state for either the `newItem` or the `editingItem` based on user input.
+ * - `handleSave`: Saves the changes made to an existing item's quantity and updates the `items` list accordingly.
+ * - `handleDelete`: Removes an item from the `items` list based on its `id`.
+ * - `handleAddItem`: Adds a new item to the `items` list after validating the input fields.
+ * 
+ * **Rendering:**
+ * 
+ * - **Item List:** Displays each disposable item with its name and quantity, along with "Edit Quantity" and "Delete" buttons.
+ * - **Edit Form:** When an item is being edited, a form appears allowing the user to update the item's quantity.
+ * - **Add New Item Form:** Provides input fields for adding a new disposable item with a name and quantity.
+ * 
+ * **User Feedback:**
+ * 
+ * - Alerts users upon successful addition or update of items.
+ * - Validates input fields to ensure that both name and quantity are provided when adding a new item.
+ * 
+ * @returns {JSX.Element} The rendered EditDisposableItems component.
+ */
 const EditDisposableItems = () => {
   const [items, setItems] = useState<DisposableItem[]>([
     { id: 1, name: "Napkins", quantity: 10 },

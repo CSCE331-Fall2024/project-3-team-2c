@@ -24,6 +24,23 @@ interface ItemOptional {
   type?: string;
 }
 
+
+/**
+ * MenuItemsPage Component
+ *
+ * This component provides a user interface for managing menu items in the system. 
+ * It allows users to view, add, edit, and delete menu items. Menu items are categorized 
+ * by types such as "entree," "side," and "drink."
+ *
+ * **Key Features:**
+ * - Displays all menu items in a table format with columns for ID, Name, and Type.
+ * - Allows adding new menu items via a dialog form.
+ * - Enables editing existing menu items with a pre-filled dialog form.
+ * - Provides delete functionality with a confirmation prompt.
+ *
+ * @returns {JSX.Element} A responsive page for managing menu items.
+ */
+
 export default function MenuItemsPage() {
   const updateMutation = api.menu.updateMenuItem.useMutation();
   const addMutation = api.menu.addMenuItem.useMutation();

@@ -24,6 +24,22 @@ interface ItemOptional {
   quantity?: number;
 }
 
+
+/**
+ * DisposableItemsPage Component
+ * 
+ * This component provides a user interface for managing disposable items in an inventory system. 
+ * It allows users to view, add, edit, and delete items, with changes reflected in real-time.
+ * 
+ * **Key Features:**
+ * - **Fetch Disposable Items:** Retrieves all disposable items from the backend and displays them in a table.
+ * - **Add Item:** Opens a dialog to create a new item and save it to the backend.
+ * - **Edit Item:** Opens a dialog pre-filled with item details for updating.
+ * - **Delete Item:** Removes an item from the inventory after user confirmation.
+ * - **Real-Time Updates:** Refreshes the table after every add, edit, or delete operation.
+ * 
+ * @returns {JSX.Element} A page for managing disposable items in the inventory.
+ */
 export default function DisposableItemsPage() {
   const updateMutation = api.disposable.updateDisposableItem.useMutation();
   const addMutation = api.disposable.addDisposableItem.useMutation();

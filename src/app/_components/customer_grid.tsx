@@ -4,6 +4,19 @@ interface CustomerGridProps {
   onClick: (category: string) => void;
 }
 
+/**
+ * CustomerGrid Component
+ * 
+ * This component renders a responsive grid of buttons representing different customer options
+ * such as Bowl, Plate, Bigger Plate, Appetizers, Drinks, and Entrees. Each button displays
+ * a label and, where applicable, a price. When a button is clicked, it invokes the provided
+ * `onClick` callback with the corresponding value, allowing parent components to handle the
+ * selection accordingly.
+ * 
+ * @param {CustomerGridProps} props - The properties passed to the component.
+ * @param {(value: string) => void} props.onClick - Callback function invoked when a grid button is clicked. Receives the value of the selected item as an argument.
+ * @returns {JSX.Element} The rendered CustomerGrid component.
+ */
 const CustomerGrid: React.FC<CustomerGridProps> = ({ onClick }) => {
   return (
     <div 

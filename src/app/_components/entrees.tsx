@@ -11,6 +11,19 @@ interface Entree {
   type: string;
 }
 
+
+/**
+ * EntreesPage Component
+ * 
+ * This component allows users to manage and select entrees. Users can:
+ * 
+ * - View a list of available entrees.
+ * - Increment or decrement the quantity of each entree.
+ * - View a summary of selected entrees and the total price.
+ * - Submit the selected entrees as an order.
+ * 
+ * @returns {JSX.Element} The rendered EntreesPage component.
+ */
 export default function EntreesPage({
   category,
   setSelectedCategory,

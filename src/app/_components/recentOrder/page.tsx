@@ -1,15 +1,17 @@
 "use client";
-import { useEffect, useMemo, useState } from 'react';
-import MenuBar from '../customer_menu_bar';
+import { useMemo } from 'react';
 import { api } from '~/trpc/react';
 import Container from './Container';
-import { containers } from '~/server/db/schema';
 
-// Insert a function for reorder button
-// Get the data from the table: total price, list of items ordered, order date
-// List of items contain individual items, such as drinks and meals.
-// In case it is a meal, then use subItems to list out the entrees and sides.
-
+/**
+ * PreviousOrders Component
+ * 
+ * This component fetches and displays the latest orders for a customer.
+ * Each order includes multiple containers, and each container displays
+ * its associated main and side menu items along with size information.
+ * 
+ * @returns {JSX.Element} The rendered PreviousOrders component.
+ */
 export default function PreviousOrders() {
     const { data: orders } = api.orders.getLatestOrdersByCustomer.useQuery(1);
     const orderItemIds = useMemo(() => {
@@ -42,11 +44,6 @@ export default function PreviousOrders() {
                                     sideList={eachContainer.sideIds} 
                                     sizeId={eachContainer.sizeId} />
                             ))}
-                        </div>
-                        <div className="mt-4 flex justify-end">
-                            <button className="px-6 py-3 bg-green-500 text-white rounded-lg shadow-md hover:bg-green-600 transition-all duration-300">
-                                Reorder
-                            </button>
                         </div>
                     </div>
                 ))}

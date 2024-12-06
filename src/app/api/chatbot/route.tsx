@@ -6,6 +6,25 @@
 
 import { type NextRequest, NextResponse } from "next/server";
 
+
+/**
+ * POST API Handler
+ * 
+ * This function handles POST requests for generating AI-powered responses using Google Generative AI (Gemini).
+ * It processes user prompts, generates content, and returns the AI response.
+ * 
+ * **Flow:**
+ * 1. Parses the request body to extract user messages.
+ * 2. Filters messages to identify the latest user prompt.
+ * 3. Validates the extracted prompt.
+ * 4. Configures and invokes the Google Generative AI API using the specified model and system instructions.
+ * 5. Processes and returns the AI-generated response as JSON.
+ * 
+ * **Returns:**
+ * - `200`: Success, with AI-generated text.
+ * - `400`: Bad request, with an error message for missing user prompt.
+ * - `500`: Internal server error, with an error message for failures during processing or API calls.
+ */
 export async function POST(req: NextRequest) {
   try {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment

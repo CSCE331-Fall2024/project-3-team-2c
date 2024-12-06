@@ -8,6 +8,18 @@ interface Ingredient {
   quantity: number;
 }
 
+/**
+ * MenuItemsPage Component
+ * 
+ * This component allows users to manage a list of ingredients. Users can:
+ * 
+ * - View all ingredients with their names and quantities.
+ * - Edit an ingredient's name and quantity.
+ * - Delete an ingredient from the list.
+ * - Add new ingredients by specifying their name and quantity.
+ * 
+ * @returns {JSX.Element} The rendered MenuItemsPage component.
+ */
 const MenuItemsPage: React.FC = () => {
   const [ingredients, setIngredients] = useState<Ingredient[]>([
     { id: 1, name: "Tomato", quantity: 2 },
