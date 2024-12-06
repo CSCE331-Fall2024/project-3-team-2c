@@ -17,6 +17,17 @@ interface DatePickerProps {
   setDateFunction: Dispatch<SetStateAction<Date>>;
 }
 
+/**
+ * DatePicker Component
+ * 
+ * A reusable date picker component that allows users to select a single date.
+ * 
+ * @param {Date | undefined} dateValue - The currently selected date. If undefined, no date is selected.
+ * @param {(date: Date | undefined) => void} setDateFunction - Callback function to update the selected date.
+ * 
+ * @returns {JSX.Element} The rendered DatePicker component.
+ */
+
 export function DatePicker({ dateValue, setDateFunction }: DatePickerProps) {
   return (
     <Popover>
