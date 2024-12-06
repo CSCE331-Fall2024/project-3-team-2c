@@ -64,7 +64,7 @@ export default function CustomerPage() {
   
 
   const showRecentOrders = (category: string) => {
-    setSelectedCategory(category)
+    setSelectedCategory(category);
     setShowCart(false);
   };
 
@@ -87,7 +87,8 @@ export default function CustomerPage() {
           <CustomerCart setCart={setCart} cart={cart} />
         ) : selectedCategory && ["bowl", "plate", "biggerPlate"].includes(selectedCategory) ? (
           <SelectionPage 
-            category={selectedCategory} 
+            category={selectedCategory}
+            user="customer"
             setSelectedCategory={setSelectedCategory}
             addComboToCart={addComboToCart}
           />

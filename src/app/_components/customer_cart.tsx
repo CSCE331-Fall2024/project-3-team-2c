@@ -105,35 +105,42 @@ const CustomerCart: React.FC<CartProps> = ({ setCart, cart }) => {
         {cart.combos.length === 0 ? (
           <p className="text-gray-600 text-center">No items in your cart.</p>
         ) : (
-          cart.combos.map((combo, index) => (
-            <div
-              key={index}
-              className="mb-4 p-3 rounded-lg shadow-sm hover:shadow-md transition-shadow bg-gray-100"
-            >
-              <h4 className="mb-2 flex items-center justify-between border-b pb-2 text-lg font-semibold text-gray-700">
-                {combo.name}
-              </h4>
-              <ul className="ml-4 space-y-1">
-                {Object.entries(combo.items).map(([category, items], idx) => (
-                  <li key={idx} className="text-gray-700">
-                    <span className="font-medium">{category}:</span>{" "}
-                    <span className="text-gray-600">
-                      {items.map((item) => item.name).join(", ")}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-              {/* Remove button */}
-              <button
-                className="mt-3 bg-red-500 text-white py-1 px-3 rounded shadow hover:bg-red-600 transition-colors ml-auto block w-fit"
-                onClick={() => removeFromCart(index)}
+          cart.combos.map((combo, index) => {
+            const sizeId = getSizeId(combo.name);
+            const foundContainer = containerData.find((container) => container.id === sizeId);
+            const containerPrice = foundContainer ? foundContainer.price : 0;
+
+            return (
+              <div
+                key={index}
+                className="mb-4 p-3 rounded-lg shadow-sm hover:shadow-md transition-shadow bg-gray-100"
               >
-                Remove
-              </button>
-            </div>
-          ))
+                <h4 className="mb-2 flex items-center justify-between border-b pb-2 text-lg font-semibold text-gray-700">
+                  {combo.name} - <span className="text-green-600">${containerPrice.toFixed(2)}</span>
+                </h4>
+                <ul className="ml-4 space-y-1">
+                  {Object.entries(combo.items).map(([category, items], idx) => (
+                    <li key={idx} className="text-gray-700">
+                      <span className="font-medium">{category}:</span>{" "}
+                      <span className="text-gray-600">
+                        {items.map((item) => item.name).join(", ")}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+                {/* Remove button */}
+                <button
+                  className="mt-3 bg-red-500 text-white py-1 px-3 rounded shadow hover:bg-red-600 transition-colors ml-auto block w-fit"
+                  onClick={() => removeFromCart(index)}
+                >
+                  Remove
+                </button>
+              </div>
+            );
+          })
         )}
       </div>
+
   
       {/* Total price */}
       <div className="mb-4 flex justify-between items-center">
