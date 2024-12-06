@@ -52,13 +52,13 @@ export default function MenuBar({
         >
           Drinks
         </button>
-        <Link
+        {/* <Link
           href="/chatbot"
           passHref
           className="text-white font-semibold hover:underline hover:text-gray-200 transition duration-300 transform hover:scale-105 flex-grow text-center"
         >
           BambooBot
-        </Link>
+        </Link> */}
         <button
           onClick={onCartClick}
           className="text-white font-semibold hover:underline hover:text-gray-200 transition duration-300 transform hover:scale-105 flex-grow"
