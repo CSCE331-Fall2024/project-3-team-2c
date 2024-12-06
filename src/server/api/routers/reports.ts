@@ -8,7 +8,7 @@ import {
   containersToMenu,
 } from "~/server/db/schema";
 import { db } from "~/server/db";
-import { between, count, desc, eq, inArray } from "drizzle-orm";
+import { between, count, desc, eq, inArray, sum } from "drizzle-orm";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 
 const inputSchema = z.object({
@@ -129,6 +129,28 @@ async function getSalesReport(
   };
 }
 
+const xzOutputSchema = z.object({
+  sales: z.number(),
+  revenue: z.number(),
+});
+
+async function xzReport(day: Date): Promise<z.infer<typeof xzOutputSchema>> {
+  const start = new Date(day);
+  start.setHours(0, 0, 0, 0);
+  const end = new Date(day);
+  end.setHours(23, 59, 59, 999);
+
+  const ordersData = await db
+    .select({ sales: count(orders.id), revenue: sum(orders.total) })
+    .from(orders)
+    .where(between(orders.timestamp, start, end));
+
+  return {
+    sales: ordersData[0]?.sales ?? 0,
+    revenue: Number(ordersData[0]?.revenue ?? 0),
+  };
+}
+
 export const reportsRouter = createTRPCRouter({
   salesReport: publicProcedure
     .input(inputSchema)
@@ -136,4 +158,15 @@ export const reportsRouter = createTRPCRouter({
     .query(({ input }) => {
       return getSalesReport(input.startDate, input.endDate);
     }),
+  xReport: publicProcedure.output(xzOutputSchema).query(async () => {
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+
+    return await xzReport(yesterday);
+  }),
+  zReport: publicProcedure.output(xzOutputSchema).query(async () => {
+    const today = new Date();
+
+    return await xzReport(today);
+  }),
 });
