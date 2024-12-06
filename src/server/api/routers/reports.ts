@@ -8,7 +8,7 @@ import {
   containersToMenu,
 } from "~/server/db/schema";
 import { db } from "~/server/db";
-import { between, count, eq, inArray } from "drizzle-orm";
+import { between, count, desc, eq, inArray } from "drizzle-orm";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 
 const inputSchema = z.object({
@@ -16,7 +16,11 @@ const inputSchema = z.object({
   endDate: z.date(),
 });
 
-const salesEntryShape = z.object({ name: z.string(), quantity: z.number() });
+const salesEntryShape = z.object({
+  id: z.number(),
+  name: z.string(),
+  quantity: z.number(),
+});
 const salesOutputSchema = z.object({
   popularSizes: z.array(salesEntryShape),
   popularMains: z.array(salesEntryShape),
@@ -27,7 +31,7 @@ async function getSalesReport(
   startDate: Date,
   endDate: Date,
 ): Promise<z.infer<typeof salesOutputSchema>> {
-  console.log("getSalesReport", startDate, endDate);
+  // console.log("getSalesReport", startDate, endDate);
 
   const orderIds = await db
     .select({ id: orders.id })
@@ -44,8 +48,13 @@ async function getSalesReport(
       ),
     );
 
+  // console.log("got container ids", containerIds);
   const sizeInfo = await db
-    .select({ name: sizes.name, quantity: count(containers.sizeId) })
+    .select({
+      id: sizes.id,
+      name: sizes.name,
+      quantity: count(containers.sizeId),
+    })
     .from(containers)
     .leftJoin(sizes, eq(containers.sizeId, sizes.id))
     .where(
@@ -56,10 +65,15 @@ async function getSalesReport(
         }),
       ),
     )
-    .orderBy(count(containers.sizeId));
-
+    .groupBy(sizes.id)
+    .orderBy(desc(count(containers.sizeId)));
+  // console.log("got size info", sizeInfo);
   const mainInfo = await db
-    .select({ name: menuItems.name, quantity: count(containersToMenu.itemId) })
+    .select({
+      id: menuItems.id,
+      name: menuItems.name,
+      quantity: count(containersToMenu.itemId),
+    })
     .from(containersToMenu)
     .leftJoin(menuItems, eq(containersToMenu.itemId, menuItems.id))
     .where(
@@ -68,10 +82,16 @@ async function getSalesReport(
         containerIds.map((c) => c.id),
       ),
     )
-    .orderBy(count(containersToMenu.itemId));
+    .groupBy(menuItems.id)
+    .orderBy(desc(count(containersToMenu.itemId)));
 
+  // console.log("got main info", mainInfo);
   const sideInfo = await db
-    .select({ name: menuItems.name, quantity: count(containersToMenu.itemId) })
+    .select({
+      id: menuItems.id,
+      name: menuItems.name,
+      quantity: count(containersToMenu.itemId),
+    })
     .from(containersToMenu)
     .leftJoin(menuItems, eq(containersToMenu.itemId, menuItems.id))
     .where(
@@ -80,16 +100,31 @@ async function getSalesReport(
         containerIds.map((c) => c.id),
       ),
     )
-    .orderBy(count(containersToMenu.itemId));
+    .groupBy(menuItems.id)
+    .orderBy(desc(count(containersToMenu.itemId)));
+
+  // console.log("got side info", sideInfo);
   return {
     popularSizes: sizeInfo.map((s) => {
-      return { name: s.name ?? "Unknown Name", quantity: s.quantity };
+      return {
+        id: s.id!,
+        name: s.name ?? "Unknown Name",
+        quantity: s.quantity,
+      };
     }),
     popularMains: mainInfo.map((m) => {
-      return { name: m.name ?? "Unknown Name", quantity: m.quantity };
+      return {
+        id: m.id!,
+        name: m.name ?? "Unknown Name",
+        quantity: m.quantity,
+      };
     }),
     popularSides: sideInfo.map((s) => {
-      return { name: s.name ?? "Unknown Name", quantity: s.quantity };
+      return {
+        id: s.id!,
+        name: s.name ?? "Unknown Name",
+        quantity: s.quantity,
+      };
     }),
   };
 }

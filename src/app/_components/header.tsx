@@ -105,18 +105,12 @@ const Header = () => {
                   <SelectValue placeholder="Reports" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Report 1">
-                    Report 1
+                  <SelectItem value="Sales Report">
+                    <Link href="/manager/reports/sales">Sales Report</Link>
                   </SelectItem>
-                  <SelectItem value="Report 2">
-                    Report 2
-                  </SelectItem>
-                  <SelectItem value="Report 3">
-                    Report 3
-                  </SelectItem>
-                  <SelectItem value="Report 4">
-                    Report 4
-                  </SelectItem>
+                  <SelectItem value="Report 2">Report 2</SelectItem>
+                  <SelectItem value="Report 3">Report 3</SelectItem>
+                  <SelectItem value="Report 4">Report 4</SelectItem>
                 </SelectContent>
               </Select>
             </NavigationMenuItem>
