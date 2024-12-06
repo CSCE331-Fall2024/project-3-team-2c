@@ -10,6 +10,22 @@ interface Drink {
   type: string;
 }
 
+/**
+ * DrinksPage Component
+ * 
+ * This component renders a page where users can select drinks from a list. It fetches available drinks
+ * from the backend using tRPC, allows users to increment or decrement the quantity of each drink,
+ * and manages the state of selected drinks. The component also calculates the total number of drinks
+ * selected and the corresponding total price. Upon submission, it adds the selected drinks to the cart
+ * and navigates the user to the appropriate page based on their role.
+ * 
+ * @param {Object} props - The properties passed to the component.
+ * @param {string} props.category - The category of items being selected.
+ * @param {string} props.user - The role of the user (e.g., "customer", "cashier").
+ * @param {(category: string | null) => void} props.setSelectedCategory - Function to set or clear the selected category.
+ * @param {(comboName: string, comboItems: Record<string, { id: number; name: string }[]>) => void} props.addComboToCart - Function to add the selected combo to the cart.
+ * @returns {JSX.Element} The rendered DrinksPage component.
+ */
 export default function DrinksPage({
   category,
   setSelectedCategory,

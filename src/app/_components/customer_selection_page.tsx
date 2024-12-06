@@ -55,6 +55,22 @@ const getSelectionLimits = (category: string): Record<string, number> => {
   }
 };
 
+
+/**
+ * SelectionPage Component
+ * 
+ * This component manages the selection process for different categories (e.g., Entrees, Sides)
+ * within the application. It handles user interactions through multiple steps, ensuring that
+ * users select the required number of items per category before proceeding. Upon completion,
+ * it formats the selections and adds them to the cart.
+ * 
+ * @param {Object} props - The properties passed to the component.
+ * @param {string} props.category - The current category being selected (e.g., "Entree", "Side").
+ * @param {string} props.user - The role of the user (e.g., "customer", "cashier").
+ * @param {(category: string | null) => void} props.setSelectedCategory - Function to set or clear the selected category.
+ * @param {(comboName: string, comboItems: Record<string, { id: number; name: string }[]>) => void} props.addComboToCart - Function to add the selected combo to the cart.
+ * @returns {JSX.Element} The rendered SelectionPage component.
+ */
 export default function SelectionPage({
   category,
   user,
@@ -240,6 +256,24 @@ export default function SelectionPage({
   );
 }
 
+
+/**
+ * OrderSidebar Component
+ * 
+ * This component renders a sidebar that displays the current step in the selection process,
+ * along with the items selected for each step. It allows users to navigate between different
+ * steps of the selection process and provides a "Back" button to return to the previous step
+ * or exit the selection process. The sidebar visually indicates the active step and lists
+ * the selected items for each step.
+ * 
+ * @param {Object} props - The properties passed to the component.
+ * @param {number} props.currentStep - The index of the current step in the selection process.
+ * @param {Record<string, { id: number; name: string }[]>} props.selections - An object containing the selected items for each step.
+ * @param {string} props.category - The current category being selected (e.g., "Entree", "Side").
+ * @param {() => void} props.handleBack - Function to handle the "Back" button click, navigating to the previous step or exiting.
+ * @param {(index: number) => void} props.handleStepSelect - Function to handle direct navigation to a specific step based on its index.
+ * @returns {JSX.Element} The rendered OrderSidebar component.
+ */
 function OrderSidebar({
   currentStep,
   selections,

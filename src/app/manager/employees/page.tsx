@@ -24,6 +24,22 @@ interface EmployeeOptional {
   email?: string;
   role?: string;
 }
+
+/**
+ * EmployeesPage Component
+ * 
+ * This component provides a user interface for managing employees in the system. 
+ * It supports functionality to view, add, edit, and delete employee records.
+ * 
+ * **Key Features:**
+ * - **View Employees:** Displays all employees in a table format with their `ID`, `Name`, `Email`, and `Role`.
+ * - **Add Employee:** Opens a dialog to input new employee details and saves them to the backend.
+ * - **Edit Employee:** Opens a dialog pre-filled with employee details for editing.
+ * - **Delete Employee:** Removes an employee after confirmation.
+ * - **Real-Time Updates:** Refreshes the table after every add, edit, or delete operation.
+ * 
+ * @returns {JSX.Element} A responsive page for managing employees in the system.
+ */
 export default function EmployeesPage() {
   const updateMutation = api.employees.updateEmployee.useMutation();
   const addMutation = api.employees.addEmployee.useMutation();

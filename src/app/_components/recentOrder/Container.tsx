@@ -1,6 +1,19 @@
 "use client";
 import { api } from "~/trpc/react";
 
+/**
+ * Container Component
+ * 
+ * This component fetches and displays menu items based on provided main and side list IDs,
+ * as well as the size type associated with a container. It retrieves data using tRPC hooks
+ * and renders the size name along with the list of main and side menu items.
+ * 
+ * @param {Object} props - The properties passed to the component.
+ * @param {number[]} props.mainList - An array of IDs for the main menu items.
+ * @param {number[]} props.sideList - An array of IDs for the side menu items.
+ * @param {number} props.sizeId - The ID representing the size type.
+ * @returns {JSX.Element} The rendered Container component.
+ */
 export default function Container({
   mainList,
   sideList,
@@ -22,7 +35,6 @@ export default function Container({
         <p className="text-lg font-bold">
           {sizeType?.name ? sizeType.name : "none"}
         </p>
-        {/* <p className="text-right">${item.price.toFixed(2)}</p> */}
       </div>
       {
         <ul className="ml-4 mt-1 list-disc text-sm text-gray-500">

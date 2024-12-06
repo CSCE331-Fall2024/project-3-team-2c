@@ -62,6 +62,19 @@ type ContainerInput = {
   sideIds: number[];
 };
 
+/**
+ * CustomerCart Component
+ * 
+ * This component displays the user's shopping cart, listing all selected combos with their
+ * respective items and prices. It allows users to remove items from the cart and proceed
+ * to place an order. The component formats the cart data appropriately for API interactions
+ * and calculates the total price of the items in the cart.
+ * 
+ * @param {CartProps} props - The properties passed to the component.
+ * @param {{ combos: { name: string; items: Record<string, ComboItem[]> }[] }} props.cart - The current state of the cart containing selected combos.
+ * @param {React.Dispatch<React.SetStateAction<{ combos: { name: string; items: Record<string, ComboItem[]> }[] }>>} props.setCart - The state updater function for the cart.
+ * @returns {JSX.Element} The rendered CustomerCart component.
+ */
 const CustomerCart: React.FC<CartProps> = ({ setCart, cart }) => {
   const formattedContainers = cart.combos.map((combo) => {
     // Get the sizeId from the container name (e.g. "bowl")
@@ -161,6 +174,21 @@ const CustomerCart: React.FC<CartProps> = ({ setCart, cart }) => {
   );  
 };
 
+
+/**
+ * PlaceOrderButton Component
+ * 
+ * This component renders a button that allows users to place their order. When clicked,
+ * it sends the formatted container data along with the customer ID to the backend API
+ * to process the order. Upon successful order placement, it clears the cart. It also
+ * handles any errors that occur during the order placement process.
+ * 
+ * @param {Object} props - The properties passed to the component.
+ * @param {ContainerInput[]} props.formattedContainers - An array of formatted container data to be sent to the API.
+ * @param {number} props.customerId - The ID of the customer placing the order.
+ * @param {React.Dispatch<React.SetStateAction<{ combos: { name: string; items: Record<string, ComboItem[]> }[] }>>} props.setCart - The state updater function to clear the cart upon successful order placement.
+ * @returns {JSX.Element} The rendered PlaceOrderButton component.
+ */
 const PlaceOrderButton: React.FC<{
   formattedContainers: ContainerInput[];
   customerId: number;

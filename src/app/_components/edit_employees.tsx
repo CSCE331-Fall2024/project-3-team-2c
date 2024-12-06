@@ -6,6 +6,19 @@ interface Employee {
   hours: number;
 }
 
+
+/**
+ * EditEmployees Component
+ * 
+ * This component allows users to manage a list of employees. Users can:
+ * 
+ * - View all employees with their names and hours.
+ * - Edit an employee's hours.
+ * - Delete an employee from the list.
+ * - Add a new employee by specifying their name and hours.
+ * 
+ * @returns {JSX.Element} The rendered EditEmployees component.
+ */
 const EditEmployees = () => {
   const [employees, setEmployees] = useState<Employee[]>([
     { id: 1, name: "Eric Liu", hours: 10 },

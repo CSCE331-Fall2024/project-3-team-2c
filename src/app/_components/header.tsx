@@ -16,6 +16,18 @@ import {
   SelectValue,
 } from "~/components/ui/select";
 
+
+/**
+ * Header Component
+ * 
+ * This component renders the main navigation header for the Panda Express Manager application.
+ * It includes navigation links to different management sections and a dropdown menu for selecting reports.
+ * 
+ * **Features:**
+ * - **Navigation Links:** Home, Menu Items, Ingredients, Disposable Items, Employees.
+ * - **Reports Dropdown:** Allows users to select and navigate to different report pages.
+ * 
+ */
 const Header = () => {
   const router = useRouter();
 

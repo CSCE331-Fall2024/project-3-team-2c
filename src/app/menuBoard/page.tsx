@@ -1,5 +1,25 @@
 import React from 'react';
 
+
+/**
+ * MenuBoard Component
+ *
+ * This component displays a visually appealing menu board (static).
+ * It organizes menu items into categories such as Sides, Entrees, Appetizers, and Drinks.
+ * Each category is represented as a card with individual menu items listed inside.
+ *
+ * **Key Features:**
+ * - **Background:** A fixed background image for aesthetic appeal.
+ * - **Categories:** Menu items are grouped into categories, each displayed on a card.
+ * - **Items:** Each menu item includes:
+ *   - Name
+ *   - Price
+ *   - Image
+ * - **Responsive Design:** Uses flexible styling to ensure proper display across different screen sizes.
+ * 
+ * @returns {JSX.Element} A styled menu board with categories and items.
+ */
+
 export default function MenuBoard() {
     const menuCategories = [
         {

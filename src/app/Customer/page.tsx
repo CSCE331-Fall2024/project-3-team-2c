@@ -10,6 +10,24 @@ import DrinksPage from '../_components/drinks';
 import EntreesPage from '../_components/entrees';
 import SidesPage from '../_components/sides';
 
+
+/**
+ * CustomerPage Component
+ * 
+ * This component serves as the main interface for customers to interact with the system. 
+ * It allows navigation between different categories, viewing recent orders, and managing the shopping cart.
+ * 
+ * **Key Features:**
+ * - **Category Selection:** Users can select categories like bowls, plates, entrees, drinks, and sides.
+ * - **Shopping Cart:** Allows users to add combos to the cart and view or modify the cart.
+ * - **Recent Orders:** Displays the user's recent orders.
+ * - **Dynamic Views:** Renders different views (e.g., `SelectionPage`, `DrinksPage`, `CustomerCart`) based on the state.
+ * 
+ * **Returns:**
+ * - A responsive customer-facing interface with navigation and cart management features.
+ * 
+ */
+
 export default function CustomerPage() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [cart, setCart] = useState<{ combos: { name: string; items: Record<string, { id: number; name: string }[]> }[] }>({
