@@ -24,6 +24,23 @@ interface IngredientOptional {
   quantity?: number;
 }
 
+/**
+ * IngredientsPage Component
+ *
+ * This component provides a user interface for managing ingredients in an inventory system.
+ * Users can view, add, edit, and delete ingredients with updates reflected in real-time.
+ *
+ *
+ * **Key Features:**
+ * - **View Ingredients:** Displays all ingredients in a table format with their `ID`, `Name`, and `Quantity`.
+ * - **Add Ingredient:** Opens a dialog to input new ingredient details and saves them to the backend.
+ * - **Edit Ingredient:** Opens a dialog pre-filled with ingredient details for editing.
+ * - **Delete Ingredient:** Removes an ingredient after user confirmation.
+ * - **Real-Time Updates:** Refreshes the ingredient list after every add, edit, or delete operation.
+ *
+ * @returns {JSX.Element} A responsive page for managing ingredients in the inventory system.
+ */
+
 export default function IngredientsPage() {
   const addMutation = api.ingredients.addIngredient.useMutation();
   const updateMutation = api.ingredients.updateIngredient.useMutation();

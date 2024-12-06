@@ -4,6 +4,20 @@ import { useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { useLanguage } from "~/context/LanguageContext";
 
+
+/**
+ * TranslatePage Component
+ * 
+ * This component dynamically translates the text content of the entire webpage
+ * based on the selected language.
+ * 
+ * - Detects changes in the selected language or the current page pathname.
+ * - Extracts all visible text nodes from the page using a recursive function.
+ * - Sends the text content to a translation API for translation.
+ * - Replaces the text content on the page with the translated text.
+ *
+ * @returns {null} This component does not render any visible UI.
+ */
 export default function TranslatePage() {
   const { selectedLanguage } = useLanguage();
   const pathname = usePathname();

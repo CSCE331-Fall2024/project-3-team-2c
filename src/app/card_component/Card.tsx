@@ -10,6 +10,28 @@ interface SquareBlockProps {
   onSave: (newName: string) => void;
 }
 
+/**
+ * Card Component
+ * 
+ * This component represents a reusable square block UI element with an image, name, 
+ * and action buttons (Edit, Save, Delete). It supports both viewing and editing modes.
+ * 
+ * **Props:**
+ * - `imageUrl` (string): URL of the image to display.
+ * - `name` (string): The name or title displayed on the card.
+ * - `onEdit` (function): Callback triggered when the "Edit" button is clicked.
+ * - `onDelete` (function): Callback triggered when the "Delete" button is clicked.
+ * - `isEditing` (boolean): Determines whether the card is in editing mode.
+ * - `onSave` (function): Callback triggered when the "Save" button is clicked, passing the edited content as an argument.
+ * 
+ * **Features:**
+ * - Displays an image and name in the default view.
+ * - Allows editing the name in editing mode.
+ * - Hover state reveals action buttons for editing or deleting.
+ * - Responsive to user interactions via callback props.
+ * 
+ * @returns {JSX.Element} A styled card component with interactive functionality.
+ */
 export const Card: React.FC<SquareBlockProps> = ({
   imageUrl,
   name,

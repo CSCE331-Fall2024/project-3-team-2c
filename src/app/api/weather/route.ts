@@ -1,5 +1,25 @@
 import { NextRequest, NextResponse } from "next/server";
 
+
+/**
+ * GET API Handler for Weather Data
+ * 
+ * This function handles GET requests to fetch weather data from the OpenWeatherMap API
+ * based on the latitude and longitude provided in the query parameters.
+ * 
+ * **Flow:**
+ * 1. Extracts `lat` (latitude) and `lon` (longitude) from the request's query parameters.
+ * 2. Validates the presence of these parameters; returns an error if missing.
+ * 3. Sends a request to the OpenWeatherMap API to fetch weather data.
+ * 4. Returns the weather data as JSON if successful.
+ * 5. Handles errors gracefully, returning appropriate status codes and messages.
+ * 
+ * **Returns:**
+ * - `200`: Success, with the fetched weather data.
+ * - `400`: Bad request, with an error message if latitude or longitude is missing.
+ * - `500`: Internal server error, with an error message for API or server failures.
+ * 
+ */
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const lat = searchParams.get("lat");

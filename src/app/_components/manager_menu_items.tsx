@@ -7,6 +7,19 @@ interface Item {
   content: string;
 }
 
+
+/**
+ * MenuItemsPage Component
+ * 
+ * This component allows users to manage a list of menu items. Users can:
+ * 
+ * - View all menu items with their names.
+ * - Edit the name of an existing menu item.
+ * - Delete a menu item from the list.
+ * - Add new menu items by specifying their name.
+ * 
+ * @returns {JSX.Element} The rendered MenuItemsPage component.
+ */
 const MenuItemsPage: React.FC = () => {
   const [items, setItems] = useState<Item[]>([
     { id: 1, content: "Orange Chicken" },

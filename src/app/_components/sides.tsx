@@ -11,6 +11,19 @@ interface Appetizer {
   type: string;
 }
 
+
+/**
+ * SidesPage Component
+ * 
+ * This component allows users to manage and select sides. Users can:
+ * 
+ * - View a list of available sides.
+ * - Increment or decrement the quantity of each side.
+ * - View a summary of selected sides and the total price.
+ * - Submit the selected sides as an order.
+ * 
+ * @returns {JSX.Element} The rendered SidesPage component.
+ */
 export default function SidesPage({
   category,
   setSelectedCategory,

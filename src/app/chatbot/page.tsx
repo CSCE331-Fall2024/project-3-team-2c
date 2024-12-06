@@ -8,6 +8,26 @@ interface BotResponse {
   message: string;
 }
 
+
+/**
+ * ChatBot Component
+ * 
+ * This component provides a chat interface where users can interact with BambooBot, a conversational assistant.
+ * It includes functionality to send user messages, receive bot responses, and display the conversation in a chat-like format.
+ * 
+ * **Key Features:**
+ * - **Message Input:** Allows users to type messages using a text input field.
+ * - **Message Display:** Renders chat messages in a scrollable view with visual distinction between bot and user messages.
+ * - **Message Sending:** Sends user messages to a backend API (`/api/chatbot`) for bot responses.
+ * - **Customer Navigation:** Includes a button to navigate back to the customer page (`/Customer`).
+ * 
+ * **API Integration:**
+ * - Sends a POST request to `/api/chatbot` with the chat history, including the latest user message.
+ * - Expects a response containing the bot's reply in the format `{ message: string }`.
+ * 
+ * @returns {JSX.Element} A chat interface for interacting with BambooBot.
+ */
+
 export default function ChatBot() {
   const [messages, setMessages] = useState([
     { role: "Bot", content: "Hi, I'm BambooBot! How can I help you today?" },
