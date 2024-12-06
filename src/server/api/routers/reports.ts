@@ -129,26 +129,36 @@ async function getSalesReport(
   };
 }
 
-const xzOutputSchema = z.object({
-  sales: z.number(),
-  revenue: z.number(),
-});
+const xzOutputSchema = z
+  .array(
+    z.object({
+      sales: z.number(),
+      revenue: z.number(),
+    }),
+  )
+  .max(24);
 
 async function xzReport(day: Date): Promise<z.infer<typeof xzOutputSchema>> {
   const start = new Date(day);
-  start.setHours(0, 0, 0, 0);
   const end = new Date(day);
-  end.setHours(23, 59, 59, 999);
 
-  const ordersData = await db
-    .select({ sales: count(orders.id), revenue: sum(orders.total) })
-    .from(orders)
-    .where(between(orders.timestamp, start, end));
+  const ordersData = Promise.all(
+    Array(24).map(async (_val, index) => {
+      start.setHours(index, 0, 0, 0);
+      end.setHours(index, 59, 59, 999);
+      return (
+        await db
+          .select({ sales: count(orders.id), revenue: sum(orders.total) })
+          .from(orders)
+          .where(between(orders.timestamp, start, end))
+      )?.at(0);
+    }),
+  );
 
-  return {
-    sales: ordersData[0]?.sales ?? 0,
-    revenue: Number(ordersData[0]?.revenue ?? 0),
-  };
+  return (await ordersData).map((data) => ({
+    sales: data?.sales ?? 0,
+    revenue: Number(data?.revenue ?? 0),
+  }));
 }
 
 export const reportsRouter = createTRPCRouter({
