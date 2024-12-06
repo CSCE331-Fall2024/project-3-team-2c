@@ -64,7 +64,7 @@ export default function CustomerPage() {
   
 
   const showRecentOrders = (category: string) => {
-    setSelectedCategory(category)
+    setSelectedCategory(category);
     setShowCart(false);
   };
 
@@ -72,7 +72,7 @@ export default function CustomerPage() {
     <div className="h-full flex flex-col bg-[#FEC6B5]">
       <MenuBar onCartClick={handleCartClick} onHomeClick={handleHomeClick} onItemClick={handleGridClick}/>
       
-      {/* Circular Button Below MenuBar */}
+      {/* Circular Button Below MenuBar
       <div className="flex justify-end mt-8 pr-8">
         <button
           onClick={() => showRecentOrders("recentOrders")} // Call showRecentOrders function
@@ -80,7 +80,7 @@ export default function CustomerPage() {
         >
           Show Recent Order
         </button>
-      </div>
+      </div> */}
   
       <div className="flex-1 p-8 mt-2 h-full">
         {showCart ? (
