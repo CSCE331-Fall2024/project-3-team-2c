@@ -1,37 +1,7 @@
 OUR DEPLOYMENT: https://project-3-team-2c.vercel.app/
 
-# Create T3 App
-
-This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
-
-## What's next? How do I make an app with this?
-
-We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
-
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
-
-- [Next.js](https://nextjs.org)
-- [NextAuth.js](https://next-auth.js.org)
-- [Prisma](https://prisma.io)
-- [Drizzle](https://orm.drizzle.team)
-- [Tailwind CSS](https://tailwindcss.com)
-- [tRPC](https://trpc.io)
-
-## Learn More
-
-To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the following resources:
-
-- [Documentation](https://create.t3.gg/)
-- [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available) — Check out these awesome tutorials
-
-You can check out the [create-t3-app GitHub repository](https://github.com/t3-oss/create-t3-app) — your feedback and contributions are welcome!
-
-## How do I deploy this?
-
-Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
-
-Test for workflow success
-
-Test for pull request merge
-
-Test for workflow
+BambooPOS is our team's implementation on a point of sales system for Panda Express. Built in the T3 stack, which is a full-stack Next.js framework, along with a PostgreSQL database, BambooPOS features many functions for a variety of users.
+From customers to managers, each of their corresponding pages allows for ease of use in functionality.
+For customers, they are given the ability to add and remove both individual items and combos to their cart, which totals everything up in a sleek and clean user interface. In addition, customers have access to BambooBot and the recent orders feature. BambooBot is a chatbot that allows for users to ask questions related to menu items, or about Panda Express in general. The recent orders feature allows for customers to look at what their most recent purchases are, and the items that they bought.
+For cashiers, their functionality is very similar to customers, but without BambooBot and recent orders records. The intuitive design allows for cashiers to easily create orders on the job.
+For managers, they are given full regin over everything in the database. From menu items to ingredients, they have the power to edit, delete, and add items to these tables. In addition, they can view reports of their store's sales within given parameters.
