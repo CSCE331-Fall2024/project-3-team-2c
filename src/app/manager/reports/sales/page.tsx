@@ -1,13 +1,17 @@
 "use client";
 
 import Header from "~/app/_components/header";
-import React from "react";
+import React, { useState } from "react";
 import { api } from "~/trpc/react";
+import { Button } from "~/components/ui/button";
+import { DatePicker } from "~/app/_components/DatePicker";
 
 export default function SalesPage() {
-  const { data: salesData, refetch } = api.reports.salesReport.useQuery({
-    startDate: new Date("2021-01-01"),
-    endDate: new Date("2025-01-01"),
+  const [startDate, setStartDate] = useState<Date>(new Date("2021-01-01"));
+  const [endDate, setEndDate] = useState<Date>(new Date("2025-01-01"));
+  const { data: salesData } = api.reports.salesReport.useQuery({
+    startDate: startDate,
+    endDate: endDate,
   });
   console.log("sizes", salesData?.popularSizes.at(0));
   return (
@@ -18,6 +22,31 @@ export default function SalesPage() {
           Sales Report
         </h1>
 
+        {/*Date Range*/}
+        <div className="justify-center">
+          <div className="mb-4 flex justify-center">
+            {/*Start Date*/}
+            <div>
+              <label className="mb-2 block">Start Date</label>
+              <DatePicker
+                dateValue={startDate}
+                setDateFunction={setStartDate}
+              />
+            </div>
+
+            {/*End Date*/}
+            <div>
+              <label className="mb-2 block">End Date</label>
+              <DatePicker dateValue={endDate} setDateFunction={setEndDate} />
+            </div>
+          </div>
+          {/*Error Message*/}
+          {startDate > endDate && (
+            <div className="flex justify-center text-red-500">
+              Start date must be before end date
+            </div>
+          )}
+        </div>
         {/*Sizes*/}
         <div>
           <h2 className="justify-left mb-4 flex text-xl font-bold">

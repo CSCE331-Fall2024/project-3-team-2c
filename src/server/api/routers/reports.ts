@@ -31,7 +31,7 @@ async function getSalesReport(
   startDate: Date,
   endDate: Date,
 ): Promise<z.infer<typeof salesOutputSchema>> {
-  // console.log("getSalesReport", startDate, endDate);
+  console.log("getSalesReport", startDate, endDate);
 
   const orderIds = await db
     .select({ id: orders.id })
