@@ -10,6 +10,8 @@ import {
 import { Button } from "~/components/ui/button";
 import { Switch } from "~/components/ui/switch";
 import { useLanguage } from "~/context/LanguageContext";
+import Head from "next/head";
+import { Title } from "@radix-ui/react-dialog";
 
 
 /**
@@ -124,6 +126,33 @@ export default function MainMenu() {
 
   return (
     <div className="relative flex min-h-screen flex-col items-center justify-center bg-[#FEC6B5] p-5">
+      <Head>
+        <Title>Panda Express Main Menu</Title>
+        <meta name="description" content="Main navigation for the Panda Express System" />
+      </Head>
+
+        {/* Skip Links */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:bg-blue-500 focus:text-white focus:p-2 focus:rounded focus:outline-none"
+      >
+        Skip to Main Content
+      </a>
+      <a
+        href="#menu"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-12 focus:left-2 focus:bg-blue-500 focus:text-white focus:p-2 focus:rounded focus:outline-none"
+      >
+        Skip to Menu
+      </a>
+      <a
+        href="#footer"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-20 focus:left-2 focus:bg-blue-500 focus:text-white focus:p-2 focus:rounded focus:outline-none"
+      >
+        Skip to Footer
+      </a>
+
+
+
       <header className="mb-5 text-center text-3xl font-bold">
         PANDA EXPRESS
       </header>
@@ -145,7 +174,7 @@ export default function MainMenu() {
 
       <Popover>
         <PopoverTrigger asChild>
-          <Button className="mb-5">Select Language</Button>
+          <Button aria-label="Language Select" className="mb-5">Select Language</Button>
         </PopoverTrigger>
         <PopoverContent className="rounded-lg border border-black bg-white p-2">
           <div
@@ -176,10 +205,12 @@ export default function MainMenu() {
       </Popover>
 
       <div className="grid grid-cols-2 gap-5">
-        <Link href="./manager/menu_item">
+        <Link href="./manager/menu_item" aria-label="contentinfo">
           <div className="relative flex h-48 w-48 transform cursor-pointer items-center justify-center rounded-lg border border-black transition-transform hover:scale-105 hover:shadow-lg">
             <span className="z-10 text-3xl font-bold text-black">Manager</span>
             <div
+              role="img"
+              aria-label="Background Image for Manager View"
               className="absolute inset-0 rounded-lg bg-cover bg-center opacity-60"
               style={{ backgroundImage: "url('/MainMenuImages/food1.jpg')" }}
             ></div>
@@ -190,6 +221,8 @@ export default function MainMenu() {
           <div className="relative flex h-48 w-48 transform cursor-pointer items-center justify-center rounded-lg border border-black transition-transform hover:scale-105 hover:shadow-lg">
             <span className="z-10 text-3xl font-bold text-black">Cashier</span>
             <div
+              role="img"
+              aria-label="Background Image for Cashier"
               className="absolute inset-0 rounded-lg bg-cover bg-center opacity-60"
               style={{ backgroundImage: "url('/MainMenuImages/food2.jpeg')" }}
             ></div>
@@ -200,6 +233,8 @@ export default function MainMenu() {
           <div className="relative flex h-48 w-48 transform cursor-pointer items-center justify-center rounded-lg border border-black transition-transform hover:scale-105 hover:shadow-lg">
             <span className="z-10 text-3xl font-bold text-black">Customer</span>
             <div
+              role="img"
+              aria-label="Background Image for Customer"
               className="absolute inset-0 rounded-lg bg-cover bg-center opacity-60"
               style={{ backgroundImage: "url('/MainMenuImages/food3.jpg')" }}
             ></div>
@@ -211,6 +246,8 @@ export default function MainMenu() {
               Menu Board
             </span>
             <div
+              role="img"
+              aria-label="Background Image for Menu Board"
               className="absolute inset-0 rounded-lg bg-cover bg-center opacity-60"
               style={{ backgroundImage: "url('/MainMenuImages/food4.jpg')" }}
             ></div>
@@ -219,10 +256,11 @@ export default function MainMenu() {
       </div>
 
       <div className="fixed right-2 top-2 flex items-center space-x-2">
-        <label htmlFor="text-size-toggle" className="text-sm font-bold">
+        <label htmlFor="text-size-toggle" className="text-sm font-bold" aria-label="Increase Text Size">
           Increase Text Size
         </label>
         <Switch
+          role="none"
           id="text-size-toggle"
           checked={isTextLarge}
           onCheckedChange={toggleTextSize}
