@@ -37,7 +37,6 @@ export default function MenuBar({
     <nav className="top-0 z-10 w-full bg-[#d1282e] p-4 text-white shadow-md">
       <div className="flex justify-between items-center w-full">
         <Link
-          aria-label="navbar"
           role="contentinfo"
           href="/MainMenu"
           passHref
