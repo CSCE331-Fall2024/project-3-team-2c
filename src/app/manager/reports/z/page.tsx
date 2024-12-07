@@ -1,10 +1,8 @@
 "use client";
 
 import Header from "~/app/_components/header";
-import React, { useState } from "react";
+import React from "react";
 import { api } from "~/trpc/react";
-import { Button } from "~/components/ui/button";
-import { DatePicker } from "~/app/_components/DatePicker";
 import { SalesBarChart } from "~/app/manager/reports/SalesBarChart";
 
 export default function ZPage() {
