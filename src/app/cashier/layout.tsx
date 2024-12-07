@@ -15,5 +15,5 @@ export default async function CashierAuthExampleLayout({
     redirect("/");
   }
 
-  return <div>{children}</div>;
+  return <div className="h-full">{children}</div>;
 }

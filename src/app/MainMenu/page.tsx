@@ -216,7 +216,11 @@ export default function MainMenu() {
         role="main-content"
         id="main-content"
       >
-        <Link href="./manager/menu_item" role="contentinfo">
+        <Link href="./manager/menu_item" role="contentinfo" onClick={() => {
+            if (session?.data?.user?.role !== "manager") {
+              alert("You do not have access to this role");
+            }
+        }}>
           <div className="relative flex h-48 w-48 transform cursor-pointer items-center justify-center rounded-lg border border-black transition-transform hover:scale-105 hover:shadow-lg">
             <span className="z-10 text-3xl font-bold text-black">Manager</span>
             <div
@@ -228,7 +232,11 @@ export default function MainMenu() {
           </div>
         </Link>
 
-        <Link href="./cashier">
+        <Link href="./cashier" onClick={() => {
+            if (session?.data?.user?.role !== "manager" && session?.data?.user?.role !== "cashier") {
+              alert("You do not have access to this role");
+            }
+        }}>
           <div className="relative flex h-48 w-48 transform cursor-pointer items-center justify-center rounded-lg border border-black transition-transform hover:scale-105 hover:shadow-lg">
             <span className="z-10 text-3xl font-bold text-black">Cashier</span>
             <div

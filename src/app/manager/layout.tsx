@@ -2,6 +2,7 @@ import "~/styles/globals.css";
 import { auth, signIn } from "~/server/auth";
 import { redirect } from "next/navigation";
 
+
 export default async function ManagerAuthExampleLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
