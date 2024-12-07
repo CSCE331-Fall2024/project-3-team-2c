@@ -46,13 +46,13 @@ export default function IngredientsPage() {
   const updateMutation = api.ingredients.updateIngredient.useMutation();
   const deleteMutation = api.ingredients.deleteIngredient.useMutation();
 
-  const [ingredients, setIngredients] = useState<Ingredient[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
   const [formValues, setFormValues] = useState<IngredientOptional>({});
+  const { data: ingredients, refetch } =
+    api.ingredients.getAllIngredients.useQuery();
 
-  const fetchIngredients = () => {
-    const { data: ingredients } = api.ingredients.getAllIngredients.useQuery();
-    setIngredients(ingredients ?? []);
+  const fetchIngredients = async () => {
+    await refetch();
   };
 
   const handleEdit = (ingredient: Ingredient) => {
@@ -78,19 +78,15 @@ export default function IngredientsPage() {
     }
 
     setIsDialogOpen(false);
-    fetchIngredients();
+    await fetchIngredients();
   };
 
   const handleDelete = async (id: number) => {
     if (confirm("Are you sure you want to delete this ingredient?")) {
       deleteMutation.mutate(id);
-      fetchIngredients();
+      await fetchIngredients();
     }
   };
-
-  useEffect(() => {
-    fetchIngredients();
-  }, []);
 
   return (
     <>
@@ -116,7 +112,7 @@ export default function IngredientsPage() {
             </tr>
           </thead>
           <tbody>
-            {ingredients.map((ingredient) => (
+            {ingredients?.map((ingredient) => (
               <tr key={ingredient.id} className="hover:bg-gray-50">
                 <td className="border border-gray-300 px-4 py-2">
                   {ingredient.id}

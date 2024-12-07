@@ -27,17 +27,17 @@ interface EmployeeOptional {
 
 /**
  * EmployeesPage Component
- * 
- * This component provides a user interface for managing employees in the system. 
+ *
+ * This component provides a user interface for managing employees in the system.
  * It supports functionality to view, add, edit, and delete employee records.
- * 
+ *
  * **Key Features:**
  * - **View Employees:** Displays all employees in a table format with their `ID`, `Name`, `Email`, and `Role`.
  * - **Add Employee:** Opens a dialog to input new employee details and saves them to the backend.
  * - **Edit Employee:** Opens a dialog pre-filled with employee details for editing.
  * - **Delete Employee:** Removes an employee after confirmation.
  * - **Real-Time Updates:** Refreshes the table after every add, edit, or delete operation.
- * 
+ *
  * @returns {JSX.Element} A responsive page for managing employees in the system.
  */
 export default function EmployeesPage() {
@@ -45,14 +45,12 @@ export default function EmployeesPage() {
   const addMutation = api.employees.addEmployee.useMutation();
   const deleteMutation = api.employees.deleteEmployee.useMutation();
 
-  const [employees, setEmployees] = useState<Employee[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
   const [formValues, setFormValues] = useState<EmployeeOptional>({});
+  const { data: employees, refetch } = api.employees.getAllEmployees.useQuery();
 
-  const fetchEmployees = () => {
-    const { data: employees } = api.employees.getAllEmployees.useQuery();
-
-    setEmployees(employees ?? []);
+  const fetchEmployees = async () => {
+    await refetch();
   };
 
   const handleEdit = (employee: Employee) => {
@@ -79,19 +77,15 @@ export default function EmployeesPage() {
     }
 
     setIsDialogOpen(false);
-    fetchEmployees();
+    await fetchEmployees();
   };
 
   const handleDelete = async (id: number) => {
     if (confirm("Are you sure you want to delete this employee?")) {
       deleteMutation.mutate(id);
-      fetchEmployees();
+      await fetchEmployees();
     }
   };
-
-  useEffect(() => {
-    fetchEmployees();
-  }, []);
 
   return (
     <>
@@ -120,7 +114,7 @@ export default function EmployeesPage() {
             </tr>
           </thead>
           <tbody>
-            {employees.map((employee) => (
+            {employees?.map((employee) => (
               <tr key={employee.id} className="hover:bg-gray-50">
                 <td className="border border-gray-300 px-4 py-2">
                   {employee.id}

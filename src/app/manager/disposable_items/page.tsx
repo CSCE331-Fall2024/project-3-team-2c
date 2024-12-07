@@ -24,20 +24,19 @@ interface ItemOptional {
   quantity?: number;
 }
 
-
 /**
  * DisposableItemsPage Component
- * 
- * This component provides a user interface for managing disposable items in an inventory system. 
+ *
+ * This component provides a user interface for managing disposable items in an inventory system.
  * It allows users to view, add, edit, and delete items, with changes reflected in real-time.
- * 
+ *
  * **Key Features:**
  * - **Fetch Disposable Items:** Retrieves all disposable items from the backend and displays them in a table.
  * - **Add Item:** Opens a dialog to create a new item and save it to the backend.
  * - **Edit Item:** Opens a dialog pre-filled with item details for updating.
  * - **Delete Item:** Removes an item from the inventory after user confirmation.
  * - **Real-Time Updates:** Refreshes the table after every add, edit, or delete operation.
- * 
+ *
  * @returns {JSX.Element} A page for managing disposable items in the inventory.
  */
 export default function DisposableItemsPage() {
@@ -45,13 +44,14 @@ export default function DisposableItemsPage() {
   const addMutation = api.disposable.addDisposableItem.useMutation();
   const deleteMutation = api.disposable.deleteDisposableItem.useMutation();
 
-  const [items, setItems] = useState<Item[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
   const [formValues, setFormValues] = useState<ItemOptional>({});
 
-  const fetchItems = () => {
-    const { data: items } = api.disposable.getAllDisposableItems.useQuery();
-    setItems(items ?? []);
+  const { data: items, refetch } =
+    api.disposable.getAllDisposableItems.useQuery();
+
+  const fetchItems = async () => {
+    await refetch();
   };
 
   const handleEdit = (item: Item) => {
@@ -77,20 +77,16 @@ export default function DisposableItemsPage() {
     }
 
     setIsDialogOpen(false);
-    fetchItems();
+    await fetchItems();
   };
 
   const handleDelete = async (id: number) => {
     if (confirm("Are you sure you want to delete this item?")) {
       deleteMutation.mutate(id);
 
-      fetchItems();
+      await fetchItems();
     }
   };
-
-  useEffect(() => {
-    fetchItems();
-  }, []);
 
   return (
     <>
@@ -116,7 +112,7 @@ export default function DisposableItemsPage() {
             </tr>
           </thead>
           <tbody>
-            {items.map((item) => (
+            {items?.map((item) => (
               <tr key={item.id} className="hover:bg-gray-50">
                 <td className="border border-gray-300 px-4 py-2">{item.id}</td>
                 <td className="border border-gray-300 px-4 py-2">
