@@ -17,7 +17,7 @@ import { type AdapterAccount } from "next-auth/adapters";
 /**
  * Creates a table with a `panda_` prefix for multi-project schema support.
  * Ensures all tables are namespaced to avoid conflicts across projects.
- * 
+ *
  * @see https://orm.drizzle.team/docs/goodies#multi-project-schema
  */
 export const createTable = pgTableCreator((name) => `panda_${name}`);
@@ -25,7 +25,7 @@ export const createTable = pgTableCreator((name) => `panda_${name}`);
 /**
  * Users Table
  * Stores information about the users in the system.
- * 
+ *
  * Fields:
  * - `id` (Primary Key): UUID identifier for the user.
  * - `name`: User's name.
@@ -60,14 +60,14 @@ export const usersRelations = relations(users, ({ many }) => ({
 /**
  * Accounts Table
  * Stores third-party account information for user authentication.
- * 
+ *
  * Fields:
  * - `userId`: References the user linked to the account.
  * - `type`: The type of account (e.g., OAuth).
  * - `provider`: Name of the authentication provider (e.g., Google, Facebook).
  * - `providerAccountId`: Unique ID for the account in the provider's system.
  * - `refresh_token`, `access_token`, `expires_at`, etc.: OAuth-related fields.
- * 
+ *
  * Keys:
  * - Primary Key: `provider` and `providerAccountId`.
  * - Index: `userIdIdx` for efficient querying by `userId`.
@@ -110,8 +110,6 @@ export const disposable_items = createTable("disposable_items", {
   name: varchar("name").notNull(),
   quantity: integer("quantity").default(0).notNull(),
 });
-
-
 
 /**
  * Defines relationships for the Accounts Table.
@@ -185,7 +183,7 @@ export const verificationTokens = createTable(
 /**
  * Menu Items Table
  * Stores menu items available for orders.
- * 
+ *
  * Fields:
  * - `id` (Primary Key): Unique identifier for the menu item.
  * - `name`: Name of the menu item.
@@ -197,11 +195,10 @@ export const menuItems = createTable("menu_items", {
   type: varchar("type").notNull(),
 });
 
-
 /**
  * Orders Table
  * Stores customer orders and their details.
- * 
+ *
  * Fields:
  * - `id` (Primary Key): Unique identifier for the order.
  * - `timestamp`: When the order was created, defaults to `now()`.
@@ -220,7 +217,7 @@ export const orders = createTable("orders", {
 /**
  * Sizes Table
  * Defines available sizes for menu items.
- * 
+ *
  * Fields:
  * - `id` (Primary Key): Unique identifier for the size.
  * - `price`: Price of the size.
@@ -239,7 +236,7 @@ export const sizes = createTable("sizes", {
 /**
  * Containers Table
  * Tracks containers used in customer orders.
- * 
+ *
  * Fields:
  * - `id` (Primary Key): Unique identifier for the container.
  * - `orderId`: References the order this container belongs to.
@@ -254,7 +251,6 @@ export const containers = createTable("containers", {
     .references(() => sizes.id)
     .notNull(),
 });
-
 
 /**
  * Containers to Menu Table
@@ -290,14 +286,16 @@ export const containersToMenu = createTable("containers_to_menu", {
 export const employees = createTable("employees", {
   id: serial("id").primaryKey(),
   name: varchar("name").notNull(),
-  email: varchar("email").notNull(),
+  email: varchar("email")
+    .notNull()
+    .references(() => users.email),
   role: varchar("role").notNull(),
 });
 
 /**
  * Ingredients Table
  * Stores ingredients available in inventory.
- * 
+ *
  * Fields:
  * - `id` (Primary Key): Unique identifier for the ingredient.
  * - `name`: Name of the ingredient.
