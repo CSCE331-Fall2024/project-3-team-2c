@@ -13,15 +13,15 @@ import { useLanguage } from "~/context/LanguageContext";
 import Head from "next/head";
 import { Title } from "@radix-ui/react-dialog";
 import SwitchBase from "@mui/material/internal/SwitchBase";
-
+import { useSession } from "next-auth/react";
 
 /**
  * MainMenu Component
- * 
- * This component serves as the main entry point for users to navigate to different roles and functionalities 
- * within the Panda Express system (e.g., Manager, Cashier, Customer, Menu Board). It also includes weather 
+ *
+ * This component serves as the main entry point for users to navigate to different roles and functionalities
+ * within the Panda Express system (e.g., Manager, Cashier, Customer, Menu Board). It also includes weather
  * information, language selection, and text size toggling features for enhanced usability.
- * 
+ *
  * **Key Features:**
  * - **Navigation Buttons:** Four main buttons for navigating to:
  *   - Manager menu items.
@@ -36,11 +36,12 @@ import SwitchBase from "@mui/material/internal/SwitchBase";
  * - **Text Size Toggle:**
  *   - Provides an accessibility feature to toggle between standard and large text sizes.
  *   - Persists the preference in `localStorage`.
- * 
+ *
  * @returns {JSX.Element} A responsive main menu interface for Panda Express.
  */
 
 export default function MainMenu() {
+  const session = useSession();
   const { selectedLanguage, setSelectedLanguage } = useLanguage();
   const [weather, setWeather] = useState<{
     description: string;
@@ -129,25 +130,26 @@ export default function MainMenu() {
     <div className="relative flex min-h-screen flex-col items-center justify-center bg-[#FEC6B5] p-5">
       <Head>
         <Title>Panda Express Main Menu</Title>
-        <meta name="description" content="Main navigation for the Panda Express System" />
+        <meta
+          name="description"
+          content="Main navigation for the Panda Express System"
+        />
       </Head>
 
-        {/* Skip Links */}
+      {/* Skip Links */}
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:bg-blue-500 focus:text-white focus:p-2 focus:rounded focus:outline-none"
+        className="sr-only focus:not-sr-only focus:absolute focus:left-2 focus:top-2 focus:rounded focus:bg-blue-500 focus:p-2 focus:text-white focus:outline-none"
       >
         Skip to Main Content
       </a>
 
       <a
         href="#footer"
-        className="sr-only focus:not-sr-only focus:absolute focus:top-20 focus:left-2 focus:bg-blue-500 focus:text-white focus:p-2 focus:rounded focus:outline-none"
+        className="sr-only focus:not-sr-only focus:absolute focus:left-2 focus:top-20 focus:rounded focus:bg-blue-500 focus:p-2 focus:text-white focus:outline-none"
       >
         Skip to Footer
       </a>
-
-
 
       <header className="mb-5 text-center text-3xl font-bold">
         PANDA EXPRESS
@@ -168,39 +170,52 @@ export default function MainMenu() {
         <div className="mb-5 text-lg font-semibold">Loading weather...</div>
       )}
 
-      <Popover>
-        <PopoverTrigger asChild>
-          <Button aria-label="Language Select" className="mb-5">Select Language</Button>
-        </PopoverTrigger>
-        <PopoverContent className="rounded-lg border border-black bg-white p-2">
-          <div
-            onClick={() => setSelectedLanguage("en-US")}
-            className="cursor-pointer p-2 hover:bg-gray-200"
-          >
-            English
-          </div>
-          <div
-            onClick={() => setSelectedLanguage("es")}
-            className="cursor-pointer p-2 hover:bg-gray-200"
-          >
-            Spanish
-          </div>
-          <div
-            onClick={() => setSelectedLanguage("fr")}
-            className="cursor-pointer p-2 hover:bg-gray-200"
-          >
-            French
-          </div>
-          <div
-            onClick={() => setSelectedLanguage("zh")}
-            className="cursor-pointer p-2 hover:bg-gray-200"
-          >
-            Chinese
-          </div>
-        </PopoverContent>
-      </Popover>
+      <div>
+        <Link href={session.data ? "/api/auth/signout" : "/api/auth/signin"}>
+          <Button aria-label="Sign In/Out" className="mb-5 mr-2">
+            {session.data ? "Sign Out" : "Sign In"}
+          </Button>
+        </Link>
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button aria-label="Language Select" className="mb-5 ml-2">
+              Select Language
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="rounded-lg border border-black bg-white p-2">
+            <div
+              onClick={() => setSelectedLanguage("en-US")}
+              className="cursor-pointer p-2 hover:bg-gray-200"
+            >
+              English
+            </div>
+            <div
+              onClick={() => setSelectedLanguage("es")}
+              className="cursor-pointer p-2 hover:bg-gray-200"
+            >
+              Spanish
+            </div>
+            <div
+              onClick={() => setSelectedLanguage("fr")}
+              className="cursor-pointer p-2 hover:bg-gray-200"
+            >
+              French
+            </div>
+            <div
+              onClick={() => setSelectedLanguage("zh")}
+              className="cursor-pointer p-2 hover:bg-gray-200"
+            >
+              Chinese
+            </div>
+          </PopoverContent>
+        </Popover>
+      </div>
 
-      <div className="grid grid-cols-2 gap-5" role="main-content" id="main-content">
+      <div
+        className="grid grid-cols-2 gap-5"
+        role="main-content"
+        id="main-content"
+      >
         <Link href="./manager/menu_item" role="contentinfo">
           <div className="relative flex h-48 w-48 transform cursor-pointer items-center justify-center rounded-lg border border-black transition-transform hover:scale-105 hover:shadow-lg">
             <span className="z-10 text-3xl font-bold text-black">Manager</span>
@@ -252,7 +267,11 @@ export default function MainMenu() {
       </div>
 
       <div className="fixed right-2 top-2 flex items-center space-x-2">
-        <label htmlFor="text-size-toggle" className="text-sm font-bold" aria-label="Increase Text Size">
+        <label
+          htmlFor="text-size-toggle"
+          className="text-sm font-bold"
+          aria-label="Increase Text Size"
+        >
           Increase Text Size
         </label>
         <Switch
