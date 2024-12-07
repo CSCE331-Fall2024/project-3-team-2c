@@ -92,7 +92,7 @@ export default function CustomerPage() {
     <div className="h-full flex flex-col bg-[#FEC6B5]">
       <Head>
         <title>Panda Express Customer Page</title>
-        <meta name="description" content="Main navigation for the Panda Express System" />
+        <meta name="description" content="Customer View for the Panda Express System" />
       </Head>
 
        {/* Skip Links */}
@@ -129,7 +129,7 @@ export default function CustomerPage() {
       </div>
       
   
-      <div className="flex-1 p-8 mt-2 h-full">
+      <div className="flex-1 p-8 mt-2 h-full main-content" id="main-content">
         {showCart ? (
           <CustomerCart setCart={setCart} cart={cart} />
         ) : selectedCategory && ["bowl", "plate", "biggerPlate"].includes(selectedCategory) ? (
