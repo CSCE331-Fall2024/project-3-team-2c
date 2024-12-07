@@ -129,7 +129,9 @@ export default function CustomerPage() {
             addComboToCart={addComboToCart}
           />
         ) : selectedCategory === "recentOrders" ? (
-          <PreviousOrders />
+          <PreviousOrders 
+            addComboToCart={addComboToCart}
+          />
         ) : (
           <CustomerGrid onClick={handleGridClick} />
         )}

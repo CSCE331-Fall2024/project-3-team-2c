@@ -1,5 +1,4 @@
-"use client";
-import { useMemo } from 'react';
+import React from 'react';
 import { api } from '~/trpc/react';
 import Container from './Container';
 
@@ -12,24 +11,27 @@ import Container from './Container';
  * 
  * @returns {JSX.Element} The rendered PreviousOrders component.
  */
-export default function PreviousOrders() {
+
+
+export default function PreviousOrders({
+    addComboToCart,
+}: {
+    addComboToCart: (comboName: string, comboItems: Record<string, { id: number; name: string }[]>) => void;
+}) {
     const { data: orders } = api.orders.getLatestOrdersByCustomer.useQuery(1);
-    const orderItemIds = useMemo(() => {
-        return orders?.map(order => {
-            return order.containers;
-        }) ?? [];
-    }, [orders]);
 
     return (
         <div className="h-full flex flex-col bg-gray-100 p-6">
-            {/* Scrollable container for the orders, ensuring it fits the parent container height */}
             <div className="flex-1 overflow-y-auto space-y-6">
                 {orders?.map((order) => (
-                    <div key={order?.orderId} className="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow">
+                    <div
+                        key={order?.orderId}
+                        className="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow"
+                    >
                         <div className="flex justify-between items-center">
                             <div>
                                 <p className="text-xl font-semibold text-gray-700">
-                                    Order on {order?.timestamp ? new Date(order.timestamp).toLocaleDateString() : "Unknown Date"}
+                                    Order on {order?.timestamp ? new Date(order.timestamp).toLocaleDateString() : 'Unknown Date'}
                                 </p>
                             </div>
                             <div className="text-right">
@@ -38,11 +40,13 @@ export default function PreviousOrders() {
                         </div>
                         <div className="mt-4 space-y-2">
                             {order.containers.map((eachContainer, index) => (
-                                <Container 
+                                <Container
                                     key={eachContainer.containerId || index}
-                                    mainList={eachContainer.mainIds} 
-                                    sideList={eachContainer.sideIds} 
-                                    sizeId={eachContainer.sizeId} />
+                                    mainList={eachContainer.mainIds}
+                                    sideList={eachContainer.sideIds}
+                                    sizeId={eachContainer.sizeId}
+                                    addComboToCart={addComboToCart}
+                                />
                             ))}
                         </div>
                     </div>
