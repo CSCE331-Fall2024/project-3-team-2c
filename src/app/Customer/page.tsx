@@ -9,6 +9,8 @@ import PreviousOrders from '../_components/recentOrder/page';
 import DrinksPage from '../_components/drinks';
 import EntreesPage from '../_components/entrees';
 import SidesPage from '../_components/sides';
+import Head from 'next/head';
+import { Title } from '@radix-ui/react-dialog';
 
 
 /**
@@ -88,6 +90,32 @@ export default function CustomerPage() {
 
   return (
     <div className="h-full flex flex-col bg-[#FEC6B5]">
+      <Head>
+        <title>Panda Express Customer Page</title>
+        <meta name="description" content="Main navigation for the Panda Express System" />
+      </Head>
+
+       {/* Skip Links */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:bg-blue-500 focus:text-white focus:p-2 focus:rounded focus:outline-none"
+      >
+        Skip to Main Content
+      </a>
+
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-20 focus:left-2 focus:bg-blue-500 focus:text-white focus:p-2 focus:rounded focus:outline-none"
+      >
+        Skip to Main Content
+      </a>
+
+            <a
+        href="/MainMenu"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-20 focus:left-2 focus:bg-blue-500 focus:text-white focus:p-2 focus:rounded focus:outline-none"
+      >
+        Skip to Home Page
+      </a>
       <MenuBar onCartClick={handleCartClick} onHomeClick={handleHomeClick} onItemClick={handleGridClick}/>
       
       {/* Circular Button Below MenuBar */}
@@ -99,6 +127,7 @@ export default function CustomerPage() {
           Show Recent Order
         </button>
       </div>
+      
   
       <div className="flex-1 p-8 mt-2 h-full">
         {showCart ? (
