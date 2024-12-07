@@ -132,33 +132,57 @@ async function getSalesReport(
 const xzOutputSchema = z
   .array(
     z.object({
+      date: z.date(),
       sales: z.number(),
       revenue: z.number(),
     }),
   )
-  .max(24);
+  .length(24);
+
+async function getHour(start: Date, end: Date) {
+  // console.log("getHour", start, end);
+  return (
+    (
+      await db
+        .select({ sales: count(orders.id), revenue: sum(orders.total) })
+        .from(orders)
+        .where(between(orders.timestamp, start, end))
+    )?.at(0) ?? { sales: 0, revenue: 0 }
+  );
+}
 
 async function xzReport(day: Date): Promise<z.infer<typeof xzOutputSchema>> {
-  const start = new Date(day);
-  const end = new Date(day);
+  // console.log("start", start, "end", end);
+  // console.log("day given", day);
+  const tmpArray = Array(24).fill(0);
+  // console.log("tmpArray", tmpArray);
 
-  const ordersData = Promise.all(
-    Array(24).map(async (_val, index) => {
+  const ordersData = await Promise.all(
+    tmpArray.map(async (_val, index) => {
+      const start = new Date(day);
+      const end = new Date(day);
       start.setHours(index, 0, 0, 0);
       end.setHours(index, 59, 59, 999);
-      return (
-        await db
-          .select({ sales: count(orders.id), revenue: sum(orders.total) })
-          .from(orders)
-          .where(between(orders.timestamp, start, end))
-      )?.at(0);
+      // console.log("start", start, "end", end);
+
+      const data = await getHour(start, end);
+      return {
+        date: start,
+        sales: data.sales,
+        revenue: data.revenue,
+      };
     }),
   );
 
-  return (await ordersData).map((data) => ({
+  // console.log("ordersData", ordersData);
+
+  const hi = ordersData.map((data) => ({
+    date: data?.date ?? new Date(),
     sales: data?.sales ?? 0,
     revenue: Number(data?.revenue ?? 0),
   }));
+  // console.log("hi", hi);
+  return hi;
 }
 
 export const reportsRouter = createTRPCRouter({
@@ -172,10 +196,13 @@ export const reportsRouter = createTRPCRouter({
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 1);
 
+    // console.log("yesterday", yesterday);
+
     return await xzReport(yesterday);
   }),
   zReport: publicProcedure.output(xzOutputSchema).query(async () => {
     const today = new Date();
+    // console.log("today", today);
 
     return await xzReport(today);
   }),
