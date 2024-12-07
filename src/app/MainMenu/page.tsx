@@ -12,6 +12,7 @@ import { Switch } from "~/components/ui/switch";
 import { useLanguage } from "~/context/LanguageContext";
 import Head from "next/head";
 import { Title } from "@radix-ui/react-dialog";
+import SwitchBase from "@mui/material/internal/SwitchBase";
 
 
 /**
@@ -138,12 +139,7 @@ export default function MainMenu() {
       >
         Skip to Main Content
       </a>
-      <a
-        href="#menu"
-        className="sr-only focus:not-sr-only focus:absolute focus:top-12 focus:left-2 focus:bg-blue-500 focus:text-white focus:p-2 focus:rounded focus:outline-none"
-      >
-        Skip to Menu
-      </a>
+
       <a
         href="#footer"
         className="sr-only focus:not-sr-only focus:absolute focus:top-20 focus:left-2 focus:bg-blue-500 focus:text-white focus:p-2 focus:rounded focus:outline-none"
@@ -204,8 +200,8 @@ export default function MainMenu() {
         </PopoverContent>
       </Popover>
 
-      <div className="grid grid-cols-2 gap-5">
-        <Link href="./manager/menu_item" aria-label="contentinfo">
+      <div className="grid grid-cols-2 gap-5" role="main-content" id="main-content">
+        <Link href="./manager/menu_item" role="contentinfo">
           <div className="relative flex h-48 w-48 transform cursor-pointer items-center justify-center rounded-lg border border-black transition-transform hover:scale-105 hover:shadow-lg">
             <span className="z-10 text-3xl font-bold text-black">Manager</span>
             <div
@@ -260,6 +256,7 @@ export default function MainMenu() {
           Increase Text Size
         </label>
         <Switch
+          aria-label="TextSize Toggle"
           role="none"
           id="text-size-toggle"
           checked={isTextLarge}
