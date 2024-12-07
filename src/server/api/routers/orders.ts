@@ -46,6 +46,15 @@ const orderOutputSchema = z.object({
 //   return sizeIds.reduce((sum, price) => sum + price, 0.0);
 // }
 
+
+/**
+ * getPriceFromSizes
+ *
+ * Calculates the total price of containers based on their size IDs.
+ *
+ * @param sizeIds - An array of size IDs for which prices need to be calculated.
+ * @returns The total price as a number.
+ */
 async function getPriceFromSizes(sizeIds: number[]) {
   // Fetch prices for each sizeId asynchronously and wait for all to resolve
   const pricePromises = sizeIds.map(async (id) => {
@@ -69,6 +78,14 @@ async function getPriceFromSizes(sizeIds: number[]) {
   return prices.reduce((sum, price) => sum + price, 0.0);
 }
 
+/**
+ * getOneOrder
+ *
+ * Retrieves details of a specific order, including containers and their items.
+ *
+ * @param input - The ID of the order to retrieve.
+ * @returns The order details, including its containers and items.
+ */
 async function getOneOrder(
   input: number,
 ): Promise<z.infer<typeof orderOutputSchema>> {
@@ -172,6 +189,15 @@ export const ordersRouter = createTRPCRouter({
 
   //     return { orderId };
   //   }),
+
+  /**
+ * placeOrder
+ *
+ * Creates a new order, calculates the total price, and inserts containers and items associated with the order.
+ *
+ * @input {orderInputSchema} - The details of the order, including customer ID and containers.
+ * @returns The ID of the newly created order.
+ */
   placeOrder: publicProcedure
     .input(orderInputSchema)
     .mutation(async ({ input }) => {
@@ -239,6 +265,15 @@ export const ordersRouter = createTRPCRouter({
       return { orderId };
     }),
 
+    /**
+ * getOrder
+ *
+ * Fetches the details of a specific order by its ID.
+ *
+ * @input {number} - The ID of the order.
+ * @output {orderOutputSchema} - The details of the order, including containers and items.
+ * @returns The complete order details.
+ */
   getOrder: publicProcedure
     .input(z.number())
     .output(orderOutputSchema)
@@ -246,6 +281,14 @@ export const ordersRouter = createTRPCRouter({
       return { ...(await getOneOrder(input)), orderId: input };
     }),
 
+    /**
+ * getAllOrders
+ *
+ * Fetches all orders from the database.
+ *
+ * @output {Array<orderOutputSchema>} - An array of all orders with their details.
+ * @returns A list of all orders.
+ */
   getAllOrders: publicProcedure
     .output(z.array(orderOutputSchema))
     .query(async () => {
@@ -255,8 +298,15 @@ export const ordersRouter = createTRPCRouter({
       );
     }),
 
-  // Returns the 5 most recent orders for a customer
-  //
+  /**
+ * getLatestOrdersByCustomer
+ *
+ * Fetches the 5 most recent orders placed by a specific customer.
+ *
+ * @input {number} - The ID of the customer.
+ * @output {Array<orderOutputSchema>} - An array of the most recent orders for the customer.
+ * @returns A list of up to 5 most recent orders for the customer.
+ */
   getLatestOrdersByCustomer: publicProcedure
     .input(z.number())
     .output(z.array(orderOutputSchema))
@@ -272,6 +322,15 @@ export const ordersRouter = createTRPCRouter({
       );
     }),
 
+    /**
+ * getOrdersWithinTimePeriod
+ *
+ * Fetches orders placed within a specific time period.
+ *
+ * @input {Object} - An object containing `start` and `end` dates for the time period.
+ * @output {Array<orderOutputSchema>} - An array of orders placed within the specified time period.
+ * @returns A list of orders within the given time range.
+ */
   getOrdersWithinTimePeriod: publicProcedure
     .input(z.object({ start: z.date(), end: z.date() }))
     .output(z.array(orderOutputSchema))
