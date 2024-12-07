@@ -1,10 +1,13 @@
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import { z } from "zod";
-import { employees } from "~/server/db/schema";
+import { employees, users } from "~/server/db/schema";
 import { db } from "~/server/db";
 import { eq } from "drizzle-orm";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 
+async function setAuthRoles(email: string, role: string) {
+  return db.update(users).set({ role: role }).where(eq(users.email, email));
+}
 
 /**
  * getOneEmployee
@@ -31,16 +34,15 @@ const updateSchema = z.object({
 });
 
 export const employeesRouter = createTRPCRouter({
-
   /**
- * getEmployeeById
- *
- * A public procedure to fetch a single employee based on their ID.
- *
- * @input {number} - The ID of the employee to retrieve.
- * @output {outputSchema} - The schema representing the returned employee.
- * @returns The employee matching the provided ID.
- */
+   * getEmployeeById
+   *
+   * A public procedure to fetch a single employee based on their ID.
+   *
+   * @input {number} - The ID of the employee to retrieve.
+   * @output {outputSchema} - The schema representing the returned employee.
+   * @returns The employee matching the provided ID.
+   */
   getEmployeeById: publicProcedure
     .input(z.number())
     .output(outputSchema)
@@ -48,27 +50,27 @@ export const employeesRouter = createTRPCRouter({
       return (await getOneEmployee(input))!;
     }),
 
-    /**
- * getAllEmployees
- *
- * A public procedure to fetch all employees from the database.
- *
- * @output {Array<outputSchema>} - An array of all employees.
- * @returns All employees in the database.
- */
+  /**
+   * getAllEmployees
+   *
+   * A public procedure to fetch all employees from the database.
+   *
+   * @output {Array<outputSchema>} - An array of all employees.
+   * @returns All employees in the database.
+   */
   getAllEmployees: publicProcedure.output(z.array(outputSchema)).query(() => {
     return db.select().from(employees);
   }),
 
   /**
- * getEmployeesByIds
- *
- * A public procedure to fetch multiple employees by their IDs.
- *
- * @input {Array<number>} - An array of employee IDs to retrieve.
- * @output {Array<outputSchema>} - An array of employees matching the provided IDs.
- * @returns The employees corresponding to the provided IDs.
- */
+   * getEmployeesByIds
+   *
+   * A public procedure to fetch multiple employees by their IDs.
+   *
+   * @input {Array<number>} - An array of employee IDs to retrieve.
+   * @output {Array<outputSchema>} - An array of employees matching the provided IDs.
+   * @returns The employees corresponding to the provided IDs.
+   */
   getEmployeesByIds: publicProcedure
     .input(z.array(z.number()))
     .output(z.array(outputSchema))
@@ -85,15 +87,15 @@ export const employeesRouter = createTRPCRouter({
       );
     }),
 
-    /**
- * getEmployeesByRole
- *
- * A public procedure to fetch employees based on their role.
- *
- * @input {string} - The role of employees to retrieve.
- * @output {Array<outputSchema>} - An array of employees matching the provided role.
- * @returns The employees with the specified role.
- */
+  /**
+   * getEmployeesByRole
+   *
+   * A public procedure to fetch employees based on their role.
+   *
+   * @input {string} - The role of employees to retrieve.
+   * @output {Array<outputSchema>} - An array of employees matching the provided role.
+   * @returns The employees with the specified role.
+   */
   getEmployeesByRole: publicProcedure
     .input(z.string())
     .output(z.array(outputSchema))
@@ -104,45 +106,69 @@ export const employeesRouter = createTRPCRouter({
         .where(eq(employees.role, input.toUpperCase()));
     }),
 
-    /**
- * addEmployee
- *
- * A public procedure to add a new employee to the database.
- *
- * @input {insertSchema} - The schema representing the data to insert.
- * @returns The result of the insert operation.
- */
+  /**
+   * addEmployee
+   *
+   * A public procedure to add a new employee to the database.
+   *
+   * @input {insertSchema} - The schema representing the data to insert.
+   * @returns The result of the insert operation.
+   */
   addEmployee: publicProcedure
     .input(insertSchema)
     .mutation(async ({ input }) => {
+      await setAuthRoles(input.email, input.role);
       return db.insert(employees).values(input);
     }),
 
-    /**
- * updateEmployee
- *
- * A public procedure to update an existing employee in the database.
- *
- * @input {updateSchema} - The schema representing the updated data, including the employee ID.
- * @returns The result of the update operation.
- */
+  /**
+   * updateEmployee
+   *
+   * A public procedure to update an existing employee in the database.
+   *
+   * @input {updateSchema} - The schema representing the updated data, including the employee ID.
+   * @returns The result of the update operation.
+   */
   updateEmployee: publicProcedure
     .input(updateSchema)
     .mutation(async ({ input }) => {
+      const { existingEmail, existingRole } = (
+        await db
+          .select({
+            existingEmail: employees.email,
+            existingRole: employees.role,
+          })
+          .from(employees)
+          .where(eq(employees.id, input.id))
+      )?.at(0) ?? { existingEmail: "", existingRole: "" };
+
+      await setAuthRoles(
+        input.email ?? existingEmail,
+        input.role ?? existingRole,
+      );
       return db.update(employees).set(input).where(eq(employees.id, input.id));
     }),
 
-    /**
- * deleteEmployee
- *
- * A public procedure to delete an employee from the database based on their ID.
- *
- * @input {number} - The ID of the employee to delete.
- * @returns The result of the delete operation.
- */
+  /**
+   * deleteEmployee
+   *
+   * A public procedure to delete an employee from the database based on their ID.
+   *
+   * @input {number} - The ID of the employee to delete.
+   * @returns The result of the delete operation.
+   */
   deleteEmployee: publicProcedure
     .input(z.number())
     .mutation(async ({ input }) => {
+      const { existingEmail } = (
+        await db
+          .select({ existingEmail: employees.email })
+          .from(employees)
+          .where(eq(employees.id, input))
+      )?.at(0) ?? { existingEmail: "" };
+
+      await setAuthRoles(existingEmail, "");
+
       return db.delete(employees).where(eq(employees.id, input));
     }),
 });
