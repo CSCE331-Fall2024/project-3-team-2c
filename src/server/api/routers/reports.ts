@@ -27,6 +27,15 @@ const salesOutputSchema = z.object({
   popularSides: z.array(salesEntryShape),
 });
 
+/**
+ * getSalesReport
+ *
+ * Generates a sales report within a given date range, identifying popular sizes, mains, and sides.
+ *
+ * @param startDate - The start date for the sales report.
+ * @param endDate - The end date for the sales report.
+ * @returns A promise resolving to an object containing arrays of popular sizes, mains, and sides with their IDs, names, and quantities.
+ */
 async function getSalesReport(
   startDate: Date,
   endDate: Date,
@@ -134,6 +143,14 @@ const xzOutputSchema = z.object({
   revenue: z.number(),
 });
 
+/**
+ * xzReport
+ *
+ * Generates a report for a specific day, including total sales and revenue.
+ *
+ * @param day - The date for which the report should be generated.
+ * @returns A promise resolving to an object containing the total sales and revenue for the day.
+ */
 async function xzReport(day: Date): Promise<z.infer<typeof xzOutputSchema>> {
   const start = new Date(day);
   start.setHours(0, 0, 0, 0);
@@ -152,18 +169,43 @@ async function xzReport(day: Date): Promise<z.infer<typeof xzOutputSchema>> {
 }
 
 export const reportsRouter = createTRPCRouter({
+  /**
+ * salesReport
+ *
+ * A TRPC procedure to retrieve a detailed sales report for a specified date range.
+ *
+ * @input {inputSchema} - An object containing `startDate` and `endDate` for the report range.
+ * @output {salesOutputSchema} - An object containing arrays of popular sizes, mains, and sides with their IDs, names, and quantities.
+ * @returns The sales report for the specified date range.
+ */
   salesReport: publicProcedure
     .input(inputSchema)
     .output(salesOutputSchema)
     .query(({ input }) => {
       return getSalesReport(input.startDate, input.endDate);
     }),
+    /**
+ * xReport
+ *
+ * A TRPC procedure to retrieve the X Report for the previous day.
+ *
+ * @output {xzOutputSchema} - An object containing the total sales and revenue for the previous day.
+ * @returns The X Report data.
+ */
   xReport: publicProcedure.output(xzOutputSchema).query(async () => {
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 1);
 
     return await xzReport(yesterday);
   }),
+  /**
+ * zReport
+ *
+ * A TRPC procedure to retrieve the Z Report for the current day.
+ *
+ * @output {xzOutputSchema} - An object containing the total sales and revenue for the current day.
+ * @returns The Z Report data.
+ */
   zReport: publicProcedure.output(xzOutputSchema).query(async () => {
     const today = new Date();
 

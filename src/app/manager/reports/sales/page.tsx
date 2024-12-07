@@ -6,6 +6,16 @@ import { api } from "~/trpc/react";
 import { Button } from "~/components/ui/button";
 import { DatePicker } from "~/app/_components/DatePicker";
 
+
+/**
+ * SalesPage Component
+ *
+ * This component displays a sales report for a specified date range. It includes:
+ * - A date range picker for users to set the start and end dates.
+ * - Tables displaying the most popular sizes, mains, and sides based on the sales data.
+ * - A validation message to ensure the start date is earlier than the end date.
+ * 
+ */
 export default function SalesPage() {
   const [startDate, setStartDate] = useState<Date>(new Date("2021-01-01"));
   const [endDate, setEndDate] = useState<Date>(new Date("2025-01-01"));
