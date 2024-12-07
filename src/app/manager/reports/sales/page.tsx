@@ -3,9 +3,19 @@
 import Header from "~/app/_components/header";
 import React, { useState } from "react";
 import { api } from "~/trpc/react";
-import { Button } from "~/components/ui/button";
 import { DatePicker } from "~/app/_components/DatePicker";
 
+
+const [initialStartDate, initialEndDate] = getInitialDates();
+function getInitialDates() {
+  const tmpDate = new Date();
+  tmpDate.setHours(0, 0, 0, 0);
+  tmpDate.setFullYear(2024, 12, 1);
+  const startDate = new Date(tmpDate);
+  tmpDate.setFullYear(2024, 12, 31);
+  const endDate = new Date(tmpDate);
+  return [startDate, endDate];
+}
 
 /**
  * SalesPage Component
@@ -14,11 +24,12 @@ import { DatePicker } from "~/app/_components/DatePicker";
  * - A date range picker for users to set the start and end dates.
  * - Tables displaying the most popular sizes, mains, and sides based on the sales data.
  * - A validation message to ensure the start date is earlier than the end date.
- * 
+ *
  */
 export default function SalesPage() {
-  const [startDate, setStartDate] = useState<Date>(new Date("2021-01-01"));
-  const [endDate, setEndDate] = useState<Date>(new Date("2025-01-01"));
+  const [startDate, setStartDate] = useState<Date>(new Date(initialStartDate!));
+  const [endDate, setEndDate] = useState<Date>(new Date(initialEndDate!));
+
   const { data: salesData } = api.reports.salesReport.useQuery({
     startDate: startDate,
     endDate: endDate,

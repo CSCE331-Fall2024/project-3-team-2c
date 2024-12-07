@@ -138,10 +138,27 @@ async function getSalesReport(
   };
 }
 
-const xzOutputSchema = z.object({
-  sales: z.number(),
-  revenue: z.number(),
-});
+const xzOutputSchema = z
+  .array(
+    z.object({
+      date: z.date(),
+      sales: z.number(),
+      revenue: z.number(),
+    }),
+  )
+  .length(24);
+
+async function getHour(start: Date, end: Date) {
+  // console.log("getHour", start, end);
+  return (
+    (
+      await db
+        .select({ sales: count(orders.id), revenue: sum(orders.total) })
+        .from(orders)
+        .where(between(orders.timestamp, start, end))
+    )?.at(0) ?? { sales: 0, revenue: 0 }
+  );
+}
 
 /**
  * xzReport
@@ -152,20 +169,37 @@ const xzOutputSchema = z.object({
  * @returns A promise resolving to an object containing the total sales and revenue for the day.
  */
 async function xzReport(day: Date): Promise<z.infer<typeof xzOutputSchema>> {
-  const start = new Date(day);
-  start.setHours(0, 0, 0, 0);
-  const end = new Date(day);
-  end.setHours(23, 59, 59, 999);
+  // console.log("start", start, "end", end);
+  // console.log("day given", day);
+  const tmpArray = Array(24).fill(0);
+  // console.log("tmpArray", tmpArray);
 
-  const ordersData = await db
-    .select({ sales: count(orders.id), revenue: sum(orders.total) })
-    .from(orders)
-    .where(between(orders.timestamp, start, end));
+  const ordersData = await Promise.all(
+    tmpArray.map(async (_val, index) => {
+      const start = new Date(day);
+      const end = new Date(day);
+      start.setHours(index, 0, 0, 0);
+      end.setHours(index, 59, 59, 999);
+      // console.log("start", start, "end", end);
 
-  return {
-    sales: ordersData[0]?.sales ?? 0,
-    revenue: Number(ordersData[0]?.revenue ?? 0),
-  };
+      const data = await getHour(start, end);
+      return {
+        date: start,
+        sales: data.sales,
+        revenue: data.revenue,
+      };
+    }),
+  );
+
+  // console.log("ordersData", ordersData);
+
+  const hi = ordersData.map((data) => ({
+    date: data?.date ?? new Date(),
+    sales: data?.sales ?? 0,
+    revenue: Number(data?.revenue ?? 0),
+  }));
+  // console.log("hi", hi);
+  return hi;
 }
 
 export const reportsRouter = createTRPCRouter({
@@ -196,6 +230,8 @@ export const reportsRouter = createTRPCRouter({
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 1);
 
+    // console.log("yesterday", yesterday);
+
     return await xzReport(yesterday);
   }),
   /**
@@ -208,6 +244,7 @@ export const reportsRouter = createTRPCRouter({
  */
   zReport: publicProcedure.output(xzOutputSchema).query(async () => {
     const today = new Date();
+    // console.log("today", today);
 
     return await xzReport(today);
   }),
