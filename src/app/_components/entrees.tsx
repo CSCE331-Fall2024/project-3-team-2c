@@ -25,10 +25,12 @@ interface Entree {
  * @returns {JSX.Element} The rendered EntreesPage component.
  */
 export default function EntreesPage({
+  user,
   category,
   setSelectedCategory,
   addComboToCart,
 }: {
+  user: string;
   category: string;
   setSelectedCategory: (category: string | null) => void;
   addComboToCart: (comboName: string, comboItems: Record<string, { id: number; name: string }[]>) => void;
@@ -112,7 +114,11 @@ export default function EntreesPage({
     });
 
     setSelectedCategory(null);
-    router.push("/Customer");
+    if (user.toLowerCase() === "customer") {
+      router.push("/Customer");
+    } else if (user.toLowerCase() === "cashier") {
+      router.push("/cashier");
+    }
   };
 
   return (
