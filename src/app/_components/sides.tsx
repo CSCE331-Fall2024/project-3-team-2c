@@ -25,10 +25,12 @@ interface Appetizer {
  * @returns {JSX.Element} The rendered SidesPage component.
  */
 export default function SidesPage({
+  user,
   category,
   setSelectedCategory,
   addComboToCart,
 }: {
+  user: string;
   category: string;
   setSelectedCategory: (category: string | null) => void;
   addComboToCart: (comboName: string, comboItems: Record<string, { id: number; name: string }[]>) => void;
@@ -111,7 +113,11 @@ export default function SidesPage({
     });
 
     setSelectedCategory(null);
-    router.push("/Customer");
+    if (user.toLowerCase() === "customer") {
+      router.push("/Customer");
+    } else if (user.toLowerCase() === "cashier") {
+      router.push("/cashier");
+    }
   };
 
   return (

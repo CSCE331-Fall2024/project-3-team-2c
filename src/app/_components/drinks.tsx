@@ -28,10 +28,12 @@ interface Drink {
  * @returns {JSX.Element} The rendered DrinksPage component.
  */
 export default function DrinksPage({
+  user,
   category,
   setSelectedCategory,
   addComboToCart,
 }: {
+  user: string;
   category: string;
   setSelectedCategory: (category: string | null) => void;
   addComboToCart: (
@@ -101,7 +103,11 @@ export default function DrinksPage({
     });
 
     setSelectedCategory(null);
-    router.push("/Customer");
+    if (user.toLowerCase() === "customer") {
+      router.push("/Customer");
+    } else if (user.toLowerCase() === "cashier") {
+      router.push("/cashier");
+    }
   };
 
   return (
